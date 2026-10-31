@@ -1,0 +1,16 @@
+{
+  "name": "study-notes",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @study-notes/desktop",
+    "build": "npm run build --workspace @study-notes/desktop",
+    "preview": "npm run preview --workspace @study-notes/desktop"
+  }
+}

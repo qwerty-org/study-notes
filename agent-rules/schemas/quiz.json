@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "quiz",
+  "type": "object",
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["id", "chapter", "type", "question", "options", "answer", "explain"],
+        "properties": {
+          "id": { "type": "string" },
+          "chapter": { "type": "integer" },
+          "type": { "enum": ["scenario", "theory"] },
+          "question": { "type": "string" },
+          "options": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "required": ["key", "text"],
+              "properties": {
+                "key": { "enum": ["A", "B", "C", "D"] },
+                "text": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "answer": { "enum": ["A", "B", "C", "D"] },
+          "explain": {
+            "type": "object",
+            "required": ["correct"],
+            "properties": {
+              "correct": { "type": "string" },
+              "wrong": {
+                "type": "object",
+                "additionalProperties": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          },
+          "difficulty": { "enum": ["easy", "medium", "hard"] },
+          "concepts": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,163 @@
+{
+  "book": "10-daqiqa-odatlar",
+  "rulesVersion": "2026-10-31",
+  "analyzedAt": "2026-10-31T10:00:00Z",
+  "chapters": [
+    {
+      "index": 0,
+      "title": "Odat nima va nima uchun muhim",
+      "keyIdeas": [
+        {
+          "id": "ch1-i1",
+          "idea": "Kunlik qarorlarning aksariyatini ong emas, odatlar qabul qiladi.",
+          "why": "Odat — miyaning ish yukiini kamaytiradigan rejasi; odatsiz har bir harakatni o'ylab chiqish kerak va miya charchaydi.",
+          "howToApply": "Bugun 5 daqiqa o'tirib, kunlik takrorlanuvchi 3 ta odatingizni yozib chiqing (ichish, telefon, boshlash).",
+          "applyTags": ["shaxsiy"]
+        },
+        {
+          "id": "ch1-i2",
+          "idea": "Har bir odat to'rt bosqichdan o'tadi: signal → xohish → harakat → mukofot.",
+          "why": "Odatni tushunish uchun uning tuzilishini bilish kerak — shunda har bir bosqichni o'zgartirish mumkin.",
+          "howToApply": "Bitta odatni olib, uning signalini (qachon boshlanadi) va mukofotini (nima his qilasiz) yozib chiqing.",
+          "applyTags": ["shaxsiy"]
+        },
+        {
+          "id": "ch1-i3",
+          "idea": "1% qoidasi: kunlik kichik yaxshilanish yil davomida ulkan natija beradi, katta sakrashlar emas.",
+          "why": "Katta maqsadlar motivatsiyani so'ndiradi; kichik qadam esa barqaror va takrorlanadi.",
+          "howToApply": "Bitta yangi odatni kuniga 10 daqiqagacha kichraytiring va 30 kun kuzating.",
+          "applyTags": ["ish", "shaxsiy"]
+        }
+      ],
+      "terms": [
+        {
+          "term": "Odat tsikli",
+          "definitionSimple": "Signal boshlaydi, xohish undaydi, harakat bajariladi, mukofot mustahkamlaydi — shu to'rtlik takrorlanadi.",
+          "metaphor": "Komp'yuterda skript avtomatik ishga tushgandek"
+        },
+        {
+          "term": "1% qoidasi",
+          "definitionSimple": "Kuniga 1% yaxshilanish — yiliga taxminan 37 barobar yaxshilanish (komponent foiz).",
+          "metaphor": "Har kuni bitta qavat qo'shilsa — oyda bino qurar"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "title": "Odatni qurish — signal, muhit va 2-daqiya",
+      "keyIdeas": [
+        {
+          "id": "ch2-i1",
+          "idea": "Iroda emas, muhit odatni belgilaydi — muhitni o'zgartirish irodadan kuchli.",
+          "why": "Iroda charchaydi va vaziyatga qarab o'zgaradi; muhit esa 24 soat ishlaydi.",
+          "howToApply": "Bugun xohlagan odatingiz uchun kerakli buyumni ko'z oldingizga qo'ying (kitobni stolga, kiyimni ko'zga tashlanadigan joyga).",
+          "applyTags": ["shaxsiy", "o'qish"]
+        },
+        {
+          "id": "ch2-i2",
+          "idea": "\"Men buni X dan keyin qilaman\" — mavjud odatga yangisini bog'lash eng ishonchli signal.",
+          "why": "Yangi signal yaratish qiyin; eskisi allaqachon mavjud va har kuni takrorlanadi.",
+          "howToApply": "Bitta yangi odatni aniq eskiga bog'lang: \"Choy damlagach, 10 daqiqa o'qiyman\" deya yozing.",
+          "applyTags": ["o'qish", "shaxsiy"]
+        },
+        {
+          "id": "ch2-i3",
+          "idea": "2-daqiya qoidasi: boshlash shunchaki osonki, qarshilik paydo bo'lmasin — maqsad bajarish emas, boshlash.",
+          "why": "Eng qiyin qism boshlash oldidagi qarshilik; boshlangan ish davom etadi (Zygarneik effekti).",
+          "howToApply": "Odatingizni 2 daqiqaga tushiring: \"faqat kitobni ochib, bitta sahifa o'qish\".",
+          "applyTags": ["shaxsiy"]
+        }
+      ],
+      "terms": [
+        {
+          "term": "Muhit dizayni",
+          "definitionSimple": "Odatni yengillashtirish uchun atrofni sun'iy ravishda sozlash: kerakli narsa qo'l ostida, kerakmasi uzoqda.",
+          "metaphor": "Katta toshni ko'tarish emas, uni oldindan surib qo'yish"
+        },
+        {
+          "term": "Friction (qarshilik)",
+          "definitionSimple": "Harakatga qo'shilgan kichik to'siq — 3 qo'shimcha bosish ham odatingizni 3 barobar kamaytiradi.",
+          "metaphor": "Derazani ochiq qoldirganda — havo kiradi, yopiq bo'lsa — yo'q"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Odatni buzish — xato tuzoqlari",
+      "keyIdeas": [
+        {
+          "id": "ch3-i1",
+          "idea": "Yomon odatni o'chirib bo'lmaydi — faqat o'rniga boshqasini qo'yasiz.",
+          "why": "Miya bo'sh joyni yoqtirmaydi; joy bo'sh qolsa, eski odat o'z-o'zidan qayta paydo bo'ladi.",
+          "howToApply": "Buzmoqchi bo'lgan odatingiz uchun aniq ALMASHTIRISH yozing: \"Sigaretni emas, 5 daqiqali yurishni.\"",
+          "applyTags": ["shaxsiy"]
+        },
+        {
+          "id": "ch3-i2",
+          "idea": "Eng katta xavf — \"bir marta hech narsa qilmaydi\"; muammo istisno emas, istisnodan keyingi qaytish.",
+          "why": "Odat bir kunda yo'qolmaydi, lekin qaytish bosqichi uzilsa — odat tugaydi.",
+          "howToApply": "Odatni o'tkazib yuborgan kuni ertasi uchun yozma reja tuzing (\"Ertaga 8:00 da boshlayman\").",
+          "applyTags": ["shaxsiy"]
+        },
+        {
+          "id": "ch3-i3",
+          "idea": "O'z-o'zini ayblash ishlamaydi — stress eski odatlarni jonlantiradi; muammo odatda emas, muhit va rejada.",
+          "why": "Ayb hissi stressni kuchaytiradi, stress esa odat tsiklini qayta yoqadi.",
+          "howToApply": "Odat buzilganda o'zingizga ayblovchi emas, tahliliy savol bering: \"Muhim nima meni chalg'itdi?\".",
+          "applyTags": ["shaxsiy", "oila"]
+        }
+      ],
+      "terms": [
+        {
+          "term": "Almashtirish odati",
+          "definitionSimple": "Eski odat joyiga uning o'rnini bosadigan yangi qisqa harakatni qo'yish usuli.",
+          "metaphor": "Eskirgan dasturni o'chirib, uning o'rniga yengilrog'ini o'rnatish"
+        },
+        {
+          "term": "Friction (buzishda)",
+          "definitionSimple": "Yomon odatga sun'iy to'siq qo'yish: yo'lni yopish — istakni so'ndirishning eng tez yo'li.",
+          "metaphor": "Yo'lga to'siq qo'yganda mashina sekinlashadi"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Uzoq muddat — kuzatish, mukofot va qaytish",
+      "keyIdeas": [
+        {
+          "id": "ch4-i1",
+          "idea": "Odat 21 kunda emas — o'rtacha 66 kunda shakllanadi; maqsad kunlarni emas, takrorlash sonini ko'paytirish.",
+          "why": "Kun sanash motivatsiyani buzadi (muddat tugaydi = maqsad tugaydi); takrorlash esa barqaror o'sishdir.",
+          "howToApply": "Kunlarini emas, takrorlarini sanang: haftalik jadvalda \"bajarildi/bajarilmadi\" belgilang.",
+          "applyTags": ["shaxsiy"]
+        },
+        {
+          "id": "ch4-i2",
+          "idea": "Kuzatish (tracking) — eng oddiy va eng kuchli vosita: ko'rilgan xatti-haratni buzishga yana bir bor o'ylaysiz.",
+          "why": "Kuzatish odatni ko'rinadigan qiladi va \"uzilishni\" sekinlashtiradi.",
+          "howToApply": "Bugundan bitta jadvalga har kuni bitta ✓ qo'ying — joyi hamon ko'z oldingizda bo'lsin.",
+          "applyTags": ["shaxsiy", "ish"]
+        },
+        {
+          "id": "ch4-i3",
+          "idea": "Uzilganda (kasallik, ta'til) kichik shaklda qaytish kerak: 10 daqiqa emas, 2 daqiqa — signalni saqlab, intizorni pasaytiring.",
+          "why": "To'liq qaytish og'ir; kichik shakl qaytishni ehtimolligini oshiradi va odatni jonlantiradi.",
+          "howToApply": "Uzilishdan keyingi birinchi kuni odatni minimal hajmda bajarib, jadvalni uzmasdan davom ettiring.",
+          "applyTags": ["shaxsiy"]
+        }
+      ],
+      "terms": [
+        {
+          "term": "Kuzatish (tracking)",
+          "definitionSimple": "Harakatni belgilab borish jadvali — odat ko'rinadigan bo'lib, buzish qiyinlashadi.",
+          "metaphor": "Yo'ldagi kilometr taymeri — masofa ko'rinmasa, mashina ham to'xtaydi"
+        },
+        {
+          "term": "Sun'iy mukofot",
+          "definitionSimple": "Tabiiy natija sekin keladigan odat uchun qo'shilgan darhol seziladigan ijobiy belgi (nishon, yulduzcha).",
+          "metaphor": "Uzoq poygada oraliq finishlar qo'yish"
+        }
+      ]
+    }
+  ]
+}

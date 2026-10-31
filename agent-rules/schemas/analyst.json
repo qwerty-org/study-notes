@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "analyst",
+  "type": "object",
+  "required": ["keyIdeas", "terms"],
+  "properties": {
+    "keyIdeas": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["idea", "why", "howToApply"],
+        "properties": {
+          "id": { "type": "string" },
+          "idea": { "type": "string", "description": "G'oya — 1-2 gap" },
+          "why": { "type": "string", "description": "Nima uchun muhim" },
+          "howToApply": {
+            "type": "string",
+            "description": "Aniq BIRINCHI qadam (foydalanuvchi ertaga bajaradigan)"
+          },
+          "applyTags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "ish | oila | do'stlik | o'qish | shaxsiy"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "terms": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["term", "definitionSimple"],
+        "properties": {
+          "term": { "type": "string" },
+          "definitionSimple": { "type": "string", "description": "Oddiy tilda — 1-2 gap" },
+          "metaphor": { "type": "string", "description": "Tushunarli metafora (ixtiyoriy)" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

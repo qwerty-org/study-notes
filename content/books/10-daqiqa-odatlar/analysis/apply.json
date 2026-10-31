@@ -1,0 +1,59 @@
+{
+  "book": "10-daqiqa-odatlar",
+  "scenarios": [
+    {
+      "id": "ch1-a1",
+      "ideaId": "ch1-i3",
+      "situation": "Siz bir hafta davomida har kuni o'qishga 2 soat va'ta qildingiz, lekin 3-kundan keyin charchab to'xtadingiz va endi umuman boshlamayapsiz.",
+      "rightAction": "Bugun 10 daqiqagacha qisqartiring: \"Faqat ochib, bitta bob o'qiyman\" deydingiz va shu bilan boshlaysiz.",
+      "wrongAction": "Kechikkaningizni yopish uchun bir kunda 3 soat o'qishga urinish.",
+      "whyWrong": "Ortiqcha yuk charchatadi va keyingi to'xtashni kafolatlaydi — kichik qadam barqarorlikni saqlaydi.",
+      "context": "o'qish"
+    },
+    {
+      "id": "ch2-a1",
+      "ideaId": "ch2-i1",
+      "situation": "Rahbar sizdan yangi loyiha bo'yicha darhol javob so'radi. Siz bir zumda \"ha\" dedingiz, keyin uni kechqurun bajarolmadingiz.",
+      "rightAction": "\"Bajarishga vaqtimni tekshirib, 15 daqiqadan keyin aniq javob beraman\" — deysiz.",
+      "wrongAction": "Darhol \"ha\" deyib, keyin vazifani tashlab qo'yish.",
+      "whyWrong": "Tez rozilik — kelajakdagi ishonchni yemiradi. Muammo kechikishda emas, vadasizlikda.",
+      "context": "ish"
+    },
+    {
+      "id": "ch2-a2",
+      "ideaId": "ch2-i2",
+      "situation": "Siz ertalab sport qilmoqchisiz, lekin har safar kechqurun o'ylab, ertalab unutasiz.",
+      "rightAction": "Kechqurun kiyimni ertalab ko'zga tashlanadigan joyga (stul boshiga) qo'yib, rejani aniq bog'laysiz: \"Choydamdan keyin kiyinib, 10 daqiqa yuguraman\".",
+      "wrongAction": "Telefonga 20 ta eslatma qo'yish va irodaga tayanolish.",
+      "whyWrong": "Eslatma muhitni o'zgartirmaydi — qiyin boshlash joyida qoladi. Muhit esa 24 soat ishlaydi.",
+      "context": "shaxsiy"
+    },
+    {
+      "id": "ch3-a1",
+      "ideaId": "ch3-i2",
+      "situation": "Siz 5 kun o'qish odatini saqladingiz, 6-kuni do'stlar bilan chiqib, o'qilmadi. Endi his-qimmat bilan \"hammasi buzildi\" deb o'ylayapsiz.",
+      "rightAction": "Darhol yozma reja tuzasiz: \"Ertaga 8:00 da, stulda o'tirib, 10 daqiqa o'qiyman\" — va ertasi bajarasiz.",
+      "wrongAction": "Odatni keyingi oygacha surib qo'yish yoki \"noldan boshlayman\" deb kutilmagan katta reja tuzish.",
+      "whyWrong": "Muammo istisno emas — keyingi qaytish. Qaytish bosqichi uzilsa, odat tugaydi.",
+      "context": "shaxsiy"
+    },
+    {
+      "id": "ch3-a2",
+      "ideaId": "ch3-i3",
+      "situation": "Siz yana bir marta o'z odatingizni buzdingiz va o'zingizga jahl qilyapsiz: \"Menda iroda yo'q\".",
+      "rightAction": "O'zingizga tahliliy savol berasiz: \"Muhim nima meni chalg'itdi?\" — va o'sha muhitni o'zgartirasiz (masalan, telefoni boshqa xonaga).",
+      "wrongAction": "O'z-o'zini ayblash va shu his bilan davom etish.",
+      "whyWrong": "Stress eski odatlarni jonlantiradi; ayb hissi odatni kuchaytiradi. Muammo odatda emas — muhit va rejada.",
+      "context": "shaxsiy"
+    },
+    {
+      "id": "ch4-a1",
+      "ideaId": "ch4-i2",
+      "situation": "Siz bir oy o'qish odatini davom ettirdingiz, lekin natijani sezmayapsiz va kuzatish jadvalini yig'ishga qiynalyapsiz.",
+      "rightAction": "Jadvalni ko'z oldingizga (muzlatgich yoki eshikka) qo'yib, har kuni bitta ✓ qo'yasiz — ko'rilgan harakatni buzish sekinlashadi.",
+      "wrongAction": "Jadvalni tashlab, \"his qilib\" davom etish.",
+      "whyWrong": "Kuzatish odatni ko'rinadigan qiladi — ko'rilgan qatorni buzishga yana bir bor o'ylaysiz.",
+      "context": "o'qish"
+    }
+  ]
+}

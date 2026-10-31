@@ -1,0 +1,189 @@
+{
+  "book": "10-daqiqa-odatlar",
+  "items": [
+    {
+      "id": "ch1-q1",
+      "chapter": 0,
+      "type": "scenario",
+      "question": "Siz yangi yil qarori qabul qildingiz: \"Bundan keyin har kuni 2 soat o'qiyman!\" Bir haftadan keyin to'satdan to'xtadingiz. Nima noto'g'ri edi?",
+      "options": [
+        { "key": "A", "text": "Irodangiz yetmadi — odam birini tanlashi kerak" },
+        { "key": "B", "text": "Reja juda katta edi — kichik va aniq qadam bilan boshlash kerak edi" },
+        { "key": "C", "text": "2 soat kam — 4 soat qilish kerak edi" },
+        { "key": "D", "text": "Kitob noto'g'ri tanlangan" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Katta sakrash motivatsiyani so'ndiradi. 1% qoidasi kichik, barqaror qadamni talab qiladi — boshlash oson bo'lishi kerak.",
+        "wrong": {
+          "A": "Muammo irodada emas — rejaning o'zida. Iroda charchaydi, kichik qadam esa charchamaydi.",
+          "C": "Ko'proq — tezroq emas. Yuk orttirish yana tezroq to'xtashga olib keladi.",
+          "D": "Kitob muammo emas — hajm muammo. Boshqa kitob bilan ham xuddi shu xato takrorlanadi."
+        }
+      },
+      "difficulty": "easy",
+      "concepts": ["ch1-i3"]
+    },
+    {
+      "id": "ch1-q2",
+      "chapter": 0,
+      "type": "theory",
+      "question": "Odat tsikli qaysi to'rt bosqichdan o'tadi?",
+      "options": [
+        { "key": "A", "text": "Maqsad → reja → amal → natija" },
+        { "key": "B", "text": "Signal → xohish → harakat → mukofot" },
+        { "key": "C", "text": "Tushuncha → tajriba → takrorlash → odat" },
+        { "key": "D", "text": "Iroda → harakat → mukofot → xotira" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Signal (boshlanish belgisi) xohishni uyg'otadi, xohish harakatga olib boradi, mukofot esa shu tsiklni mustahkamlaydi.",
+        "wrong": {
+          "A": "Bu loyiha boshqaruvi sxemasi — odat tsikli emas.",
+          "C": "Bu o'rganish bosqichlari, odat tsikli emas.",
+          "D": "Iroda tsikli emas — iroda odat tsiklining bir qismi ham emas."
+        }
+      },
+      "difficulty": "easy",
+      "concepts": ["ch1-i2"]
+    },
+    {
+      "id": "ch2-q1",
+      "chapter": 1,
+      "type": "scenario",
+      "question": "Ertalab sport qilmoqchisiz, lekin har kuni kechqurun hisoblab, ertalab unutasiz. Kitobning tavsiyasi qaysi?",
+      "options": [
+        { "key": "A", "text": "Telefonga 20 ta eslatma qo'yish" },
+        { "key": "B", "text": "Kiyimni erta kechqurun ko'zga tashlanadigan joyga qo'yib, yangi odatni mavjud ertalabki odatga bog'lash" },
+        { "key": "C", "text": "Motivatsiya gaplarini stolga yozib qo'yish" },
+        { "key": "D", "text": "Bir hafta o'ylab ko'rib, keyin boshlash" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Muhit dizayni (kiyim ko'z oldida) + \"X dan keyin\" usuli (mavjud odatga bog'lash) — ikkala kuchli texnika birga ishlaydi.",
+        "wrong": {
+          "A": "Eslatma — signalning bir turi, lekin faqat eslatma muhitni o'zgartirmaydi: qiyin boshlash joyida qoladi.",
+          "C": "Gap — harakat emas. Motivatsiyaga tayangan odat tez so'nadi.",
+          "D": "Kutish — eng keng tarqalgan xato: boshlash hech qachon kelmaydi."
+        }
+      },
+      "difficulty": "medium",
+      "concepts": ["ch2-i1", "ch2-i2"]
+    },
+    {
+      "id": "ch2-q2",
+      "chapter": 1,
+      "type": "theory",
+      "question": "2-daqiya qoidasining mohiyati nima?",
+      "options": [
+        { "key": "A", "text": "Har bir mashq 2 daqiqa bo'lishi kerak" },
+        { "key": "B", "text": "Boshlash shunchada osonki, boshlash oldidagi qarshilik paydo bo'lmasin" },
+        { "key": "C", "text": "Odat kuniga 2 marta bajariladi" },
+        { "key": "D", "text": "Telefon ishlatishga 2 daqiya ruxsat" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Maqsad bajarish emas — BOSHLASH. Boshlangan ish davom etadi; eng qiyin qism boshlash oldidagi qarshilikdir.",
+        "wrong": {
+          "A": "Bu qoidaning mohiyati emas — hajm haqida, boshlash haqida emas.",
+          "C": "Takrorlash tezligi haqida — qoida esa boshlash to'g'risida.",
+          "D": "Bu qoidaga umuman daxldor emas."
+        }
+      },
+      "difficulty": "easy",
+      "concepts": ["ch2-i3"]
+    },
+    {
+      "id": "ch3-q1",
+      "chapter": 2,
+      "type": "scenario",
+      "question": "Siz 5 kun o'qish odatini saqladingiz, 6-kuni do'stingiz bilan chiqib, o'qilmadi. Endi nima qilasiz?",
+      "options": [
+        { "key": "A", "text": "Odat bekor — boshidan boshlash kerak, noldan" },
+        { "key": "B", "text": "Yozma reja tuzib, ertaga minimal shaklda qaytaman (masalan, 10 daqiqa)" },
+        { "key": "C", "text": "Keyingi oydanoq boshlayman — hozir foydasi yo'q" },
+        { "key": "D", "text": "Ertaga 3 soat o'qib, kechikishni qoplayman" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Muammo istisno emas — keyingi qaytish. Yozma reja + minimal shakl qaytish ehtimolini oshiradi va jadval uzilmaydi.",
+        "wrong": {
+          "A": "5 kun takrorlash yo'qolmaydi — noldan boshlash afsonasi.",
+          "C": "Kutish odatni yanada susaytiradi — qayta qo'shish qiyinlashadi.",
+          "D": "Ortiqcha yuk charchatadi va keyingi to'xtashni kafolatlaydi."
+        }
+      },
+      "difficulty": "medium",
+      "concepts": ["ch3-i2"]
+    },
+    {
+      "id": "ch3-q2",
+      "chapter": 2,
+      "type": "theory",
+      "question": "Yomon odatni buzishning to'g'ri yo'li nima?",
+      "options": [
+        { "key": "A", "text": "Uni o'chirish — shundan keyin bo'sh joy qoladi" },
+        { "key": "B", "text": "Uni yo'liga sun'iy to'siq qo'yish (friction) va o'rniga boshqa odat qo'yish" },
+        { "key": "C", "text": "O'z-o'zini ayblash — shunda yana takrorlamaydi" },
+        { "key": "D", "text": "Odat haqida kitob o'qish" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Miya bo'sh joyni yoqtirmaydi — joyga yangi odat kerak. Yo'lni yopish (friction) esa istakni pasaytiradi.",
+        "wrong": {
+          "A": "O'chirib bo'lmaydi — joy bo'sh qolsa, eski odat qayta paydo bo'ladi.",
+          "C": "Ayb hissi stressni kuchaytiradi, stress esa eski odatni jonlantiradi.",
+          "D": "Bilim — harakat emas. Odat faqat amalda shakllanadi."
+        }
+      },
+      "difficulty": "easy",
+      "concepts": ["ch3-i1", "ch3-i3"]
+    },
+    {
+      "id": "ch4-q1",
+      "chapter": 3,
+      "type": "scenario",
+      "question": "Siz kasallikdan keyin o'qish odatga qaytdingiz. Qaysi reja eng to'g'ri?",
+      "options": [
+        { "key": "A", "text": "O'tkazib qo'ygan kunlarni yig'ish uchun kuniga 3 soat" },
+        { "key": "B", "text": "Eski signalni (o'sha joy, o'sha vaqt) saqlab, 2 daqiqalik minimal shakldan boshlash" },
+        { "key": "C", "text": "Odatni keyingi oyga surib, to'liq tiklashni kutish" },
+        { "key": "D", "text": "Kuzatish jadalini o'chirib, faqat his-qimmat bilan o'qish" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "3 bosqichli qaytish: minimal shakl → eski signal → jadvalni uzmaslik. Kichik qadam qaytishni ehtimolligini oshiradi.",
+        "wrong": {
+          "A": "Yig'ish — katta yuk. U ortiqcha bosim beradi va tez yana to'xtatadi.",
+          "C": "Surish — odatni butunlay yo'qotish demak.",
+          "D": "Kuzatish qaytishning eng kuchli vositasi — uni o'chirish noto'g'ri."
+        }
+      },
+      "difficulty": "medium",
+      "concepts": ["ch4-i3", "ch4-i2"]
+    },
+    {
+      "id": "ch4-q2",
+      "chapter": 3,
+      "type": "theory",
+      "question": "\"Odat 21 kunda shakllanadi\" haqiqatmi?",
+      "options": [
+        { "key": "A", "text": "Ha — olimlar tekshirgan qoida" },
+        { "key": "B", "text": "Yo'q — o'rtacha 66 kun, odamlar orasida 18-254 kun; muhim takrorlash soni" },
+        { "key": "C", "text": "Faqat oddiy odatlar uchun to'g'ri" },
+        { "key": "D", "text": "Ha — lekin faqat ertalabki odatlar uchun" }
+      ],
+      "answer": "B",
+      "explain": {
+        "correct": "Bu afsona. Tadqiqotlar o'rtacha 66 kunni ko'rsatadi va oraliq juda keng (18-254). Shuning uchun kun emas, takrorlash sanaladi.",
+        "wrong": {
+          "A": "Bu raqam ilmiy manbada emas — pressada tarqagan afsona.",
+          "C": "Odat murakkabligi muddatga ta'sir qiladi, lekin 21 kun qoida emas.",
+          "D": "Kun tartibiga bog'liqlik yo'q — qoida umumiy emas."
+        }
+      },
+      "difficulty": "easy",
+      "concepts": ["ch4-i1"]
+    }
+  ]
+}
