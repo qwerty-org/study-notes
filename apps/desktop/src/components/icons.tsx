@@ -221,3 +221,10 @@ export const IconMaximize = (p: IconProps) => (
     <rect x="5.5" y="5.5" width="13" height="13" rx="2.2" />
   </svg>
 )
+
+export const IconUser = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
+  </svg>
+)

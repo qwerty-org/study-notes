@@ -21,7 +21,6 @@ const NAV = [
   { to: '/kutubxona', icon: IconLibrary, label: 'Kutubxona' },
   { to: '/takrorlash', icon: IconRepeat, label: 'Takrorlash' },
   { to: '/natijalar', icon: IconChart, label: 'Natijalarim' },
-  { to: '/sozlamalar', icon: IconSliders, label: 'Sozlamalar' },
 ]
 
 /** Desktop shell: yuqori navbar (markazda menyu) + profil popup + deraza tugmalari */
@@ -109,12 +108,6 @@ export default function Layout() {
                 </div>
 
                 <div className="popmenu-list">
-                  <Link to="/natijalar" className="popmenu-item" role="menuitem">
-                    <IconChart size={17} /> Natijalarim
-                  </Link>
-                  <Link to="/kutubxona" className="popmenu-item" role="menuitem">
-                    <IconLibrary size={17} /> Kutubxona
-                  </Link>
                   <Link to="/sozlamalar" className="popmenu-item" role="menuitem">
                     <IconSliders size={17} /> Sozlamalar
                   </Link>

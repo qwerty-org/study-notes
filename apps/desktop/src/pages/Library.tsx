@@ -9,13 +9,14 @@ import {
 } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
 import { Cover, EmptyState, PageHead, ProgressBar } from '../components/ui'
-import { IconPlus, IconTrash, IconUpload } from '../components/icons'
+import { IconPlus, IconSparkles, IconTrash, IconUpload } from '../components/icons'
 
-type Filter = 'all' | 'reading' | 'done'
+type Filter = 'all' | 'reading' | 'done' | 'pending'
 
 const ACCEPT = '.md,.txt,.markdown'
 const NOT_READY = ['pdf', 'epub']
 
+/** Kutubxona — to'liq kenglikdagi professional bloklar */
 export default function Library() {
   const { library, addBook, removeBook } = useApp()
   const nav = useNavigate()
@@ -68,9 +69,14 @@ export default function Library() {
     nav(`/kitob/${slug}`)
   }
 
+  const reading = library.filter((b) => b.progress.percent > 0 && b.progress.percent < 100).length
+  const done = library.filter((b) => b.progress.percent >= 100).length
+  const pendingN = library.filter((b) => !b.analysis).length
+
   const shown = library.filter((b) => {
     if (filter === 'reading') return b.progress.percent > 0 && b.progress.percent < 100
     if (filter === 'done') return b.progress.percent >= 100
+    if (filter === 'pending') return !b.analysis
     return true
   })
 
@@ -78,10 +84,10 @@ export default function Library() {
     <>
       <PageHead
         title="Kutubxonam"
-        sub={`${library.length} ta kitob`}
+        sub={`${library.length} ta kitob · ${reading} o'qilmoqda · ${done} tugatilgan`}
         right={
           <button className="btn btn-primary" onClick={() => fileRef.current?.click()}>
-            <IconPlus size={17} /> Kitob
+            <IconPlus size={17} /> Kitob qo'shish
           </button>
         }
       />
@@ -94,47 +100,54 @@ export default function Library() {
         onChange={(e) => importFiles(e.target.files)}
       />
 
-      <div
-        className={`dropzone${over ? ' over' : ''}`}
-        onClick={() => fileRef.current?.click()}
-        onDragOver={(e) => {
-          e.preventDefault()
-          setOver(true)
-        }}
-        onDragLeave={() => setOver(false)}
-        onDrop={(e) => {
-          e.preventDefault()
-          setOver(false)
-          importFiles(e.dataTransfer.files)
-        }}
-        role="button"
-        tabIndex={0}
-      >
-        <span className="icon">
-          <IconUpload size={20} />
-        </span>
-        <b>.md / .txt</b> faylni shu yerga sudrab tashlang
-        <div className="hint" style={{ marginTop: 4 }}>
-          PDF/EPUB konvertatsiyasi keyingi bosqichda
+      <div className="card" style={{ padding: 14 }}>
+        <div
+          className={`dropzone${over ? ' over' : ''}`}
+          style={{ padding: '18px 16px' }}
+          onClick={() => fileRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setOver(true)
+          }}
+          onDragLeave={() => setOver(false)}
+          onDrop={(e) => {
+            e.preventDefault()
+            setOver(false)
+            importFiles(e.dataTransfer.files)
+          }}
+          role="button"
+          tabIndex={0}
+        >
+          <span className="icon">
+            <IconUpload size={20} />
+          </span>
+          <b>.md / .txt</b> faylni shu yerga sudrab tashlang
+          <div className="hint" style={{ marginTop: 4 }}>
+            PDF/EPUB konvertatsiyasi keyingi bosqichda
+          </div>
         </div>
       </div>
 
-      <div className="tabs">
-        {(
-          [
-            ['all', `Barchasi (${library.length})`],
-            ['reading', "O'qilmoqda"],
-            ['done', 'Tugatilgan'],
-          ] as [Filter, string][]
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            className={`tab${filter === key ? ' active' : ''}`}
-            onClick={() => setFilter(key)}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="row-between wrap">
+        <div className="tabs" style={{ flex: '1 1 420px', maxWidth: 560 }}>
+          {(
+            [
+              ['all', `Barchasi (${library.length})`],
+              ['reading', "O'qilmoqda"],
+              ['done', 'Tugatilgan'],
+              ['pending', 'Tahlil kutyapti'],
+            ] as [Filter, string][]
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              className={`tab${filter === key ? ' active' : ''}`}
+              onClick={() => setFilter(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <span className="chip">{shown.length} ta ko'rsatilmoqda</span>
       </div>
 
       {!shown.length ? (
@@ -175,17 +188,30 @@ export default function Library() {
               <span className="author">{b.meta.author ?? `${b.meta.chapters} ta bob`}</span>
               <span
                 className={`chip ${
-                  b.analysis ? 'chip-green' : b.meta.status === 'partial' ? 'chip-amber' : ''
+                  b.analysis
+                    ? 'chip-green'
+                    : b.meta.status === 'partial'
+                      ? 'chip-amber'
+                      : 'chip-primary'
                 }`}
                 style={{ alignSelf: 'flex-start' }}
               >
-                {b.analysis
-                  ? 'tahlil tayyor'
-                  : b.meta.status === 'partial'
-                    ? 'qisman tahlil'
-                    : 'AI tahlili kutilmoqda'}
+                {b.analysis ? (
+                  <>
+                    <IconSparkles size={12} /> tahlil tayyor
+                  </>
+                ) : b.meta.status === 'partial' ? (
+                  'qisman tahlil'
+                ) : (
+                  'AI tahlili kutilmoqda'
+                )}
               </span>
-              <ProgressBar value={b.progress.percent} />
+              <div className="row-between" style={{ marginTop: 'auto' }}>
+                <ProgressBar value={b.progress.percent} style={{ flex: 1 }} />
+                <b style={{ fontSize: 13, color: 'var(--muted)', minWidth: 34, textAlign: 'right' }}>
+                  {b.progress.percent}%
+                </b>
+              </div>
             </div>
           ))}
         </div>
