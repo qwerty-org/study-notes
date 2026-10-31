@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { dueReviews } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
 import {
@@ -23,11 +24,36 @@ const NAV = [
   { to: '/sozlamalar', icon: IconSliders, label: 'Sozlamalar' },
 ]
 
-/** Desktop shell: yuqori navbar + deraza boshqaruvi (minimize/maximize/close) */
+/** Desktop shell: yuqori navbar (markazda menyu) + profil popup + deraza tugmalari */
 export default function Layout() {
-  const { reviews, profile } = useApp()
+  const { reviews, profile, updateProfile } = useApp()
   const location = useLocation()
   const due = dueReviews(reviews).length
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // Tashqaridan bosish yoki Escape — menyu yopiladi
+  useEffect(() => {
+    if (!menuOpen) return
+    const onDown = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
+
+  // Sahifa almashganda menyu yopiladi
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
 
   return (
     <div className="app">
@@ -58,6 +84,64 @@ export default function Layout() {
           <span className="chip chip-amber streak-chip" title="Kunlik streak">
             <IconFlame size={14} /> {profile.streak} kun
           </span>
+
+          <div className="avatar-wrap" ref={menuRef}>
+            <button
+              className={`avatar-btn${menuOpen ? ' on' : ''}`}
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Profil menyusi"
+              aria-expanded={menuOpen}
+              title="Profil"
+            >
+              {profile.avatar}
+            </button>
+
+            {menuOpen && (
+              <div className="popmenu" role="menu">
+                <div className="popmenu-head">
+                  <span className="popmenu-avatar">{profile.avatar}</span>
+                  <div style={{ minWidth: 0 }}>
+                    <b>{profile.name || "o'quvchi"}</b>
+                    <small>
+                      <IconFlame size={12} /> {profile.streak} kunlik streak
+                    </small>
+                  </div>
+                </div>
+
+                <div className="popmenu-list">
+                  <Link to="/natijalar" className="popmenu-item" role="menuitem">
+                    <IconChart size={17} /> Natijalarim
+                  </Link>
+                  <Link to="/kutubxona" className="popmenu-item" role="menuitem">
+                    <IconLibrary size={17} /> Kutubxona
+                  </Link>
+                  <Link to="/sozlamalar" className="popmenu-item" role="menuitem">
+                    <IconSliders size={17} /> Sozlamalar
+                  </Link>
+                </div>
+
+                <div className="popmenu-theme">
+                  <span>Mavzu</span>
+                  <div className="mini-seg">
+                    <button
+                      className={profile.theme === 'light' ? 'on' : ''}
+                      onClick={() => updateProfile({ theme: 'light' })}
+                    >
+                      Kunduzi
+                    </button>
+                    <button
+                      className={profile.theme === 'dark' ? 'on' : ''}
+                      onClick={() => updateProfile({ theme: 'dark' })}
+                    >
+                      Tungi
+                    </button>
+                  </div>
+                </div>
+
+                <div className="popmenu-foot">v0.1.0 · ma'lumot shu qurilmada</div>
+              </div>
+            )}
+          </div>
 
           <div className="win-controls">
             <button

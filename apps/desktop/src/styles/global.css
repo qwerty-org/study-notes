@@ -197,7 +197,8 @@ button {
   left: 0;
   right: 0;
   height: var(--topbar-h);
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) auto minmax(140px, 1fr);
   align-items: center;
   gap: 14px;
   padding: 0 6px 0 16px;
@@ -216,7 +217,8 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
+  justify-self: start;
+  min-width: 0;
 }
 .brand .mark {
   width: 32px;
@@ -240,9 +242,10 @@ button {
 .topnav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 3px;
-  flex: 1;
   min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
   scrollbar-width: none;
   padding: 4px 0;
@@ -304,9 +307,10 @@ button {
 .topbar-right {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
-  flex-shrink: 0;
-  margin-left: auto;
+  justify-self: end;
+  min-width: 0;
 }
 .topbar-right .streak-chip svg {
   color: var(--yellow-dark);
@@ -345,6 +349,195 @@ button {
 .win-close:hover {
   background: #e81123;
   color: #fff;
+}
+
+/* ---------- Profil popup menyusi ---------- */
+
+.avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.avatar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 2px solid var(--border-strong);
+  background: var(--elevated);
+  font-size: 18px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    border-color 0.13s,
+    box-shadow 0.13s,
+    transform 0.08s;
+}
+.avatar-btn:hover {
+  border-color: var(--blue);
+}
+.avatar-btn.on {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-soft);
+}
+.avatar-btn:active {
+  transform: scale(0.94);
+}
+
+.popmenu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: -4px;
+  width: 264px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-pop);
+  padding: 8px;
+  z-index: 95;
+  transform-origin: top right;
+  animation: popIn 0.16s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+.popmenu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  background: var(--card);
+  border-left: 1.5px solid var(--border);
+  border-top: 1.5px solid var(--border);
+  transform: rotate(45deg);
+  border-radius: 3px 0 0 0;
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-5px);
+  }
+}
+
+.popmenu-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 8px 12px;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 6px;
+}
+.popmenu-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(88, 204, 2, 0.3);
+}
+.popmenu-head b {
+  display: block;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.popmenu-head small {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.popmenu-head small svg {
+  color: var(--yellow-dark);
+}
+[data-theme='dark'] .popmenu-head small svg {
+  color: var(--yellow);
+}
+
+.popmenu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.popmenu-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px;
+  border-radius: 11px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.12s;
+}
+.popmenu-item:hover {
+  background: var(--elevated);
+  text-decoration: none;
+}
+.popmenu-item svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.popmenu-item:hover svg {
+  color: var(--primary-dark);
+}
+[data-theme='dark'] .popmenu-item:hover svg {
+  color: var(--primary);
+}
+
+.popmenu-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 10px 9px;
+  border-top: 1.5px solid var(--border);
+  margin-top: 7px;
+}
+.popmenu-theme > span {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--muted);
+}
+.mini-seg {
+  display: flex;
+  gap: 3px;
+  background: var(--elevated);
+  padding: 3px;
+  border-radius: 10px;
+}
+.mini-seg button {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.13s,
+    color 0.13s;
+}
+.mini-seg button.on {
+  background: var(--seg-active);
+  color: var(--text);
+  box-shadow: var(--shadow-seg);
+}
+
+.popmenu-foot {
+  font-size: 11.5px;
+  color: var(--faint);
+  text-align: center;
+  padding: 9px 6px 4px;
+  border-top: 1.5px solid var(--border);
+  margin-top: 4px;
 }
 
 .main {
