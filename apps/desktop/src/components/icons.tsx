@@ -209,3 +209,15 @@ export const IconClock = (p: IconProps) => (
     <path d="M12 7.5V12l3 2" />
   </svg>
 )
+
+export const IconMinus = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M4.5 16.5h15" />
+  </svg>
+)
+
+export const IconMaximize = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="5.5" y="5.5" width="13" height="13" rx="2.2" />
+  </svg>
+)

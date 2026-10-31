@@ -62,7 +62,7 @@
   --r-lg: 16px;
   --r-pill: 999px;
 
-  --sidebar-w: 248px;
+  --topbar-h: 56px;
   --content-max: 1100px;
 
   --font:
@@ -185,159 +185,170 @@ button {
   background-clip: content-box;
 }
 
-/* ---------- Desktop shell: sidebar + maydon ---------- */
+/* ---------- Desktop shell: top navbar + window controls ---------- */
 
 .app {
   min-height: 100vh;
 }
 
-.sidebar {
+.topbar {
   position: fixed;
   top: 0;
-  bottom: 0;
   left: 0;
-  width: var(--sidebar-w);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 14px 16px;
-  background: var(--sidebar);
-  border-right: 1.5px solid var(--border);
-  z-index: 70;
-}
-
-.side-brand {
+  right: 0;
+  height: var(--topbar-h);
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 2px 8px 18px;
+  gap: 14px;
+  padding: 0 6px 0 16px;
+  background: var(--sidebar);
+  border-bottom: 1.5px solid var(--border);
+  z-index: 80;
+  -webkit-app-region: drag;
 }
-.side-brand .mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
+.topbar a,
+.topbar button,
+.topnav {
+  -webkit-app-region: no-drag;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.brand .mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   background: linear-gradient(135deg, var(--primary), var(--blue));
   display: grid;
   place-items: center;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(88, 204, 2, 0.32);
+  box-shadow: 0 3px 10px rgba(88, 204, 2, 0.32);
 }
-.side-brand b {
-  display: block;
-  font-size: 16.5px;
+.brand b {
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.15;
   color: var(--text);
-}
-.side-brand small {
-  display: block;
-  font-size: 11px;
-  color: var(--faint);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  font-weight: 700;
+  white-space: nowrap;
 }
 
-.side-label {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--faint);
-  padding: 10px 10px 8px;
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 0;
+}
+.topnav::-webkit-scrollbar {
+  display: none;
 }
 
-.side-item {
+.nav-item {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 12px;
-  border-radius: 13px;
+  gap: 9px;
+  padding: 8px 13px;
+  border-radius: 11px;
   color: var(--muted);
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition:
     background 0.13s,
     color 0.13s;
 }
-.side-item:hover {
+.nav-item:hover {
   background: var(--elevated);
   color: var(--text);
   text-decoration: none;
 }
-.side-item.active {
+.nav-item.active {
   background: var(--primary-soft);
   color: var(--primary-dark);
 }
-[data-theme='dark'] .side-item.active {
+[data-theme='dark'] .nav-item.active {
   color: var(--primary);
 }
-.side-item.active svg {
+.nav-item.active svg {
   stroke-width: 2.2;
 }
-.side-item svg {
+.nav-item svg {
   flex-shrink: 0;
 }
-.side-badge {
-  margin-left: auto;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 7px;
+
+.nav-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
   border-radius: 999px;
   background: var(--primary);
   color: #fff;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 800;
   display: grid;
   place-items: center;
   box-shadow: 0 2px 0 var(--primary-dark);
 }
 
-.side-foot {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.side-streak {
+.topbar-right {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 12px;
-  border-radius: 14px;
-  background: var(--yellow-soft);
-  border: 1.5px solid color-mix(in srgb, var(--yellow) 45%, transparent);
-}
-.side-streak svg {
-  color: var(--yellow-dark);
   flex-shrink: 0;
+  margin-left: auto;
 }
-[data-theme='dark'] .side-streak svg {
+.topbar-right .streak-chip svg {
+  color: var(--yellow-dark);
+}
+[data-theme='dark'] .topbar-right .streak-chip svg {
   color: var(--yellow);
 }
-.side-streak b {
-  display: block;
-  font-size: 15.5px;
-  line-height: 1.2;
-}
-.side-streak small {
-  font-size: 11.5px;
-  color: var(--muted);
-}
 
-.side-meta {
-  font-size: 11.5px;
-  color: var(--faint);
-  line-height: 1.5;
-  padding: 0 4px;
+/* Deraza boshqaruvi (Tauri/Electron titlebar tugmalari) */
+.win-controls {
+  display: flex;
+  align-items: center;
+  margin-left: 2px;
+  padding-left: 8px;
+  border-left: 1.5px solid var(--border);
+}
+.win-btn {
+  width: 42px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+.win-btn:hover {
+  background: var(--elevated);
+  color: var(--text);
+}
+.win-close:hover {
+  background: #e81123;
+  color: #fff;
 }
 
 .main {
-  margin-left: var(--sidebar-w);
+  padding-top: var(--topbar-h);
   min-height: 100vh;
   background: var(--bg);
 }
@@ -1487,7 +1498,7 @@ button {
 .toast {
   position: fixed;
   bottom: 28px;
-  left: calc(50% + var(--sidebar-w) / 2);
+  left: 50%;
   transform: translateX(-50%);
   background: var(--text);
   color: var(--card);
@@ -1514,56 +1525,23 @@ button {
   margin-top: 0;
 }
 
-/* ---------- Siqilgan oyna: sidebar faqat ikonkalar ---------- */
+/* ---------- Siqilgan oyna: navigatsiya ixchamlanadi ---------- */
 
 @media (max-width: 900px) {
-  .sidebar {
-    width: 66px;
-    padding: 18px 8px 14px;
-  }
-  .side-brand {
-    justify-content: center;
-    padding: 2px 0 16px;
-  }
-  .side-brand .brand-text,
-  .side-label,
-  .side-meta,
-  .side-streak small,
-  .side-streak b {
+  .brand b {
     display: none;
   }
-  .side-item {
-    justify-content: center;
-    padding: 11px 0;
-  }
-  .side-item .side-txt {
+  .nav-item .nav-txt {
     display: none;
   }
-  .side-streak {
-    justify-content: center;
-    padding: 10px 0;
-  }
-  .side-badge {
-    position: absolute;
-    top: 5px;
-    right: 7px;
-    margin: 0;
-    min-width: 17px;
-    height: 17px;
-    font-size: 10px;
-    padding: 0 4px;
-    border: 2px solid var(--sidebar);
-    box-sizing: content-box;
-  }
-  .main {
-    margin-left: 66px;
+  .nav-item {
+    padding: 8px 10px;
   }
   .page {
     padding: 26px 22px 60px;
   }
   .toast {
-    left: calc(50% + 33px);
-    max-width: calc(100vw - 130px);
+    max-width: calc(100vw - 60px);
   }
   .hero {
     flex-direction: column;
@@ -1572,6 +1550,9 @@ button {
 }
 
 @media (max-width: 660px) {
+  .streak-chip {
+    display: none;
+  }
   .grid-3,
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
