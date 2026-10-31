@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 /** Gradient plitka — kitob muqovasi (birinchi harf bilan) */
 const GRADIENTS = [
@@ -21,13 +21,13 @@ export function Cover({
   variant = 'grid',
 }: {
   title: string
-  variant?: 'grid' | 'sm'
+  variant?: 'grid' | 'sm' | 'inline'
 }) {
   const bg = GRADIENTS[hash(title) % GRADIENTS.length]
   const initial = (title.trim()[0] ?? '?').toUpperCase()
   return (
     <div
-      className={variant === 'sm' ? 'cover cover-sm' : 'cover'}
+      className={variant === 'sm' ? 'cover cover-sm' : variant === 'inline' ? 'cover cover-inline' : 'cover'}
       style={{ background: bg }}
       aria-hidden
     >
@@ -36,10 +36,10 @@ export function Cover({
   )
 }
 
-export function ProgressBar({ value }: { value: number }) {
+export function ProgressBar({ value, style }: { value: number; style?: CSSProperties }) {
   const v = Math.max(0, Math.min(100, Math.round(value)))
   return (
-    <div className="progress" aria-label={`Progress ${v}%`}>
+    <div className="progress" style={style} aria-label={`Progress ${v}%`}>
       <div style={{ width: `${v}%` }} />
     </div>
   )
