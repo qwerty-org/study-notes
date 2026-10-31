@@ -8,7 +8,8 @@ import {
   type BookRecord,
 } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
-import { EmptyState, PageHead, ProgressBar } from '../components/ui'
+import { Cover, EmptyState, PageHead, ProgressBar } from '../components/ui'
+import { IconPlus, IconTrash, IconUpload } from '../components/icons'
 
 type Filter = 'all' | 'reading' | 'done'
 
@@ -25,7 +26,7 @@ export default function Library() {
 
   const showToast = (msg: string) => {
     setToast(msg)
-    setTimeout(() => setToast(''), 3000)
+    setTimeout(() => setToast(''), 3200)
   }
 
   const importFiles = async (files: FileList | File[] | null) => {
@@ -34,11 +35,13 @@ export default function Library() {
     const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
 
     if (NOT_READY.includes(ext)) {
-      showToast(`⚠️ ${ext.toUpperCase()} — konvertatsiya keyingi bosqichda. Hozircha .md yoki .txt fayl yuklang.`)
+      showToast(
+        `${ext.toUpperCase()} — konvertatsiya keyingi bosqichda. Hozircha .md yoki .txt fayl yuklang.`,
+      )
       return
     }
     if (!['md', 'txt', 'markdown'].includes(ext)) {
-      showToast('Noto\'g\'ri format — .md yoki .txt fayl kerak.')
+      showToast("Noto'g'ri format — .md yoki .txt fayl kerak.")
       return
     }
 
@@ -61,7 +64,7 @@ export default function Library() {
       progress: emptyProgress(),
     }
     addBook(record)
-    showToast(`✅ «${baseTitle}» qo'shildi — endi AI tahlilini boshlang`)
+    showToast(`«${baseTitle}» qo'shildi`)
     nav(`/kitob/${slug}`)
   }
 
@@ -74,11 +77,11 @@ export default function Library() {
   return (
     <>
       <PageHead
-        title="📚 Kutubxonam"
+        title="Kutubxonam"
         sub={`${library.length} ta kitob`}
         right={
           <button className="btn btn-primary" onClick={() => fileRef.current?.click()}>
-            + Kitob qo'shish
+            <IconPlus size={17} /> Kitob
           </button>
         }
       />
@@ -92,7 +95,7 @@ export default function Library() {
       />
 
       <div
-        className={`dropzone${over ? ' over' : ''} mb`}
+        className={`dropzone${over ? ' over' : ''}`}
         onClick={() => fileRef.current?.click()}
         onDragOver={(e) => {
           e.preventDefault()
@@ -104,9 +107,16 @@ export default function Library() {
           setOver(false)
           importFiles(e.dataTransfer.files)
         }}
+        role="button"
+        tabIndex={0}
       >
-        📥 Faylni shu yerga sudrab tashlang <b>.md / .txt</b> — yoki bosib tanlang
-        <div className="hint">PDF/EPUB konvertatsiyasi keyingi bosqichda</div>
+        <span className="icon">
+          <IconUpload size={20} />
+        </span>
+        <b>.md / .txt</b> faylni shu yerga sudrab tashlang
+        <div className="hint" style={{ marginTop: 4 }}>
+          PDF/EPUB konvertatsiyasi keyingi bosqichda
+        </div>
       </div>
 
       <div className="tabs">
@@ -129,12 +139,16 @@ export default function Library() {
 
       {!shown.length ? (
         <EmptyState
-          icon="📖"
-          title={filter === 'all' ? "Kutubxona bo'sh" : "Bu filtrda kitob yo'q"}
-          text={filter === 'all' ? 'Birinchi kitobni yuklang — 5 daqiqada tahlil tayyor bo\'ladi.' : undefined}
+          icon={<IconUpload size={26} />}
+          title={filter === 'all' ? "Kutubxona bo'sh" : 'Bu filtrda kitob yo\'q'}
+          text={
+            filter === 'all'
+              ? "Birinchi kitobni yuklang — 5 daqiqada tahlil tayyor bo'ladi."
+              : undefined
+          }
         />
       ) : (
-        <div className="grid grid-3">
+        <div className="grid grid-2">
           {shown.map((b) => (
             <div
               key={b.meta.slug}
@@ -144,38 +158,33 @@ export default function Library() {
               onClick={() => nav(`/kitob/${b.meta.slug}`)}
               onKeyDown={(e) => e.key === 'Enter' && nav(`/kitob/${b.meta.slug}`)}
             >
-              <div className="row-between">
-                <span className="book-cover">
-                  {b.progress.percent >= 100 ? '📗' : b.analysis ? '📕' : '📘'}
-                </span>
+              <div className="book-cover">
+                <Cover title={b.meta.title} />
                 <button
-                  className="btn btn-ghost btn-sm"
+                  className="book-del"
                   title="O'chirish"
                   onClick={(e) => {
                     e.stopPropagation()
                     if (confirm(`«${b.meta.title}» o'chirilsinmi?`)) removeBook(b.meta.slug)
                   }}
                 >
-                  🗑
+                  <IconTrash size={15} />
                 </button>
               </div>
               <h3>{b.meta.title}</h3>
               <span className="author">{b.meta.author ?? `${b.meta.chapters} ta bob`}</span>
-              <div className="row" style={{ gap: 8 }}>
-                <span
-                  className={`chip ${
-                    b.analysis ? 'chip-green' : b.meta.status === 'partial' ? 'chip-amber' : ''
-                  }`}
-                >
-                  {b.analysis
-                    ? '✅ tahlil tayyor'
-                    : b.meta.status === 'analyzing'
-                      ? '⏳ tahlil...'
-                      : b.meta.status === 'partial'
-                        ? '⚠️ qisman'
-                        : '🤖 AI tahlili kutilmoqda'}
-                </span>
-              </div>
+              <span
+                className={`chip ${
+                  b.analysis ? 'chip-green' : b.meta.status === 'partial' ? 'chip-amber' : ''
+                }`}
+                style={{ alignSelf: 'flex-start' }}
+              >
+                {b.analysis
+                  ? 'tahlil tayyor'
+                  : b.meta.status === 'partial'
+                    ? 'qisman tahlil'
+                    : 'AI tahlili kutilmoqda'}
+              </span>
               <ProgressBar value={b.progress.percent} />
             </div>
           ))}

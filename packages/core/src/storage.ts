@@ -41,7 +41,7 @@ export const store = {
       avatar: '🦊',
       streak: 0,
       language: 'uz',
-      theme: 'dark',
+      theme: 'light',
       onboarded: false,
     }),
   setProfile: (p: Profile) => save(K.profile, p),

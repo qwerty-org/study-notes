@@ -90,6 +90,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  // Yangi dizayn migratsiyasi: eski interfeysda 'tungi' standart edi —
+  // birinchi ochilganda yangi yorug' mavzuga o'tamiz (keyin foydalanuvchi o'zi tanlaydi)
+  useEffect(() => {
+    if (localStorage.getItem('sn.ui.v2')) return
+    localStorage.setItem('sn.ui.v2', '1')
+    if (profile.theme === 'dark') updateProfile({ theme: 'light' })
+  }, [profile.theme, updateProfile])
+
   const updateAI = useCallback((cfg: AIConfig) => {
     setAI(cfg)
     store.setAI(cfg)

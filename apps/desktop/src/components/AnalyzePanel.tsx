@@ -11,6 +11,7 @@ import { analyzeChapter } from '@study-notes/ai'
 import { RULES, SCHEMAS } from '../rules'
 import { useApp } from '../store/AppStore'
 import { ProgressBar } from './ui'
+import { IconCheck, IconSparkles } from './icons'
 
 const PHASES: Record<string, string> = {
   analyst: "G'oyalar va terminlar",
@@ -102,41 +103,47 @@ export default function AnalyzePanel({ book }: { book: BookRecord }) {
 
   if (saved && !error) {
     return (
-      <div className="card" style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 44 }}>✅</div>
-        <h2>Tahlil tayyor!</h2>
-        <p style={{ color: 'var(--muted)' }}>
-          {chaptersCount(book)} bob tahlil qilindi — xulosalar, terminlar, quizlar va hayotdagi
-          vaziyatlar endi shu yerda.
-        </p>
-        <button className="btn btn-primary" onClick={() => setSaved(false)}>
-          Xulosalarni ko'rish →
+      <div className="card narrow" style={{ textAlign: 'center', padding: '26px 18px' }}>
+        <div className="empty" style={{ padding: '0 0 14px' }}>
+          <span
+            className="icon"
+            style={{ background: 'var(--green-soft)', color: 'var(--green)' }}
+          >
+            <IconCheck size={28} />
+          </span>
+          <h3>Tahlil tayyor</h3>
+          <p>
+            {chaptersCount(book)} bob tahlil qilindi — xulosalar, terminlar, quizlar va hayotdagi
+            vaziyatlar shu yerda.
+          </p>
+        </div>
+        <button className="btn btn-primary btn-block" onClick={() => setSaved(false)}>
+          Xulosalarni ko'rish
         </button>
       </div>
     )
   }
 
   return (
-    <div className="card">
+    <div className="card narrow">
       <div className="card-title">
-        <h2>🤖 Kitobni AI tahlil qiladi</h2>
+        <h2>
+          <IconSparkles size={17} style={{ verticalAlign: '-3px', marginRight: 6 }} />
+          Kitobni AI tahlil qiladi
+        </h2>
         <span className="chip">1 marta</span>
       </div>
 
-      <p style={{ color: 'var(--muted)' }}>
-        Har bob uchun 3 ta agent ishlaydi ({RULES ? 'agent-rules/' : ''}analyst, quiz-master,
-        life-mentor): eng muhim g'oyalar, terminlar, quizlar va "qachon qo'llash" senariylari
-        yaratiladi.
-      </p>
-      <p className="hint">
-        🔒 Matn faqat lokal saqlanadi — AI'ga faqat joriy bob yuboriladi. Sozlangan provayder:{' '}
-        <b>{ai.provider}</b>.
+      <p className="hint" style={{ marginTop: 0 }}>
+        Har bob uchun 3 ta agent ishlaydi (analyst, quiz-master, life-mentor): eng muhim g'oyalar,
+        terminlar, quizlar va «qachon qo'llash» senariylari yaratiladi. Matn faqat lokal
+        saqlanadi — AI'ga faqat joriy bob yuboriladi.
       </p>
 
       {needKey && (
         <div className="explain bad mb">
           <b>API kalit kiritilmagan.</b> Tahlil uchun Sozlamalardan AI kalit qo'shing yoki
-          Ollama'ni tanlang. <Link to="/sozlamalar">Sozlamalarga o'tish →</Link>
+          Ollama'ni tanlang. <Link to="/sozlamalar">Sozlamalarga o'tish</Link>
         </div>
       )}
 
@@ -144,9 +151,7 @@ export default function AnalyzePanel({ book }: { book: BookRecord }) {
         <div className="explain bad mb">
           <b>Tahlil to'xtadi:</b> {error.slice(0, 400)}
           <br />
-          <small>
-            Qisman natija saqlandi — qayta urinishda qolgan boblar davom etadi.
-          </small>
+          <small>Qisman natija saqlandi — qayta urinishda qolgan boblar davom etadi.</small>
         </div>
       )}
 
@@ -157,15 +162,15 @@ export default function AnalyzePanel({ book }: { book: BookRecord }) {
             Bob {progress.done + 1}/{progress.total} — «{progress.title}»: {PHASES[progress.phase]}
           </div>
           <ProgressBar value={(progress.done / Math.max(1, progress.total)) * 100} />
-          <small>Bir bob 20-60 soniya olishi mumkin — sekinchalab kutamiz.</small>
+          <small>Bir bob 20-60 soniya olishi mumkin.</small>
         </div>
       ) : (
-        <div className="row mt wrap">
-          <button className="btn btn-primary" onClick={run} disabled={needKey}>
-            {error ? '🔄 Qayta urinish' : '⚡ Tahlil qilish'}
+        <div className="stack">
+          <button className="btn btn-primary btn-lg btn-block" onClick={run} disabled={needKey}>
+            {error ? 'Qayta urinish' : 'Tahlil qilish'}
           </button>
           {needKey && (
-            <Link to="/sozlamalar" className="btn">
+            <Link to="/sozlamalar" className="btn btn-block">
               Avval AI ni ulash
             </Link>
           )}

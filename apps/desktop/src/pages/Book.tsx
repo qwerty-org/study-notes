@@ -5,17 +5,18 @@ import { useApp } from '../store/AppStore'
 import AnalyzePanel from '../components/AnalyzePanel'
 import QuizRunner, { type QuizResult } from '../components/QuizRunner'
 import { ApplyTab, IdeasTab, ReadTab, TermsTab, TutorTab } from '../components/BookTabs'
-import { EmptyState } from '../components/ui'
+import { Cover, EmptyState } from '../components/ui'
+import { IconChevronLeft, IconLibrary, IconTarget } from '../components/icons'
 
 type TabKey = 'read' | 'ideas' | 'terms' | 'quiz' | 'apply' | 'tutor'
 
 const TABS: [TabKey, string][] = [
-  ['read', "📄 O'qish"],
-  ['ideas', '💡 Xulosalar'],
-  ['terms', '📖 Terminlar'],
-  ['quiz', '🎯 Quiz'],
-  ['apply', '🌍 Hayotda qo\'llash'],
-  ['tutor', '🤖 AI ustoz'],
+  ['read', "O'qish"],
+  ['ideas', 'Xulosalar'],
+  ['terms', 'Terminlar'],
+  ['quiz', 'Quiz'],
+  ['apply', "Hayotda qo'llash"],
+  ['tutor', 'AI ustoz'],
 ]
 
 export default function Book() {
@@ -30,11 +31,11 @@ export default function Book() {
   if (!book) {
     return (
       <EmptyState
-        icon="🔍"
+        icon={<IconLibrary size={26} />}
         title="Kitob topilmadi"
         action={
           <Link to="/kutubxona" className="btn btn-primary mt">
-            ← Kutubxonaga qaytish
+            Kutubxonaga qaytish
           </Link>
         }
       />
@@ -57,7 +58,6 @@ export default function Book() {
       : null
 
   const finishQuiz = (r: QuizResult) => {
-    // 1) Kitob progressi
     updateBook(book.meta.slug, (b) => ({
       ...b,
       progress: {
@@ -66,14 +66,11 @@ export default function Book() {
         quizTotal: b.progress.quizTotal + r.total,
       },
     }))
-    // 2) Takrorlash jadvalini yangilash (to'g'ri → uzaytirish, xato → qisqartirish)
-    const byId = new Map(reviews.map((x) => [x.reviewId, x]))
     const updated = reviews.map((rv) => {
       const d = r.details.find((x) => x.id === rv.reviewId)
       return d ? scheduleReview(rv, d.correct ? 4 : 1) : rv
     })
     if (updated.some((x, i) => x !== reviews[i])) setReviews(updated)
-    // 3) Streak
     updateProfile(touchActiveDay(profile))
     setLastResult(r)
     setQuizOn(false)
@@ -81,34 +78,37 @@ export default function Book() {
 
   return (
     <>
-      {/* Sarlavha */}
       <div className="page-head">
-        <div>
-          <Link to="/kutubxona" className="hint">
-            ← Kutubxona
+        <div className="grow" style={{ minWidth: 0 }}>
+          <Link to="/kutubxona" className="page-back">
+            <IconChevronLeft size={15} /> Kutubxona
           </Link>
-          <h1>
-            {book.meta.title}{' '}
-            {book.progress.percent >= 100 ? '📗' : book.analysis ? '📕' : '📘'}
-          </h1>
-          <small>
-            {book.meta.author ? `${book.meta.author} · ` : ''}
-            {book.meta.chapters} ta bob · {book.progress.percent}% o'qilgan
-          </small>
+          <div className="row" style={{ alignItems: 'flex-start', gap: 12 }}>
+            <Cover title={book.meta.title} variant="sm" />
+            <div className="grow" style={{ minWidth: 0 }}>
+              <h1 style={{ fontSize: 21 }}>{book.meta.title}</h1>
+              <small>
+                {book.meta.author ? `${book.meta.author} · ` : ''}
+                {book.meta.chapters} ta bob · {book.progress.percent}% o'qilgan
+              </small>
+            </div>
+          </div>
         </div>
-        <span className={`chip ${book.analysis ? 'chip-green' : 'chip-amber'}`}>
-          {book.analysis
-            ? `✅ tahlil tayyor (${quizzes.length} ta quiz)`
-            : book.meta.status === 'partial'
-              ? '⚠️ tahlil qisman'
-              : '🤖 AI tahlili kutilmoqda'}
-        </span>
       </div>
 
-      {/* Tahlil yo'q — AI panel */}
-      {!book.analysis && <div className="mb"><AnalyzePanel book={book} /></div>}
+      <span
+        className={`chip ${book.analysis ? 'chip-green' : 'chip-amber'}`}
+        style={{ alignSelf: 'flex-start' }}
+      >
+        {book.analysis
+          ? `tahlil tayyor · ${quizzes.length} ta quiz`
+          : book.meta.status === 'partial'
+            ? 'tahlil qisman'
+            : 'AI tahlili kutilmoqda'}
+      </span>
 
-      {/* Tablar */}
+      {!book.analysis && <AnalyzePanel book={book} />}
+
       <div className="tabs">
         {TABS.map(([key, label]) => (
           <button
@@ -121,25 +121,33 @@ export default function Book() {
         ))}
       </div>
 
-      {/* ---------- O'qish ---------- */}
       {tab === 'read' && <ReadTab book={book} />}
 
-      {/* ---------- Xulosalar ---------- */}
       {tab === 'ideas' &&
         (book.analysis ? (
           <IdeasTab book={book} />
         ) : (
-          <EmptyState icon="💡" title="Xulosalar tahlildan keyin paydo bo'ladi" text="Yuqoridagi «Tahlil qilish» tugmasini bosing." />
+          <EmptyState
+            icon={<IconTarget size={26} />}
+            title="Xulosalar tahlildan keyin paydo bo'ladi"
+            text="«AI tahlil qilish» tugmasini bosing."
+          />
         ))}
 
-      {/* ---------- Terminlar ---------- */}
       {tab === 'terms' &&
-        (book.analysis ? <TermsTab book={book} /> : <EmptyState icon="📖" title="Terminlar tahlildan keyin paydo bo'ladi" />)}
+        (book.analysis ? (
+          <TermsTab book={book} />
+        ) : (
+          <EmptyState icon={<IconTarget size={26} />} title="Terminlar tahlildan keyin yaratiladi" />
+        ))}
 
-      {/* ---------- Quiz ---------- */}
       {tab === 'quiz' &&
         (!book.analysis ? (
-          <EmptyState icon="🎯" title="Quiz tahlildan keyin yaratiladi" text="AI har bobga vaziyatli va nazariy savollar tuzadi." />
+          <EmptyState
+            icon={<IconTarget size={26} />}
+            title="Quiz tahlildan keyin yaratiladi"
+            text="AI har bobga vaziyatli va nazariy savollar tuzadi."
+          />
         ) : quizOn ? (
           <QuizRunner
             items={quizzes}
@@ -149,23 +157,23 @@ export default function Book() {
             onExit={() => setQuizOn(false)}
           />
         ) : (
-          <div className="card">
+          <div className="card narrow">
             <div className="card-title">
-              <h2>🎯 Quiz</h2>
+              <h2>Quiz</h2>
               <span className="chip chip-primary">{quizzes.length} ta savol</span>
             </div>
             <div className="grid grid-3 mb">
               <div className="stat">
                 <b>{quizzes.filter((q) => q.type === 'scenario').length}</b>
-                <span>vaziyatli savol</span>
+                <span>vaziyatli</span>
               </div>
               <div className="stat">
                 <b>{quizzes.filter((q) => q.type === 'theory').length}</b>
-                <span>nazariy savol</span>
+                <span>nazariy</span>
               </div>
               <div className="stat">
                 <b>{accuracy !== null ? `${accuracy}%` : '—'}</b>
-                <span>sizning o'rtachangiz</span>
+                <span>sizning o'rtacha</span>
               </div>
             </div>
             {lastResult && (
@@ -173,21 +181,26 @@ export default function Book() {
                 <b>Oxirgi natija:</b> {lastResult.correct}/{lastResult.total} to'g'ri javob.
               </div>
             )}
-            <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-              Har savoldan keyin sabab ko'rsatiladi — shu orqali o'rganasiz. Javoblar takrorlash
-              jadvalini avtomatik yangilaydi.
+            <p className="hint" style={{ marginTop: 0 }}>
+              Har savoldan keyin sabab ko'rsatiladi. Javoblar takrorlash jadvalini avtomatik
+              yangilaydi.
             </p>
-            <button className="btn btn-primary btn-lg" onClick={() => setQuizOn(true)}>
-              ▶ Boshlash
+            <button className="btn btn-primary btn-lg btn-block" onClick={() => setQuizOn(true)}>
+              Boshlash
             </button>
           </div>
         ))}
 
-      {/* ---------- Hayotda qo'llash ---------- */}
       {tab === 'apply' &&
-        (book.analysis ? <ApplyTab book={book} /> : <EmptyState icon="🌍" title="Senariylar tahlildan keyin paydo bo'ladi" />)}
+        (book.analysis ? (
+          <ApplyTab book={book} />
+        ) : (
+          <EmptyState
+            icon={<IconTarget size={26} />}
+            title="Senariylar tahlildan keyin paydo bo'ladi"
+          />
+        ))}
 
-      {/* ---------- AI ustoz ---------- */}
       {tab === 'tutor' && <TutorTab book={book} />}
     </>
   )

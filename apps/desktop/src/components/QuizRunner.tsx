@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { QuizItem } from '@study-notes/core'
+import { IconBookOpen, IconCheck, IconRepeat, IconTarget, IconX } from './icons'
 
 export interface QuizResult {
   correct: number
@@ -15,10 +16,7 @@ interface Props {
   onExit: () => void
 }
 
-/**
- * To'liq quiz rejimi: savol → javob → sabab → keyingi → natija.
- * docs/04 §5 bo'yicha.
- */
+/** To'liq quiz rejimi: savol → javob → sabab → keyingi → natija (docs/04 §5) */
 export default function QuizRunner({ items, title, finishLabel, onFinish, onExit }: Props) {
   const [idx, setIdx] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
@@ -46,37 +44,47 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
     }
   }
 
-  const result: QuizResult = {
-    correct: correctCount,
-    total: items.length,
-    details,
-  }
+  const result: QuizResult = { correct: correctCount, total: items.length, details }
 
   /* ---------- Natija ekrani ---------- */
   if (finished) {
     const percent = items.length ? Math.round((correctCount / items.length) * 100) : 0
+    const ResultIcon = percent >= 80 ? IconCheck : percent >= 50 ? IconRepeat : IconBookOpen
+    const resultColor = percent >= 80 ? 'var(--green)' : percent >= 50 ? 'var(--accent)' : 'var(--amber)'
     return (
       <div className="quiz-wrap">
-        <div className="card" style={{ textAlign: 'center', padding: '30px 20px' }}>
-          <div style={{ fontSize: 46 }}>{percent >= 80 ? '🎉' : percent >= 50 ? '💪' : '📖'}</div>
-          <h1>
-            {correctCount} / {items.length}
-          </h1>
-          <p style={{ color: 'var(--muted)' }}>
-            {percent >= 80
-              ? 'Ajoyib! Materialni yaxshi egallabsiz.'
-              : percent >= 50
-                ? "Yaxshi! Ba'zi mavzularni takrorlashga arziydi."
-                : "Xavotir olmang — takrorlash orqali mustahkamlanadi."}
-          </p>
+        <div className="card" style={{ textAlign: 'center', padding: '28px 18px' }}>
+          <div className="empty" style={{ padding: '0 0 10px' }}>
+            <span className="icon" style={{ background: 'var(--elevated)', color: resultColor }}>
+              <ResultIcon size={28} />
+            </span>
+            <h3>
+              {correctCount} / {items.length}
+            </h3>
+            <p>
+              {percent >= 80
+                ? 'Ajoyib! Materialni yaxshi egallabsiz.'
+                : percent >= 50
+                  ? "Yaxshi! Ba'zi mavzularni takrorlashga arziydi."
+                  : 'Xavotir olmang — takrorlash orqali mustahkamlanadi.'}
+            </p>
+          </div>
 
-          <div className="stack mt" style={{ textAlign: 'left' }}>
+          <div className="stack" style={{ textAlign: 'left' }}>
             {items.map((q, i) => {
               const d = details[i]
               return (
-                <div key={q.id} className="row" style={{ fontSize: 13.5 }}>
-                  <span>{d?.correct ? '✅' : '❌'}</span>
-                  <span className="grow" style={{ color: 'var(--muted)' }}>
+                <div key={q.id} className="row" style={{ fontSize: 13.5, alignItems: 'flex-start' }}>
+                  <span
+                    style={{
+                      color: d?.correct ? 'var(--green)' : 'var(--red)',
+                      flexShrink: 0,
+                      marginTop: 2,
+                    }}
+                  >
+                    {d?.correct ? <IconCheck size={15} /> : <IconX size={15} />}
+                  </span>
+                  <span className="grow" style={{ color: 'var(--muted)', letterSpacing: 0 }}>
                     {q.question.slice(0, 90)}
                     {q.question.length > 90 ? '…' : ''}
                   </span>
@@ -85,12 +93,12 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
             })}
           </div>
 
-          <div className="row mt" style={{ justifyContent: 'center' }}>
-            <button className="btn btn-ghost" onClick={onExit}>
-              Chiqish
-            </button>
-            <button className="btn btn-primary" onClick={() => onFinish(result)}>
+          <div className="stack mt">
+            <button className="btn btn-primary btn-lg btn-block" onClick={() => onFinish(result)}>
               {finishLabel ?? 'Tugatish'}
+            </button>
+            <button className="btn btn-ghost btn-block" onClick={onExit}>
+              Chiqish
             </button>
           </div>
         </div>
@@ -103,7 +111,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
       <div className="quiz-wrap">
         <div className="card">
           <p>Savollar topilmadi.</p>
-          <button className="btn" onClick={onExit}>
+          <button className="btn mt" onClick={onExit}>
             Orqaga
           </button>
         </div>
@@ -114,12 +122,12 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
   /* ---------- Savol ---------- */
   return (
     <div className="quiz-wrap">
-      <div className="row-between mb">
+      <div className="row-between">
         <span className="chip chip-primary">
-          {item.type === 'scenario' ? '📍 Vaziyat savoli' : '📝 Nazariy savol'}
+          {item.type === 'scenario' ? 'Vaziyat savoli' : 'Nazariy savol'}
         </span>
         <button className="btn btn-ghost btn-sm" onClick={onExit}>
-          Chiqish ✕
+          Yopish
         </button>
       </div>
 
@@ -144,7 +152,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
         <small>
           {idx + 1} / {items.length}
         </small>
-        <h2 style={{ marginTop: 6, fontSize: 18 }}>{item.question}</h2>
+        <h2 style={{ marginTop: 6, fontSize: 17.5, lineHeight: 1.4 }}>{item.question}</h2>
 
         <div className="stack mt">
           {item.options.map((o) => {
@@ -156,7 +164,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
             }
             return (
               <button key={o.key} className={cls} onClick={() => choose(o.key)}>
-                <span className="key">{o.key}.</span>
+                <span className="key">{o.key}</span>
                 <span>{o.text}</span>
               </button>
             )
@@ -166,7 +174,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
         {revealed && (
           <div className="stack mt">
             <div className={`explain ${selected === item.answer ? 'ok' : 'bad'}`}>
-              <b>{selected === item.answer ? '✅ To\'g\'ri! ' : '❌ Noto\'g\'ri. '}</b>
+              <b>{selected === item.answer ? "To'g'ri javob. " : "Noto'g'ri. "}</b>
               {item.explain.correct}
             </div>
             {selected !== item.answer && item.explain.wrong?.[selected ?? ''] && (
@@ -175,7 +183,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
               </div>
             )}
             <button className="btn btn-primary btn-block" onClick={next}>
-              {idx + 1 < items.length ? 'Keyingi savol →' : 'Natijani ko\'rish'}
+              {idx + 1 < items.length ? 'Keyingi savol' : 'Natijani ko\'rish'}
             </button>
           </div>
         )}

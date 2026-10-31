@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { PROVIDERS } from '@study-notes/ai'
 import type { AIProvider } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
+import { IconBookOpen, IconCheck } from '../components/icons'
 
 const AVATARS = ['🦊', '🐨', '🦉', '🐳', '🐱', '🐼', '🦁', '🤖']
 
@@ -24,7 +25,9 @@ export default function Onboarding() {
 
   const nextFromAI = () => {
     if (needKey && !apiKey.trim()) {
-      setWarn("Kalit kiritilmagan — \"Keyinroq\" bosib keyin Sozlamalardan qo'shishingiz mumkin.")
+      setWarn(
+        "Kalit kiritilmagan — keyinroq Sozlamalardan qo'shishingiz mumkin.",
+      )
       return
     }
     updateAI({ provider, apiKey: apiKey.trim(), model: model.trim() })
@@ -42,11 +45,13 @@ export default function Onboarding() {
   return (
     <div className="onboarding">
       <div className="onboarding-box">
-        <div className="brand" style={{ justifyContent: 'center', paddingBottom: 8 }}>
-          <div className="brand-logo">📚</div>
+        <div className="onboarding-logo">
+          <div className="mark">
+            <IconBookOpen size={28} />
+          </div>
           <div>
-            Study Notes
-            <small>o'rgan va hayotda qo'lla</small>
+            <h1>Study Notes</h1>
+            <p>Kitobni o'rgan va hayotda qo'lla</p>
           </div>
         </div>
 
@@ -56,13 +61,13 @@ export default function Onboarding() {
           ))}
         </div>
 
-        {/* ---------- 1-qadam: AI ---------- */}
+        {/* 1-qadam: AI */}
         {step === 0 && (
           <div className="card">
-            <h1>👋 Xush kelibsiz!</h1>
-            <p style={{ color: 'var(--muted)' }}>
-              Kitobni o'qish emas — tushunish va hayotda qo'llash. Avval AI'ni ulaymiz (1
-              daqiqa) — u kitoblarni sizun tahlil qiladi.
+            <h2>Xush kelibsiz</h2>
+            <p className="hint" style={{ marginTop: 4 }}>
+              Platforma kitobni o'qishni emas, tushunish va hayotda qo'llashni o'rgatadi. Avval
+              AI'ni ulaymiz — u kitoblarni sizun tahlil qiladi.
             </p>
 
             <div className="provider-pick mt">
@@ -73,11 +78,11 @@ export default function Onboarding() {
                     name="provider"
                     checked={provider === p.id}
                     onChange={() => setProvider(p.id)}
-                    style={{ marginTop: 4 }}
                   />
                   <span className="grow">
                     <b>
-                      {p.name} {p.id === 'gemini' && '⭐'}
+                      {p.name}
+                      {p.id === 'gemini' && ' · tavsiya'}
                     </b>
                     <small>{p.freeHint}</small>
                   </span>
@@ -99,12 +104,12 @@ export default function Onboarding() {
                   {info.keyUrl && (
                     <>
                       <a href={info.keyUrl} target="_blank" rel="noreferrer">
-                        📹 {info.name} kalitini olish (bepul)
+                        {info.name} kalitini olish (bepul)
                       </a>{' '}
-                      —
+                      ·{' '}
                     </>
-                  )}{' '}
-                  kalit faqat shu kompyuterda saqlanadi va faqat AI chaqiruvi uchun ishlatiladi.
+                  )}
+                  kalit faqat shu qurilmada saqlanadi.
                 </div>
                 <label className="label mt">Model (ixtiyoriy)</label>
                 <input
@@ -120,38 +125,35 @@ export default function Onboarding() {
                 <a href="https://ollama.com" target="_blank" rel="noreferrer">
                   ollama.com
                 </a>{' '}
-                dan o'rnatib, kerakli modelni yuklab qo'ying (masalan: {info.defaultModel}).
+                dan o'rnatib, {info.defaultModel} modelini yuklab qo'ying.
               </div>
             )}
 
             {warn && <div className="explain bad mt">{warn}</div>}
 
-            <div className="row mt">
-              <button className="btn btn-primary grow btn-lg" onClick={nextFromAI}>
-                Davom etish →
+            <div className="stack mt">
+              <button className="btn btn-primary btn-lg btn-block" onClick={nextFromAI}>
+                Davom etish
+              </button>
+              <button
+                className="btn btn-ghost btn-block"
+                onClick={() => {
+                  updateAI({ provider, apiKey: apiKey.trim(), model: model.trim() })
+                  setStep(1)
+                }}
+              >
+                Keyinroq sozlayman
               </button>
             </div>
-            <div className="hint" style={{ textAlign: 'center' }}>
-              Keyinroq sozlash ham mumkin — kutubxona hozircha ochiq.
-            </div>
-            <button
-              className="btn btn-ghost btn-block mt"
-              onClick={() => {
-                updateAI({ provider, apiKey: apiKey.trim(), model: model.trim() })
-                setStep(1)
-              }}
-            >
-              Keyinroq sozlayman
-            </button>
           </div>
         )}
 
-        {/* ---------- 2-qadam: shaxsiy profil ---------- */}
+        {/* 2-qadam: shaxsiy profil */}
         {step === 1 && (
           <div className="card">
-            <h1>🧑 O'zingiz haqingizda</h1>
-            <p style={{ color: 'var(--muted)' }}>
-              Parol kerak emas — ma'lumot faqat shu kompyuteringizda.
+            <h2>O'zingiz haqingizda</h2>
+            <p className="hint" style={{ marginTop: 4 }}>
+              Parol kerak emas — ma'lumot faqat shu qurilmada.
             </p>
 
             <label className="label mt">Ismingiz</label>
@@ -177,27 +179,33 @@ export default function Onboarding() {
             </div>
 
             <div className="row mt">
-              <button className="btn btn-ghost" onClick={() => setStep(0)}>
-                ← Orqaga
+              <button className="btn" onClick={() => setStep(0)}>
+                Orqaga
               </button>
               <button className="btn btn-primary grow btn-lg" onClick={() => setStep(2)}>
-                Davom etish →
+                Davom etish
               </button>
             </div>
           </div>
         )}
 
-        {/* ---------- 3-qadam: tayyor ---------- */}
+        {/* 3-qadam: tayyor */}
         {step === 2 && (
           <div className="card" style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 52 }}>🎉</div>
-            <h1>Tayyor, {name || 'o\'quvchi'} {avatar}</h1>
-            <p style={{ color: 'var(--muted)' }}>
-              Kutubxonada namunaviy kitob tayyor. Unda xulosalar, terminlar, quizlar va
-              «hayotda qo'llash» senariylari bor — ko'rib chiqing.
-            </p>
+            <div className="empty" style={{ padding: '4px 0 14px' }}>
+              <span className="icon" style={{ background: 'var(--green-soft)', color: 'var(--green)' }}>
+                <IconCheck size={28} />
+              </span>
+              <h3>
+                Tayyor, {name || 'o\'quvchi'} {avatar}
+              </h3>
+              <p>
+                Kutubxonada namunaviy kitob tayyor — xulosalar, terminlar, quizlar va real
+                vaziyatlar bilan.
+              </p>
+            </div>
             <button className="btn btn-primary btn-lg btn-block" onClick={finish}>
-              Kutubxonani ochish →
+              Kutubxonani ochish
             </button>
           </div>
         )}
