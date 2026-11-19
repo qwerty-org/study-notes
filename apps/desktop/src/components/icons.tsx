@@ -228,3 +228,10 @@ export const IconUser = (p: IconProps) => (
     <path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" />
   </svg>
 )
+
+export const IconSearch = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="m16 16 4.5 4.5" />
+  </svg>
+)

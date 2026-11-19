@@ -125,10 +125,15 @@ export interface Review {
 export interface ApplyLogEntry {
   id: string
   book: string
+  /** G'oya yoki vaziyat bog'langan g'oya id si (escha kod bilan moslik uchun) */
   ideaId: string
   date: string
   note?: string
   context?: string
+  /** Qaysi turdagi yozuv ekanligi — g'oya va vaziyat belgilari aralashib ketmasligi uchun */
+  kind?: 'idea' | 'scenario'
+  /** Asl obyekt id si (g'oya id yoki vaziyat id) */
+  refId?: string
 }
 
 /* ---------- Profil va AI sozlamalari ---------- */

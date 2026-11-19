@@ -1,0 +1,244 @@
+/* ============================================================
+   Study Notes — "O'quv xonasi" dizayn tizimi
+   Ilhom: kitobxona/editorial interfeyslar, Tufte marginaliyalari,
+   Readwise long-form reading, Anki/Quizlet review sikli.
+   Eski global.css ustiga qo'yiladi: barcha bo'limlar bitta palette va
+   tipografik tizimga ega bo'ladi (Dashboard tuzilmasiga tegmaymiz).
+   ============================================================ */
+
+:root {
+  /* --- Yorug' qog'oz --- */
+  --bg: #f5f2ea;
+  --card: #fffdf8;
+  --sidebar: #fbf8f1;
+  --elevated: #eee9dc;
+  --seg-active: #fffdf8;
+  --input-bg: #fffdf8;
+  --border: #e2dccd;
+  --border-strong: #cdc4b1;
+  --text: #26231e;
+  --muted: #6b6457;
+  --faint: #9a9182;
+
+  /* --- Asosiy: terrakota (olov/kitob muqovasi) --- */
+  --primary: #b4542d;
+  --primary-hover: #9c4623;
+  --primary-dark: #82391d;
+  --primary-soft: rgba(180, 84, 45, 0.11);
+
+  /* --- Ikkilamchi: ko'k-yashil (bilim/tinchlik) --- */
+  --blue: #3d6d61;
+  --blue-dark: #2f554b;
+  --blue-soft: rgba(61, 109, 97, 0.12);
+
+  --yellow: #ba842c;
+  --yellow-dark: #956a21;
+  --yellow-soft: rgba(186, 132, 44, 0.16);
+
+  --red: #b5473d;
+  --red-dark: #96382f;
+  --red-soft: rgba(181, 71, 61, 0.12);
+
+  --green: #4c7b5b;
+  --green-soft: rgba(76, 123, 91, 0.14);
+  --purple: #8b6f9e;
+  --purple-dark: #735683;
+  --purple-soft: rgba(139, 111, 158, 0.14);
+
+  --accent: var(--primary);
+  --amber: var(--yellow);
+  --amber-soft: var(--yellow-soft);
+  --green: var(--primary);
+  --green-soft: var(--primary-soft);
+  --ring-track: var(--elevated);
+
+  --btn2-face: #ece6d8;
+  --btn2-shadow: #d8d0bd;
+  --btn2-text: #494334;
+
+  --shadow-card: 0 1px 2px rgba(58, 46, 28, 0.05), 0 10px 30px rgba(58, 46, 28, 0.035);
+  --shadow-pop: 0 20px 56px rgba(40, 30, 16, 0.18);
+  --shadow-seg: 0 1px 3px rgba(58, 46, 28, 0.12);
+
+  --r-sm: 8px;
+  --r: 12px;
+  --r-lg: 18px;
+  --r-pill: 999px;
+
+  --topbar-h: 64px;
+  --content-max: 1280px;
+
+  --font: 'Manrope Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+
+  /* Qog'oz donadorligi (past kontrastli texture) */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+}
+
+[data-theme='dark'] {
+  --bg: #16140f;
+  --card: #201d17;
+  --sidebar: #1c1914;
+  --elevated: #2a261e;
+  --seg-active: #302b22;
+  --input-bg: #1c1914;
+  --border: #373127;
+  --border-strong: #4a4235;
+  --text: #f3ecdd;
+  --muted: #a99f8c;
+  --faint: #776e5e;
+
+  --primary: #e08b5c;
+  --primary-hover: #eb9c70;
+  --primary-dark: #f0b08a;
+  --primary-soft: rgba(224, 139, 92, 0.14);
+
+  --blue: #7fb0a2;
+  --blue-dark: #9bc7bb;
+  --blue-soft: rgba(127, 176, 162, 0.14);
+
+  --yellow: #d9a94f;
+  --yellow-dark: #ecc271;
+  --red: #e07b6f;
+  --red-dark: #ef9a90;
+  --green: #86b592;
+  --green-soft: rgba(134, 181, 146, 0.14);
+
+  --btn2-face: #2c2720;
+  --btn2-shadow: #17140f;
+  --btn2-text: #e8dfcd;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-pop: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Umumiy tipografiya yangilanishi ---------- */
+body {
+  font-size: 14.5px;
+  line-height: 1.6;
+  background: var(--bg);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--primary-dark);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---------- Shell: yuqori panel (barcha sahifalar uchun) ---------- */
+.app {
+  min-height: 100vh;
+}
+
+.topbar {
+  height: var(--topbar-h);
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.015);
+  z-index: 30;
+}
+
+.brand .mark {
+  border-radius: 10px;
+  background: var(--primary);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.brand b {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.nav-item {
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.nav-item.active {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  box-shadow: inset 0 -2px 0 var(--primary);
+}
+
+.nav-badge {
+  background: var(--primary);
+}
+
+.streak-chip {
+  color: var(--yellow-dark);
+}
+
+.win-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.win-btn:disabled:hover {
+  background: transparent;
+  color: inherit;
+}
+
+.win-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.brand {
+  text-decoration: none;
+}
+
+/* ---------- Asosiy kontent maydoni ---------- */
+.main {
+  background-color: var(--bg);
+  background-image: radial-gradient(
+      ellipse 80% 40% at 50% -10%,
+      color-mix(in srgb, var(--primary) 6%, transparent),
+      transparent 70%
+    ),
+    var(--paper-grain);
+  background-blend-mode: normal, soft-light;
+}
+
+/* Eski `.page` faqat Dashboard uchun ishlaydi; yangi sahifalar o'z
+   `.nx-page` konteyneriga ega. Ikkalasi ham `.main` ichida. */
+.page {
+  animation: nx-page-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nx-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

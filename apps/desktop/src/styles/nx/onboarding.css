@@ -1,0 +1,341 @@
+/* ============================================================
+   NX Onboarding — 3 qadamli kirish
+   ============================================================ */
+
+.nx-onboarding {
+  display: grid;
+  grid-template-columns: minmax(320px, 42%) 1fr;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.nx-onboarding-aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 44px clamp(28px, 4vw, 64px);
+  color: #fff;
+  background:
+    radial-gradient(ellipse 70% 50% at 80% 10%, rgba(240, 170, 110, 0.32), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(90, 130, 110, 0.3), transparent 70%),
+    linear-gradient(155deg, #7a3a22, #3f2a24 70%);
+  overflow: hidden;
+}
+
+.nx-onboarding-aside::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-grain);
+  background-blend-mode: soft-light;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.nx-onboarding-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+.nx-onboarding-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nx-onboarding-quote {
+  margin: auto 0;
+  position: relative;
+  z-index: 1;
+}
+
+.nx-onboarding-quote .nx-eyebrow {
+  color: #f0c79f;
+}
+
+.nx-onboarding-quote h1 {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4vw, 56px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  margin: 18px 0 20px;
+}
+
+.nx-onboarding-quote h1 em {
+  font-style: italic;
+  color: #f5c58f;
+}
+
+.nx-onboarding-quote p {
+  max-width: 42ch;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.nx-onboarding-features {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  position: relative;
+  z-index: 1;
+}
+
+.nx-onboarding-features > div {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.nx-onboarding-features svg {
+  color: #f5c58f;
+}
+
+.nx-onboarding-aside-foot {
+  margin-top: 28px;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.nx-onboarding-main {
+  display: grid;
+  place-items: center;
+  padding: 40px 28px;
+  overflow-y: auto;
+}
+
+.nx-onboarding-card {
+  width: min(560px, 100%);
+  padding: 34px 38px;
+  border: 1px solid var(--nx-line);
+  border-radius: 22px;
+  background: var(--nx-surface);
+  box-shadow: 0 30px 80px rgba(40, 28, 14, 0.14);
+  animation: nx-modal-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.nx-onboarding-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0 0 32px;
+  padding: 0;
+  list-style: none;
+}
+
+.nx-onboarding-steps li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--nx-line);
+  color: var(--faint);
+  font-size: 11px;
+  font-weight: 750;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.nx-onboarding-steps li span:first-child {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--nx-surface-2);
+  font-size: 10px;
+}
+
+.nx-onboarding-steps li.is-active {
+  border-color: var(--nx-accent);
+  color: var(--nx-accent);
+}
+
+.nx-onboarding-steps li.is-active span:first-child {
+  background: var(--nx-accent);
+  color: #fff;
+}
+
+.nx-onboarding-steps li.is-done {
+  border-color: var(--nx-success);
+  color: var(--nx-success);
+}
+
+.nx-onboarding-steps li.is-done span:first-child {
+  background: var(--nx-success-soft);
+}
+
+.nx-onboarding-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: nx-rise 0.35s ease both;
+}
+
+.nx-onboarding-step .nx-subtitle {
+  margin-top: -10px;
+}
+
+.nx-onb-providers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.nx-onb-provider {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 13px 16px;
+  border: 1.5px solid var(--nx-line);
+  border-radius: 11px;
+  background: var(--nx-surface);
+  color: var(--nx-ink);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.nx-onb-provider:hover {
+  border-color: var(--nx-accent);
+}
+
+.nx-onb-provider.is-active {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-soft);
+}
+
+.nx-onb-provider b {
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.nx-onb-provider small {
+  font-size: 11px;
+  color: var(--nx-muted);
+}
+
+.nx-onb-provider__tag {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--nx-success-soft);
+  color: var(--nx-success);
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.nx-onb-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  background: var(--nx-accent-soft);
+  color: var(--nx-accent);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.nx-onb-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--nx-line);
+}
+
+.nx-onb-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 30px 20px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--nx-accent) 4%, transparent);
+  color: var(--nx-muted);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.nx-onb-drop:hover {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-soft);
+}
+
+.nx-onb-drop svg {
+  color: var(--nx-accent);
+}
+
+.nx-onb-drop b {
+  font-size: 13px;
+  color: var(--nx-ink);
+}
+
+.nx-onb-drop small {
+  font-size: 11px;
+}
+
+.nx-onb-demo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+}
+
+.nx-onb-demo__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--nx-success-soft);
+  color: var(--nx-success);
+}
+
+.nx-onb-demo b {
+  font-size: 12.5px;
+}
+
+@media (max-width: 860px) {
+  .nx-onboarding {
+    grid-template-columns: 1fr;
+  }
+
+  .nx-onboarding-aside {
+    display: none;
+  }
+
+  .nx-onboarding-card {
+    padding: 26px 22px;
+  }
+}

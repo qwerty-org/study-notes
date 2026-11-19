@@ -14,13 +14,19 @@ import {
   IconSliders,
   IconX,
 } from './icons'
-import { closeWindow, maximizeWindow, minimizeWindow } from '../lib/windowControls'
+import {
+  closeWindow,
+  controlsAvailable,
+  maximizeWindow,
+  minimizeWindow,
+} from '../lib/windowControls'
 
 const NAV = [
   { to: '/', icon: IconHome, label: 'Bosh sahifa', end: true },
   { to: '/kutubxona', icon: IconLibrary, label: 'Kutubxona' },
   { to: '/takrorlash', icon: IconRepeat, label: 'Takrorlash' },
   { to: '/natijalar', icon: IconChart, label: 'Natijalarim' },
+  { to: '/sozlamalar', icon: IconSliders, label: 'Sozlamalar' },
 ]
 
 /** Desktop shell: yuqori navbar (markazda menyu) + profil popup + deraza tugmalari */
@@ -28,6 +34,14 @@ export default function Layout() {
   const { reviews, profile, updateProfile } = useApp()
   const location = useLocation()
   const due = dueReviews(reviews).length
+  const windowControls = controlsAvailable()
+
+  // Ichki sahifalar uchun tegishli nav elementi faol ko'rinadi
+  const isActive = (to: string, end?: boolean) => {
+    if (to === '/kutubxona') return location.pathname.startsWith('/kitob/') || location.pathname === to
+    if (to === '/' && end) return location.pathname === '/'
+    return location.pathname.startsWith(to)
+  }
 
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -57,20 +71,20 @@ export default function Layout() {
   return (
     <div className="app">
       <header className="topbar" data-tauri-drag-region>
-        <div className="brand" data-tauri-drag-region>
+        <Link to="/" className="brand" data-tauri-drag-region aria-label="Bosh sahifa">
           <span className="mark">
             <IconBookOpen size={16} />
           </span>
           <b data-tauri-drag-region>Study Notes</b>
-        </div>
+        </Link>
 
-        <nav className="topnav">
+        <nav className="topnav" aria-label="Asosiy navigatsiya">
           {NAV.map(({ to, icon: Icon, label, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
-              className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+              className={`nav-item${isActive(to, end) ? ' active' : ''}`}
             >
               <Icon size={19} />
               <span className="nav-txt">{label}</span>
@@ -80,7 +94,7 @@ export default function Layout() {
         </nav>
 
         <div className="topbar-right">
-          <span className="chip chip-amber streak-chip" title="Kunlik streak">
+          <span className="chip chip-amber streak-chip" title="Uzluksiz kunlar">
             <IconFlame size={14} /> {profile.streak} kun
           </span>
 
@@ -118,12 +132,16 @@ export default function Layout() {
                   <div className="mini-seg">
                     <button
                       className={profile.theme === 'light' ? 'on' : ''}
+                      role="menuitemradio"
+                      aria-checked={profile.theme === 'light'}
                       onClick={() => updateProfile({ theme: 'light' })}
                     >
                       Kunduzi
                     </button>
                     <button
                       className={profile.theme === 'dark' ? 'on' : ''}
+                      role="menuitemradio"
+                      aria-checked={profile.theme === 'dark'}
                       onClick={() => updateProfile({ theme: 'dark' })}
                     >
                       Tungi
@@ -131,16 +149,17 @@ export default function Layout() {
                   </div>
                 </div>
 
-                <div className="popmenu-foot">v0.1.0 · ma'lumot shu qurilmada</div>
+                <div className="popmenu-foot">v0.1.0 · ma'lumotlar shu qurilmada</div>
               </div>
             )}
           </div>
 
-          <div className="win-controls">
+          <div className="win-controls" title={windowControls ? undefined : 'Faqat desktop ilovasida ishlaydi'}>
             <button
               className="win-btn"
               title="Kichraytirish"
               aria-label="Derazani kichraytirish"
+              disabled={!windowControls}
               onClick={() => void minimizeWindow()}
             >
               <IconMinus size={17} />
@@ -149,6 +168,7 @@ export default function Layout() {
               className="win-btn"
               title="Kattalashtirish"
               aria-label="Derazani kattalashtirish"
+              disabled={!windowControls}
               onClick={() => void maximizeWindow()}
             >
               <IconMaximize size={15} />
@@ -157,6 +177,7 @@ export default function Layout() {
               className="win-btn win-close"
               title="Yopish"
               aria-label="Derazani yopish"
+              disabled={!windowControls}
               onClick={() => void closeWindow()}
             >
               <IconX size={16} />

@@ -1,207 +1,251 @@
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { store } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
-import { Cover, EmptyState, PageHead, ProgressBar, Ring, Stat } from '../components/ui'
+import { Ring, useToast } from '../components/nx/NxUI'
+import { localDay, niceDate } from '../lib/nxDate'
 import {
+  IconBookOpen,
+  IconChart,
   IconCheck,
-  IconChevronRight,
+  IconDownload,
   IconFlame,
   IconGlobe,
-  IconLibrary,
-  IconRepeat,
+  IconTarget,
 } from '../components/icons'
+import { IconCalendar, IconFeather, IconInfo } from '../components/nx/icons'
 
-/** Mening natijalarim — streak, statistika, "qo'lladim" jurnali (docs/04 §6) */
+const CONTEXTS = ['Barchasi', 'ish', 'oila', "do'stlik", "o'qish", 'shaxsiy'] as const
+
 export default function Stats() {
   const { profile, library, applyLog } = useApp()
+  const [context, setContext] = useState<(typeof CONTEXTS)[number]>('Barchasi')
+  const { show, toast: toastNode } = useToast()
 
-  const chaptersRead = library.reduce((s, b) => s + b.progress.readChapters.length, 0)
-  const quizCorrect = library.reduce((s, b) => s + b.progress.quizCorrect, 0)
-  const quizTotal = library.reduce((s, b) => s + b.progress.quizTotal, 0)
-  const quizPct = quizTotal ? Math.round((quizCorrect / quizTotal) * 100) : null
-  const finished = library.filter((b) => b.progress.percent >= 100).length
+  const ideaText = (ideaId: string) => {
+    for (const b of library) {
+      for (const ch of b.analysis?.chapters ?? []) {
+        const idea = ch.keyIdeas.find((i) => i.id === ideaId)
+        if (idea) return idea.idea
+      }
+      const scenario = b.analysis?.scenarios.find((s) => s.id === ideaId)
+      if (scenario) return scenario.situation
+    }
+    return "Qoida hayotda qo'llandi"
+  }
+
   const avgProgress = library.length
     ? Math.round(library.reduce((s, b) => s + b.progress.percent, 0) / library.length)
     : 0
+  const quizTotal = library.reduce((s, b) => s + b.progress.quizTotal, 0)
+  const quizCorrect = library.reduce((s, b) => s + b.progress.quizCorrect, 0)
+  const accuracy = quizTotal ? Math.round((quizCorrect / quizTotal) * 100) : 0
+  const finished = library.filter((b) => b.progress.percent >= 100).length
 
-  const ideaText = (bookSlug: string, ideaId: string): string | null => {
-    const book = library.find((b) => b.meta.slug === bookSlug)
-    for (const ch of book?.analysis?.chapters ?? []) {
-      const idea = ch.keyIdeas.find((i) => i.id === ideaId)
-      if (idea) return idea.idea
+  const activity = useMemo(() => {
+    const days: { label: string; date: string; count: number }[] = []
+    const names = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan']
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000)
+      const date = localDay(d)
+      days.push({
+        label: names[d.getDay()],
+        date,
+        count: applyLog.filter((e) => e.date === date).length,
+      })
     }
-    return ideaId
+    return days
+  }, [applyLog])
+
+  const maxActivity = Math.max(3, ...activity.map((d) => d.count))
+
+  const badges = [
+    { label: 'Birinchi qadam', ok: applyLog.length >= 1, icon: '✦' },
+    { label: '7 kunlik iz', ok: profile.streak >= 7, icon: '🔥' },
+    { label: '10 ta qo\'llash', ok: applyLog.length >= 10, icon: '★' },
+    { label: 'Quiz ustasi', ok: accuracy >= 70 && quizTotal >= 5, icon: '◎' },
+  ]
+
+  const journal = applyLog
+    .filter((e) => context === 'Barchasi' || e.context === context)
+    .slice(0, 30)
+
+  const exportData = () => {
+    const blob = new Blob([store.exportAll()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `study-notes-${localDay()}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+    show('Ma\'lumotlar eksport qilindi')
   }
 
   return (
-    <>
-      <PageHead title="Natijalarim" sub="O'sishingiz bir joyda" />
+    <div className="nx-page nx-page--wide nx-stats">
+      <header className="nx-head">
+        <div>
+          <span className="nx-eyebrow">Shaxsiy taraqqiyot</span>
+          <h1 className="nx-title">Natijalarim</h1>
+          <p className="nx-subtitle">O'sishingizni bir joyda ko'ring — o'qiganingiz emas, qo'llaganingiz.</p>
+        </div>
+        <div className="nx-head__actions">
+          <button className="nx-btn nx-btn--ghost" onClick={exportData}>
+            <IconDownload size={16} /> Eksport
+          </button>
+        </div>
+      </header>
 
-      {/* ---- Profil + asosiy raqamlar ---- */}
-      <div className="hero">
-        <div className="row" style={{ gap: 16, minWidth: 0 }}>
-          <span className="popmenu-avatar" style={{ width: 58, height: 58, fontSize: 30 }}>
-            {profile.avatar}
-          </span>
-          <div style={{ minWidth: 0 }}>
-            <h1 style={{ fontSize: 22 }}>{profile.name || "Ismsiz o'quvchi"}</h1>
-            <div className="row wrap mt" style={{ marginTop: 7 }}>
-              <span className="chip chip-amber">
-                <IconFlame size={14} /> {profile.streak} kunlik streak
+      <section className="nx-stats-hero nx-card">
+        <div className="nx-stats-hero__profile">
+          <span className="nx-stats-hero__avatar">{profile.avatar}</span>
+          <div>
+            <h2 className="nx-title nx-title--sm">{profile.name || "o'quvchi"}</h2>
+            <p className="nx-subtitle">
+              <IconFlame size={14} /> {profile.streak} kunlik iz · {library.length} ta kitob · {finished} tugatilgan
+            </p>
+          </div>
+        </div>
+        <div className="nx-stats-hero__ring">
+          <Ring value={avgProgress} size={76} />
+          <span>o'rtacha progress</span>
+        </div>
+      </section>
+
+      <section className="nx-stats-grid nx-grid nx-grid--4">
+        <div className="nx-stat nx-stat--accent">
+          <div className="nx-stat__top"><span className="nx-stat__label">Qo'llangan qoida</span><IconGlobe size={17} /></div>
+          <div className="nx-stat__value nx-mono-num">{applyLog.length}</div>
+          <div className="nx-stat__hint">kunlik maqsad: 1 ta</div>
+        </div>
+        <div className="nx-stat nx-stat--success">
+          <div className="nx-stat__top"><span className="nx-stat__label">To'g'ri javob</span><IconTarget size={17} /></div>
+          <div className="nx-stat__value nx-mono-num">{accuracy}%</div>
+          <div className="nx-stat__hint">{quizCorrect}/{quizTotal} savol</div>
+        </div>
+        <div className="nx-stat nx-stat--warn">
+          <div className="nx-stat__top"><span className="nx-stat__label">Uzluksiz kun</span><IconFlame size={17} /></div>
+          <div className="nx-stat__value nx-mono-num">{profile.streak}</div>
+          <div className="nx-stat__hint">kunlik iz</div>
+        </div>
+        <div className="nx-stat">
+          <div className="nx-stat__top"><span className="nx-stat__label">O'qilgan bob</span><IconBookOpen size={17} /></div>
+          <div className="nx-stat__value nx-mono-num">
+            {library.reduce((s, b) => s + b.progress.readChapters.length, 0)}
+          </div>
+          <div className="nx-stat__hint">{library.reduce((s, b) => s + b.meta.chapters, 0)} ta jami</div>
+        </div>
+      </section>
+
+      <section className="nx-stats-activity nx-card nx-card--pad">
+        <div className="nx-section-head">
+          <div>
+            <h2 className="nx-h2">So'nggi 7 kun</h2>
+            <p className="nx-hint">Har kuni kamida bitta qoidani qo'llashga harakat qiling.</p>
+          </div>
+          <div className="nx-row nx-badges">
+            {badges.map((b) => (
+              <span key={b.label} className={`nx-badge${b.ok ? ' is-earned' : ''}`} title={b.label}>
+                <span>{b.icon}</span><small>{b.label}</small>
               </span>
-              <span className="chip chip-green">{library.length} ta kitob</span>
-              <span className="chip chip-primary">{finished} tugatilgan</span>
+            ))}
+          </div>
+        </div>
+        <div className="nx-activity-chart">
+          {activity.map((d) => (
+            <div className="nx-activity-day" key={d.date}>
+              <span className="nx-activity-bar-wrap">
+                <span
+                  className={`nx-activity-bar${d.count ? ' has-data' : ''}`}
+                  style={{ height: `${Math.max(8, (d.count / maxActivity) * 100)}%` }}
+                  title={`${d.count} ta qo'llash`}
+                />
+              </span>
+              <small>{d.label}</small>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="nx-journal nx-panel">
+        <div className="nx-panel__head">
+          <div className="nx-row" style={{ gap: 9 }}>
+            <IconFeather size={18} />
+            <div>
+              <h2 className="nx-h2">"Men qo'lladim" jurnali</h2>
+              <p className="nx-hint">Hayotda sinab ko'rgan qoidalaringiz</p>
             </div>
           </div>
+          <span className="nx-chip nx-chip--success">{applyLog.length} yozuv</span>
         </div>
-        <div className="hero-goal">
-          <Ring value={avgProgress} size={92} label={`${avgProgress}%`} />
-          <small>o'rtacha progress</small>
-        </div>
-      </div>
-
-      {/* ---- Ko'rsatkichlar qatori ---- */}
-      <div className="grid grid-fit">
-        <div className="card">
-          <div className="card-title">
-            <h3>O'qish</h3>
-          </div>
-          <div className="grid grid-2">
-            <Stat value={chaptersRead} label="bob o'qildi" />
-            <Stat value={`${avgProgress}%`} label="o'rtacha progress" />
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-title">
-            <h3>Bilim nazorati</h3>
-          </div>
-          <div className="grid grid-2">
-            <Stat value={quizPct !== null ? `${quizPct}%` : '—'} label="quiz o'rtachasi" />
-            <Stat value={quizTotal} label="javob berilgan" />
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-title">
-            <h3>Hayotda qo'llash</h3>
-            <span className="chip chip-green">maqsad: 1/kun</span>
-          </div>
-          <div className="grid grid-2">
-            <Stat value={applyLog.length} label="jami qo'llanma" />
-            <Stat
-              value={applyLog.filter((e) => e.date === new Date().toISOString().slice(0, 10)).length}
-              label="bugun qo'llandi"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="split">
-        {/* ---- «Men qo'lladim» jurnali ---- */}
-        <div className="card">
-          <div className="card-title">
-            <h3>«Men qo'lladim» jurnali</h3>
-            <span className="chip chip-green">{applyLog.length} ta</span>
+        <div className="nx-panel__body">
+          <div className="nx-filter-row nx-segmented" role="group" aria-label="Kontekst bo'yicha filtr">
+            {CONTEXTS.map((c) => (
+              <button key={c} aria-pressed={context === c} onClick={() => setContext(c)}>{c}</button>
+            ))}
           </div>
 
-          {!applyLog.length ? (
-            <EmptyState
-              icon={<IconGlobe size={26} />}
-              title="Hozircha yo'q"
-              text="Kitobdagi qoidani hayotda qo'llaganingizda «Men qo'lladim» tugmasini bosing — shu yerda to'planadi. Platformaning asosiy maqsadi shu!"
-              action={
-                <Link to="/kutubxona" className="btn btn-primary mt">
-                  Kitobga o'tish
-                </Link>
-              }
-            />
-          ) : (
-            <div className="stack" style={{ gap: 8 }}>
-              {applyLog.map((e) => (
-                <div key={e.id} className="book-row" style={{ cursor: 'default' }}>
-                  <span
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 10,
-                      display: 'grid',
-                      placeItems: 'center',
-                      flexShrink: 0,
-                      background: 'var(--primary-soft)',
-                      color: 'var(--primary-dark)',
-                    }}
-                  >
-                    <IconCheck size={15} strokeWidth={2.4} />
-                  </span>
-                  <span className="b-body">
-                    <b style={{ fontSize: 13.5 }}>{ideaText(e.book, e.ideaId)}</b>
-                    <small>
-                      {library.find((b) => b.meta.slug === e.book)?.meta.title ?? e.book}
-                      {e.context ? ` · ${e.context}` : ''}
-                    </small>
-                  </span>
-                  <span className="chip" style={{ flexShrink: 0 }}>
-                    {e.date.slice(5).split('-').reverse().join('.')}
-                  </span>
+          {journal.length ? (
+            <div className="nx-timeline">
+              {journal.map((e) => (
+                <div className="nx-timeline__item" key={e.id}>
+                  <span className="nx-timeline__dot" />
+                  <div className="nx-timeline__body">
+                    <b>{ideaText(e.ideaId)}</b>
+                    <div className="nx-row" style={{ gap: 7, flexWrap: 'wrap' }}>
+                      {e.context && <span className="nx-chip nx-chip--outline">{e.context}</span>}
+                      <span className="nx-chip">{niceDate(e.date)}</span>
+                      {e.note && <span className="nx-hint">{e.note}</span>}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="nx-empty" style={{ padding: '36px 20px' }}>
+              <div className="nx-empty__icon"><IconFeather size={24} /></div>
+              <div className="nx-empty__title">Hali yozuv yo'q</div>
+              <p className="nx-empty__text">
+                Kitobdagi qoidani hayotda sinab, "Men qo'lladim" tugmasini bosing — shu yerda paydo bo'ladi.
+              </p>
+              <Link to="/kutubxona" className="nx-btn nx-btn--primary">Kitob tanlash</Link>
+            </div>
           )}
         </div>
+      </section>
 
-        <div className="stack" style={{ gap: 16 }}>
-          {/* ---- Kitoblar bo'yicha progress ---- */}
-          <div className="card">
-            <div className="card-title">
-              <h3>Kitoblar progressi</h3>
-              <Link to="/kutubxona" className="chip">
-                Kutubxona <IconChevronRight size={12} />
+      <section className="nx-stats-bottom nx-grid nx-grid--2">
+        <div className="nx-panel">
+          <div className="nx-panel__head"><b className="nx-h3">Kitoblar progressi</b><IconBookOpen size={17} /></div>
+          <div className="nx-panel__body nx-stack" style={{ gap: 10 }}>
+            {library.length ? library.map((b) => (
+              <Link to={`/kitob/${b.meta.slug}`} className="nx-progress-row" key={b.meta.slug}>
+                <span>{b.meta.title}</span>
+                <span className="nx-progress nx-progress--inline"><span style={{ width: `${b.progress.percent}%` }} /></span>
+                <b className="nx-mono-num">{b.progress.percent}%</b>
               </Link>
-            </div>
-            {library.length ? (
-              <div className="stack" style={{ gap: 10 }}>
-                {library.map((b) => (
-                  <Link key={b.meta.slug} to={`/kitob/${b.meta.slug}`} className="book-row">
-                    <Cover title={b.meta.title} variant="inline" />
-                    <span className="b-body">
-                      <b>{b.meta.title}</b>
-                      <small>
-                        {b.progress.readChapters.length}/{b.meta.chapters} bob
-                      </small>
-                      <ProgressBar value={b.progress.percent} />
-                    </span>
-                    <b style={{ fontSize: 13, color: 'var(--muted)', flexShrink: 0 }}>
-                      {b.progress.percent}%
-                    </b>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <p className="hint" style={{ marginTop: 0 }}>
-                Kutubxona bo'sh.
-              </p>
-            )}
+            )) : <p className="nx-hint">Hali kitob qo'shilmagan.</p>}
           </div>
-
-          {/* ---- Keyingi qadam ---- */}
-          <div className="card">
-            <div className="card-title">
-              <h3>Keyingi qadam</h3>
+        </div>
+        <div className="nx-panel nx-next-step">
+          <div className="nx-panel__head"><b className="nx-h3">Keyingi qadam</b><IconChart size={17} /></div>
+          <div className="nx-panel__body nx-stack">
+            <div className="nx-next-step__row">
+              <IconFlame size={18} />
+              <p>Kunlik izni saqlash uchun bugun kamida bitta qoidani qo'llang.</p>
             </div>
-            <p className="hint" style={{ marginTop: 0 }}>
-              Har kuni bitta vaziyatda qo'llash — oyiga ~30 ta qoida hayotga o'tadi.
-            </p>
-            <div className="stack">
-              <Link to="/takrorlash" className="btn btn-primary btn-block">
-                <IconRepeat size={17} /> Takrorlashni boshlash
-              </Link>
-              <Link to="/kutubxona" className="btn btn-block">
-                <IconLibrary size={17} /> Yangi kitob o'qish
-              </Link>
+            <div className="nx-next-step__row">
+              <IconInfo size={18} />
+              <p>Noto'g'ri javoblar takrorlash jadvalida tezroq qaytadi — ularni <Link to="/takrorlash">takrorlash</Link> bo'limida ko'ring.</p>
+            </div>
+            <div className="nx-next-step__row">
+              <IconCheck size={18} />
+              <p>{finished} ta kitob to'liq o'qildi. Yangi kitob qo'shish uchun <Link to="/kutubxona">kutubxonaga</Link> o'ting.</p>
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </section>
+      {toastNode}
+    </div>
   )
 }

@@ -6,6 +6,7 @@ import { useApp } from '../store/AppStore'
 import { Cover, EmptyState, ProgressBar, Ring, Stat } from '../components/ui'
 import {
   IconArrowRight,
+  IconBookOpen,
   IconCheck,
   IconChevronRight,
   IconClock,
@@ -147,24 +148,27 @@ export default function Dashboard() {
   return (
     <>
       <div className="hero">
-        <div style={{ minWidth: 0 }}>
-          <h1>
-            Salom, {profile.name || "o'quvchi"} {profile.avatar}
-          </h1>
-          <p>
-            {due
-              ? `Bugun uchun ${due} ta takrorlash savoli tayyor — 2-5 daqiqa yetarli.`
-              : "Bugun takrorlash yo'q. Kitobni o'qishni davom ettiring yoki qoidani hayotda qo'llang."}
-          </p>
-          <div className="row wrap mt">
-            <span className="chip chip-amber">
-              <IconFlame size={14} /> {profile.streak} kunlik streak
-            </span>
-            <span className="chip chip-green">{chaptersRead} ta bob o'qildi</span>
-            <span className="chip chip-primary">
-              {quizPct !== null ? `Quiz ${quizPct}%` : 'Quiz boshlanmagan'}
-            </span>
+        <div className="profile-col">
+          <span className="big-avatar">{profile.avatar}</span>
+          <div className="info" style={{ minWidth: 0 }}>
+            <h1>
+              Salom, {profile.name || "o'quvchi"} {profile.avatar}
+            </h1>
+            <small style={{ display: 'block', marginTop: 2 }}>
+              {due
+                ? `Bugun uchun ${due} ta takrorlash savoli tayyor — 2-5 daqiqa yetarli.`
+                : "Bugun takrorlash yo'q. Kitobni o'qishni davom ettiring yoki qoidani hayotda qo'llang."}
+            </small>
           </div>
+        </div>
+        <div className="row wrap mt" style={{ marginTop: 0 }}>
+          <span className="chip chip-amber">
+            <IconFlame size={14} /> {profile.streak} kunlik streak
+          </span>
+          <span className="chip chip-green">{chaptersRead} ta bob o'qildi</span>
+          <span className="chip chip-primary">
+            {quizPct !== null ? `Quiz ${quizPct}%` : 'Quiz boshlanmagan'}
+          </span>
         </div>
         <div className="hero-goal">
           <Ring
@@ -192,7 +196,7 @@ export default function Dashboard() {
           {/* ---- Yuqori qator: reja · amallar · ko'rsatkichlar ---- */}
           <div className="grid grid-fit">
             <div className="card">
-              <div className="card-title">
+              <div className="section-head">
                 <h3>Bugungi reja</h3>
                 <span className={`chip ${todoDone === todos.length ? 'chip-green' : 'chip-primary'}`}>
                   {todoDone}/{todos.length} bajarildi
@@ -215,7 +219,7 @@ export default function Dashboard() {
             </div>
 
             <div className="card">
-              <div className="card-title">
+              <div className="section-head">
                 <h3>Tezkor amallar</h3>
               </div>
               <div className="qactions">
@@ -230,17 +234,21 @@ export default function Dashboard() {
             </div>
 
             <div className="card">
-              <div className="card-title">
+              <div className="section-head">
                 <h3>Umumiy ko'rsatkichlar</h3>
                 <Link to="/natijalar" className="chip">
                   Batafsil <IconChevronRight size={12} />
                 </Link>
               </div>
               <div className="grid grid-2">
-                <Stat value={library.length} label="kitob" />
-                <Stat value={chaptersRead} label="bob o'qildi" />
-                <Stat value={quizPct !== null ? `${quizPct}%` : '—'} label="quiz o'rtachasi" />
-                <Stat value={applyLog.length} label="qo'llanma" />
+                <Stat value={library.length} label="kitob" icon={<IconLibrary size={18} />} />
+                <Stat value={chaptersRead} label="bob o'qildi" icon={<IconBookOpen size={18} />} />
+                <Stat
+                  value={quizPct !== null ? `${quizPct}%` : '—'}
+                  label="quiz o'rtachasi"
+                  icon={<IconTarget size={18} />}
+                />
+                <Stat value={applyLog.length} label="qo'llanma" icon={<IconCheck size={18} />} />
               </div>
             </div>
           </div>
@@ -250,7 +258,7 @@ export default function Dashboard() {
             <div className="stack" style={{ gap: 16 }}>
               {current && (
                 <div className="card">
-                  <div className="card-title">
+                  <div className="section-head">
                     <span className="chip chip-primary">Davom ettirish</span>
                     <span className="chip">{current.progress.percent}%</span>
                   </div>
@@ -280,13 +288,13 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <div className="card">
-                <div className="card-title">
-                  <h3>Bugungi vaziyat</h3>
-                  <span className={`chip ${todayScenario ? 'chip-amber' : 'chip-green'}`}>
-                    {todayScenario ? 'sinab ko\'ring' : 'bajarildi'}
-                  </span>
-                </div>
+                <div className="card">
+                  <div className="section-head">
+                    <h3>Bugungi vaziyat</h3>
+                    <span className={`chip ${todayScenario ? 'chip-amber' : 'chip-green'}`}>
+                      {todayScenario ? 'sinab ko\'ring' : 'bajarildi'}
+                    </span>
+                  </div>
                 {todayScenario ? (
                   <div className="stack">
                     <p className="situation" style={{ fontSize: 15, lineHeight: 1.6 }}>
@@ -322,13 +330,13 @@ export default function Dashboard() {
                 )}
               </div>
 
-              <div className="card">
-                <div className="card-title">
-                  <h3>Kutubxonam</h3>
-                  <Link to="/kutubxona" className="chip">
-                    Barchasi <IconChevronRight size={12} />
-                  </Link>
-                </div>
+                <div className="card">
+                  <div className="section-head">
+                    <h3>Kutubxonam</h3>
+                    <Link to="/kutubxona" className="chip">
+                      Barchasi <IconChevronRight size={12} />
+                    </Link>
+                  </div>
                 <div className="stack" style={{ gap: 8 }}>
                   {library.slice(0, 5).map((b) => (
                     <Link key={b.meta.slug} to={`/kitob/${b.meta.slug}`} className="book-row">
@@ -354,7 +362,7 @@ export default function Dashboard() {
 
             <div className="stack" style={{ gap: 16 }}>
               <div className="card">
-                <div className="card-title">
+                <div className="section-head">
                   <h3>AI holati</h3>
                   <span className={`chip ${aiReady ? 'chip-green' : 'chip-red'}`}>
                     {aiReady ? 'tayyor' : 'sozlanmagan'}
@@ -392,7 +400,7 @@ export default function Dashboard() {
               </div>
 
               <div className="card">
-                <div className="card-title">
+                <div className="section-head">
                   <h3>Oxirgi faoliyat</h3>
                   <span className="chip">
                     <IconClock size={12} /> {applyLog.length} ta jami
@@ -406,7 +414,7 @@ export default function Dashboard() {
                         .flatMap((c) => c.keyIdeas)
                         .find((i) => i.id === e.ideaId)
                       return (
-                        <div key={e.id} className="book-row" style={{ cursor: 'default' }}>
+                        <div key={e.id} className="book-row journal" style={{ cursor: 'default' }}>
                           <span
                             className="t-icon green"
                             style={{

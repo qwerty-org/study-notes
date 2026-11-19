@@ -12,5 +12,9 @@
     "dev": "npm run dev --workspace @study-notes/desktop",
     "build": "npm run build --workspace @study-notes/desktop",
     "preview": "npm run preview --workspace @study-notes/desktop"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0"
   }
 }

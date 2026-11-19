@@ -1,54 +1,82 @@
-import { useRef, useState } from 'react'
-import { PROVIDERS, complete } from '@study-notes/ai'
-import { store, type AIProvider, type Profile } from '@study-notes/core'
+import { useRef, useState, type ChangeEvent } from 'react'
+import { useLocation } from 'react-router-dom'
+import { store, type AIProvider } from '@study-notes/core'
+import { complete, PROVIDERS, providerInfo } from '@study-notes/ai'
 import { useApp } from '../store/AppStore'
-import { PageHead } from '../components/ui'
+import { ConfirmModal, useToast } from '../components/nx/NxUI'
+import { localDay } from '../lib/nxDate'
 import {
+  IconBookOpen,
+  IconCheck,
   IconDownload,
+  IconFlame,
+  IconGlobe,
   IconLock,
-  IconSparkles,
-  IconTarget,
+  IconSliders,
   IconTrash,
   IconUpload,
   IconUser,
 } from '../components/icons'
+import { IconEye, IconEyeOff, IconInfo, IconMoon, IconRefresh, IconSun } from '../components/nx/icons'
 
-const AVATARS = ['🦊', '🐨', '🦉', '🐳', '🐱', '🐼', '🦁', '🤖']
+type Section = 'profile' | 'ai' | 'data' | 'about'
 
-/** Sozlamalar — to'liq kenglik, professional bloklar (AI · Profil · Ma'lumotlar · Haqida) */
+const AVATARS = ['🦊', '🐻', '🦉', '🐼', '🐨', '🦁', '🐯', '🐰']
+
+const SECTIONS: { key: Section; label: string; hint: string }[] = [
+  { key: 'profile', label: 'Profil va ko‘rinish', hint: 'Ism, mavzu, til' },
+  { key: 'ai', label: 'AI ulash', hint: 'Provayder va kalit' },
+  { key: 'data', label: 'Ma\'lumotlar', hint: 'Eksport, import' },
+  { key: 'about', label: 'Dastur haqida', hint: 'Versiya, litsenziya' },
+]
+
 export default function Settings() {
   const { ai, updateAI, profile, updateProfile, onboarding, setOnboarding } = useApp()
-
-  const [provider, setProvider] = useState<AIProvider>(ai.provider)
-  const [apiKey, setApiKey] = useState(ai.apiKey)
-  const [model, setModel] = useState(ai.model ?? '')
-  const [savedAI, setSavedAI] = useState(false)
+  const location = useLocation()
+  const [section, setSection] = useState<Section>('profile')
+  const [keyVisible, setKeyVisible] = useState(false)
+  const [keyDraft, setKeyDraft] = useState(ai.apiKey)
+  const [modelDraft, setModelDraft] = useState(ai.model ?? '')
   const [testing, setTesting] = useState(false)
-  const [testMsg, setTestMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [testOk, setTestOk] = useState(false)
+  const [testError, setTestError] = useState('')
+  const [clearOpen, setClearOpen] = useState(false)
+  const [dataMsg, setDataMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+  const { show, toast: toastNode } = useToast()
 
-  const importRef = useRef<HTMLInputElement>(null)
-  const [dataMsg, setDataMsg] = useState('')
-
-  const info = PROVIDERS.find((p) => p.id === provider)!
+  const reason = (location.state as { reason?: string } | null)?.reason
+  const provider = providerInfo(ai.provider)
+  const status = testOk ? 'Ulanish tekshirildi' : ai.apiKey.trim() || ai.provider === 'ollama' ? 'Sozlangan' : 'Sozlanmagan'
 
   const saveAI = () => {
-    updateAI({ provider, apiKey: apiKey.trim(), model: model.trim() })
-    setSavedAI(true)
-    setTimeout(() => setSavedAI(false), 2000)
+    updateAI({ provider: ai.provider, apiKey: keyDraft.trim(), model: modelDraft.trim() })
+    setTestOk(false)
+    setTestError('')
+    show('AI sozlamalari saqlandi')
   }
 
-  const test = async () => {
+  const testConnection = async () => {
     setTesting(true)
-    setTestMsg(null)
+    setTestError('')
+    setTestOk(false)
     try {
       await complete(
-        { provider, apiKey: apiKey.trim(), model: model.trim() },
-        "Sen yordamchisan. Javobda faqat OK so'zini yoz.",
+        { provider: ai.provider, apiKey: keyDraft.trim(), model: modelDraft.trim() },
+        'Faqat "OK" deb javob ber.',
         'Test',
       )
-      setTestMsg({ ok: true, text: 'Muvaffaqiyatli ulandi' })
+      setTestOk(true)
+      show('Ulanish muvaffaqiyatli')
     } catch (e) {
-      setTestMsg({ ok: false, text: (e as Error).message.slice(0, 300) })
+      const m = (e as Error).message
+      setTestError(
+        m.toLowerCase().includes('kalit')
+          ? 'API kaliti yaroqsiz yoki kiritilmagan.'
+          : m.toLowerCase().includes('ollama')
+            ? 'Ollama ishlamayapti. U o‘rnatilgani va ishlab turganini tekshiring.'
+            : 'Ulanib bo‘lmadi. Kalitni va internet ulanishini tekshiring.',
+      )
     } finally {
       setTesting(false)
     }
@@ -56,256 +84,272 @@ export default function Settings() {
 
   const exportData = () => {
     const blob = new Blob([store.exportAll()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `study-notes-${new Date().toISOString().slice(0, 10)}.json`
+    a.href = url
+    a.download = `study-notes-${localDay()}.json`
     a.click()
-    URL.revokeObjectURL(a.href)
-    setDataMsg('Eksport yuklab olindi')
-    setTimeout(() => setDataMsg(''), 3000)
+    URL.revokeObjectURL(url)
+    setDataMsg({ ok: true, text: 'Ma\'lumotlar fayli yuklab olindi.' })
   }
 
-  const importData = async (file: File | undefined) => {
+  const importData = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
     if (!file) return
-    const ok = store.importAll(await file.text())
-    if (ok) location.reload()
-    else {
-      setDataMsg("Fayl noto'g'ri — study-notes eksporti bo'lishi kerak")
-      setTimeout(() => setDataMsg(''), 4000)
+    try {
+      const ok = store.importAll(await file.text())
+      setDataMsg(
+        ok
+          ? { ok: true, text: 'Ma\'lumotlar tiklandi. Ilova qayta ishga tushiriladi…' }
+          : { ok: false, text: 'Bu fayl Study Notes eksporti emas.' },
+      )
+      if (ok) window.setTimeout(() => window.location.reload(), 900)
+    } catch {
+      setDataMsg({ ok: false, text: 'Fayl o‘qib bo‘lmadi.' })
     }
+    e.target.value = ''
   }
-
-  const patchProfile = (patch: Partial<Profile>) => updateProfile(patch)
 
   return (
-    <>
-      <PageHead title="Sozlamalar" sub="Hammasi shu kompyuteringizda saqlanadi" />
-
-      <div className="split">
-        {/* ================= Chap ustun ================= */}
-        <div className="stack" style={{ gap: 16 }}>
-          {/* AI ulash */}
-          <div className="card">
-            <div className="card-title">
-              <h3>
-                <IconSparkles size={17} style={{ verticalAlign: '-3px', marginRight: 7 }} />
-                AI ulash
-              </h3>
-              <span className={`chip ${testMsg?.ok ? 'chip-green' : ''}`}>
-                {ai.apiKey || ai.provider === 'ollama' ? 'ulangan' : 'ulalmagan'}
-              </span>
-            </div>
-
-            <div className="provider-pick">
-              {PROVIDERS.map((p) => (
-                <label key={p.id} className={`provider${provider === p.id ? ' on' : ''}`}>
-                  <input
-                    type="radio"
-                    name="ai-provider"
-                    checked={provider === p.id}
-                    onChange={() => setProvider(p.id)}
-                  />
-                  <span className="grow">
-                    <b>
-                      {p.name}
-                      {p.id === 'gemini' && ' · tavsiya'}
-                    </b>
-                    <small>{p.freeHint}</small>
-                  </span>
-                </label>
-              ))}
-            </div>
-
-            {info.needsKey && (
-              <>
-                <label className="label mt">API kalit</label>
-                <div className="row">
-                  <input
-                    className="input grow"
-                    type="password"
-                    placeholder="kalit..."
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                  />
-                  {info.keyUrl && (
-                    <a className="btn" href={info.keyUrl} target="_blank" rel="noreferrer">
-                      Olish
-                    </a>
-                  )}
-                </div>
-                <label className="label mt">
-                  Model (bo'sh = {info.defaultModel})
-                </label>
-                <input
-                  className="input"
-                  placeholder={info.defaultModel}
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                />
-              </>
-            )}
-
-            <div className="row wrap mt">
-              <button className="btn btn-primary" style={{ flex: '1 1 160px' }} onClick={saveAI}>
-                {savedAI ? 'Saqlandi ✓' : 'Saqlash'}
-              </button>
-              <button
-                className="btn"
-                style={{ flex: '1 1 160px' }}
-                onClick={test}
-                disabled={testing}
-              >
-                {testing ? 'Tekshirilmoqda...' : 'Ulanishni tekshirish'}
-              </button>
-            </div>
-
-            {testMsg && <div className={`explain mt ${testMsg.ok ? 'ok' : 'bad'}`}>{testMsg.text}</div>}
-            <div className="hint row" style={{ alignItems: 'flex-start', marginTop: 12 }}>
-              <IconLock size={15} style={{ flexShrink: 0, marginTop: 2 }} />
-              <span>
-                Kalit faqat shu qurilmada saqlanadi — faqat tanlangan AI provayderiga to'g'ridan-to'g'ri
-                so'rov ketadi.
-              </span>
-            </div>
-          </div>
-
-          {/* Ma'lumotlar */}
-          <div className="card">
-            <div className="card-title">
-              <h3>
-                <IconLock size={17} style={{ verticalAlign: '-3px', marginRight: 7 }} />
-                Ma'lumotlar
-              </h3>
-              <span className="chip chip-green">
-                <IconLock size={13} /> lokal
-              </span>
-            </div>
-            <p className="hint" style={{ marginTop: 0 }}>
-              Kutubxona, progress va eslatmalar shu kompyuteringizda turadi. Eksport orqali nusxalash
-              mumkin.
-            </p>
-            <div className="row wrap">
-              <button className="btn" style={{ flex: '1 1 150px' }} onClick={exportData}>
-                <IconDownload size={17} /> Eksport (JSON)
-              </button>
-              <button
-                className="btn"
-                style={{ flex: '1 1 150px' }}
-                onClick={() => importRef.current?.click()}
-              >
-                <IconUpload size={17} /> Import
-              </button>
-              <input
-                ref={importRef}
-                type="file"
-                accept=".json"
-                hidden
-                onChange={(e) => importData(e.target.files?.[0])}
-              />
-              <button
-                className="btn btn-danger"
-                style={{ flex: '1 1 100%' }}
-                onClick={() => {
-                  if (confirm("Barcha ma'lumotlar o'chirilsinmi? Bu qaytarib bo'lmaydi.")) {
-                    store.clearAll()
-                    location.reload()
-                  }
-                }}
-              >
-                <IconTrash size={17} /> Hammasini o'chirish
-              </button>
-            </div>
-            {dataMsg && <div className="explain ok mt">{dataMsg}</div>}
-          </div>
+    <div className="nx-page nx-page--wide nx-settings">
+      <header className="nx-head">
+        <div>
+          <span className="nx-eyebrow">Shaxsiy sozlamalar</span>
+          <h1 className="nx-title">Sozlamalar</h1>
+          <p className="nx-subtitle">Hammasi shu kompyuteringizda saqlanadi — server va hisob kerak emas.</p>
         </div>
+      </header>
 
-        {/* ================= O'ng ustun ================= */}
-        <div className="stack" style={{ gap: 16 }}>
-          {/* Profil */}
-          <div className="card">
-            <div className="card-title">
-              <h3>
-                <IconUser size={17} style={{ verticalAlign: '-3px', marginRight: 7 }} />
-                Profil va ko'rinish
-              </h3>
-              <span className="chip">
-                {profile.avatar} {profile.name || "o'quvchi"}
-              </span>
-            </div>
-            <label className="label">Ism</label>
-            <input
-              className="input"
-              value={profile.name}
-              maxLength={30}
-              placeholder="Ismingiz"
-              onChange={(e) => patchProfile({ name: e.target.value })}
-            />
+      {reason && (
+        <div className="nx-settings-notice">
+          <IconInfo size={18} /> {reason}
+        </div>
+      )}
 
-            <label className="label mt">Avatar</label>
-            <div className="avatar-pick">
-              {AVATARS.map((a) => (
-                <button
-                  key={a}
-                  className={`avatar${profile.avatar === a ? ' on' : ''}`}
-                  onClick={() => patchProfile({ avatar: a })}
-                >
-                  {a}
-                </button>
-              ))}
-            </div>
-
-            <label className="label mt">Mavzu</label>
-            <div className="mini-seg" style={{ width: 'fit-content' }}>
-              <button
-                className={profile.theme === 'light' ? 'on' : ''}
-                onClick={() => patchProfile({ theme: 'light' })}
-              >
-                Kunduzi
-              </button>
-              <button
-                className={profile.theme === 'dark' ? 'on' : ''}
-                onClick={() => patchProfile({ theme: 'dark' })}
-              >
-                Tungi
-              </button>
-            </div>
-
+      <div className="nx-settings-layout">
+        <nav className="nx-settings-nav" aria-label="Sozlamalar bo'limlari">
+          {SECTIONS.map((s) => (
             <button
-              className="btn btn-ghost btn-block mt"
-              onClick={() => {
-                setOnboarding({ step: 0, done: false })
-                location.hash = '#/onboarding'
-              }}
+              key={s.key}
+              className={`nx-settings-nav__item${section === s.key ? ' is-active' : ''}`}
+              onClick={() => setSection(s.key)}
+              aria-current={section === s.key ? 'page' : undefined}
             >
-              O'rnatish sehrgarini qayta ishga tushirish
+              <b>{s.label}</b>
+              <small>{s.hint}</small>
             </button>
-          </div>
+          ))}
+          <div className="nx-settings-nav__foot"><IconLock size={14} /> Ma'lumotlar faqat lokal</div>
+        </nav>
 
-          {/* Dastur haqida */}
-          <div className="card">
-            <div className="card-title">
-              <h3>
-                <IconTarget size={17} style={{ verticalAlign: '-3px', marginRight: 7 }} />
-                Study Notes haqida
-              </h3>
-              <span className="chip chip-primary">v0.1.0</span>
-            </div>
-            <p className="hint" style={{ marginTop: 0 }}>
-              Bosqich 1 · Open source (MIT) · Lokal dastur — server yo'q, ma'lumot kompyuterdan
-              chiqmaydi.
-            </p>
-            <div className="row wrap">
-              <span className="chip">hujjatlar: docs/</span>
-              <span className="chip">AI qoidalari: agent-rules/</span>
-              <span className="chip chip-primary">o'zbek tilida</span>
-            </div>
-            <p className="hint">
-              PDF/EPUB import, AI ustoz, sync va onlayn kutubxona — keyingi bosqichlar
-              (docs/02-roadmap.md).
-            </p>
-          </div>
+        <div className="nx-settings-content">
+          {section === 'profile' && (
+            <section className="nx-panel">
+              <div className="nx-panel__head"><b className="nx-h3">Profil va ko'rinish</b><IconUser size={17} /></div>
+              <div className="nx-panel__body nx-stack" style={{ gap: 22 }}>
+                <div className="nx-field">
+                  <label className="nx-label" htmlFor="set-name">Ismingiz</label>
+                  <input id="set-name" className="nx-input" value={profile.name}
+                    placeholder="Masalan, Aziz" onChange={(e) => updateProfile({ name: e.target.value })} />
+                  <span className="nx-hint">Parol yoki hisob kerak emas.</span>
+                </div>
+
+                <div className="nx-field">
+                  <span className="nx-label">Avatar</span>
+                  <div className="nx-avatar-picks">
+                    {AVATARS.map((a) => (
+                      <button key={a} className={`nx-avatar-pick${profile.avatar === a ? ' is-active' : ''}`}
+                        onClick={() => updateProfile({ avatar: a })} aria-label={`Avatar ${a}`} aria-pressed={profile.avatar === a}>
+                        {a}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="nx-setting-row">
+                  <div>
+                    <b>Ko'rinish</b>
+                    <p className="nx-hint">Kechqurun o'qish uchun tungi rejim qulay.</p>
+                  </div>
+                  <div className="nx-segmented">
+                    <button aria-pressed={profile.theme === 'light'} onClick={() => updateProfile({ theme: 'light' })}>
+                      <IconSun size={14} /> Kunduzi
+                    </button>
+                    <button aria-pressed={profile.theme === 'dark'} onClick={() => updateProfile({ theme: 'dark' })}>
+                      <IconMoon size={14} /> Tungi
+                    </button>
+                  </div>
+                </div>
+
+                <div className="nx-setting-row nx-setting-row--muted">
+                  <div>
+                    <b>Interfeys tili</b>
+                    <p className="nx-hint">Hozircha faqat o'zbekcha. Boshqa tillar keyingi bosqichda.</p>
+                  </div>
+                  <span className="nx-chip nx-chip--outline"><IconGlobe size={13} /> O'zbek</span>
+                </div>
+
+                <div className="nx-setting-row nx-setting-row--muted">
+                  <div>
+                    <b>Takrorlash eslatmasi</b>
+                    <p className="nx-hint">Eslatmalar keyingi bosqichda qo'shiladi.</p>
+                  </div>
+                  <span className="nx-chip nx-chip--outline">20:00 · tez orada</span>
+                </div>
+
+                <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={() => {
+                  setOnboarding({ step: 0, done: false })
+                  window.location.hash = '#/onboarding'
+                }}>
+                  <IconRefresh size={14} /> Boshlang'ich sozlamalarni qayta ko'rish
+                </button>
+              </div>
+            </section>
+          )}
+
+          {section === 'ai' && (
+            <section className="nx-panel">
+              <div className="nx-panel__head">
+                <b className="nx-h3">AI ulash</b>
+                <span className={`nx-chip ${testOk ? 'nx-chip--success' : ai.apiKey || ai.provider === 'ollama' ? 'nx-chip--accent' : ''}`}>
+                  {testOk && <IconCheck size={11} />} {status}
+                </span>
+              </div>
+              <div className="nx-panel__body nx-stack" style={{ gap: 22 }}>
+                <div className="nx-field">
+                  <span className="nx-label">Provayder</span>
+                  <div className="nx-provider-grid">
+                    {PROVIDERS.map((p) => (
+                      <button
+                        key={p.id}
+                        className={`nx-provider${ai.provider === p.id ? ' is-active' : ''}`}
+                        onClick={() => {
+                          updateAI({ provider: p.id as AIProvider, apiKey: keyDraft, model: '' })
+                          setModelDraft('')
+                          setTestOk(false)
+                        }}
+                      >
+                        <b>{p.name}</b>
+                        <small>{p.freeHint}</small>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {provider.needsKey && (
+                  <div className="nx-field">
+                    <label className="nx-label" htmlFor="set-key">API kalit</label>
+                    <div className="nx-key-wrap">
+                      <input id="set-key" className="nx-input" type={keyVisible ? 'text' : 'password'}
+                        value={keyDraft} placeholder="AI Studio yoki platforma kaliti"
+                        onChange={(e) => { setKeyDraft(e.target.value); setTestOk(false) }} />
+                      <button className="nx-icon-btn" onClick={() => setKeyVisible((v) => !v)}
+                        aria-label={keyVisible ? 'Kalitni yashirish' : 'Kalitni ko‘rsatish'}>
+                        {keyVisible ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                      </button>
+                    </div>
+                    <span className="nx-hint">
+                      Kalit faqat shu qurilmada saqlanadi.{' '}
+                      {provider.keyUrl && <a href={provider.keyUrl} target="_blank" rel="noreferrer">Kalitni qayerdan olish?</a>}
+                    </span>
+                  </div>
+                )}
+
+                <div className="nx-field">
+                  <label className="nx-label" htmlFor="set-model">Model <span className="nx-muted">(ixtiyoriy)</span></label>
+                  <input id="set-model" className="nx-input" value={modelDraft}
+                    placeholder={`Bo'sh qoldirsangiz: ${provider.defaultModel}`}
+                    onChange={(e) => setModelDraft(e.target.value)} />
+                </div>
+
+                {testError && <div className="nx-inline-error"><IconInfo size={15} /> {testError}</div>}
+
+                <div className="nx-row" style={{ gap: 9 }}>
+                  <button className="nx-btn nx-btn--primary" onClick={saveAI}>Saqlash</button>
+                  <button className="nx-btn nx-btn--ghost" onClick={() => void testConnection()} disabled={testing}>
+                    {testing ? 'Tekshirilmoqda…' : 'Ulanishni tekshirish'}
+                  </button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {section === 'data' && (
+            <section className="nx-panel">
+              <div className="nx-panel__head"><b className="nx-h3">Ma'lumotlar</b><IconSliders size={17} /></div>
+              <div className="nx-panel__body nx-stack" style={{ gap: 18 }}>
+                {dataMsg && (
+                  <div className={dataMsg.ok ? 'nx-inline-ok' : 'nx-inline-error'}>
+                    <IconInfo size={15} /> {dataMsg.text}
+                  </div>
+                )}
+                <div className="nx-data-row">
+                  <div className="nx-data-row__icon"><IconDownload size={19} /></div>
+                  <div style={{ flex: 1 }}>
+                    <b>Eksport qilish</b>
+                    <p className="nx-hint">Kitoblar, progress va jurnalni JSON faylga zaxiralash.</p>
+                  </div>
+                  <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={exportData}>Eksport</button>
+                </div>
+                <div className="nx-data-row">
+                  <div className="nx-data-row__icon"><IconUpload size={19} /></div>
+                  <div style={{ flex: 1 }}>
+                    <b>Import qilish</b>
+                    <p className="nx-hint">Avval eksport qilingan fayl bilan tiklash.</p>
+                  </div>
+                  <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={() => fileRef.current?.click()}>Import</button>
+                  <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void importData(e)} />
+                </div>
+                <div className="nx-data-row nx-data-row--danger">
+                  <div className="nx-data-row__icon"><IconTrash size={19} /></div>
+                  <div style={{ flex: 1 }}>
+                    <b>Hammasini o'chirish</b>
+                    <p className="nx-hint">Barcha kitoblar, tahlillar va jurnal o'chiriladi.</p>
+                  </div>
+                  <button className="nx-btn nx-btn--danger nx-btn--sm" onClick={() => setClearOpen(true)}>O'chirish</button>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {section === 'about' && (
+            <section className="nx-panel">
+              <div className="nx-panel__head"><b className="nx-h3">Dastur haqida</b><IconBookOpen size={17} /></div>
+              <div className="nx-panel__body">
+                <div className="nx-about">
+                  <span className="nx-about__mark"><IconBookOpen size={28} /></span>
+                  <h2 className="nx-title nx-title--sm">Study Notes</h2>
+                  <p className="nx-subtitle">
+                    Kitobni o'qish emas — tushunish va hayotda qo'llash uchun yaratilgan lokal dastur.
+                  </p>
+                </div>
+                <div className="nx-about-grid">
+                  <div><small>Versiya</small><b>v0.1.0 · Bosqich 1</b></div>
+                  <div><small>Litsenziya</small><b>MIT · ochiq kodli</b></div>
+                  <div><small>Ma'lumotlar</small><b>Faqat shu qurilmada</b></div>
+                  <div><small>AI</small><b>O'z kalitingiz yoki Ollama</b></div>
+                </div>
+                <p className="nx-hint" style={{ marginTop: 18, lineHeight: 1.7 }}>
+                  Keyingi bosqichlarda AI ustoz, PDF/EPUB import, onlayn kutubxona va ustozlar obunasi qo'shiladi.
+                  Asosiy dastur doim bepul bo'lib qoladi.
+                </p>
+              </div>
+            </section>
+          )}
         </div>
       </div>
-    </>
+
+      {clearOpen && (
+        <ConfirmModal
+          title="Barcha ma'lumotlarni o'chirish?"
+          text="Kitoblar, tahlillar, streak va qo'llash jurnali butunlay o'chiriladi. Avval eksport qilish tavsiya etiladi."
+          confirmLabel="Ha, o'chirish"
+          danger
+          onClose={() => setClearOpen(false)}
+          onConfirm={() => { store.clearAll(); window.location.reload() }}
+        />
+      )}
+      {toastNode}
+    </div>
   )
 }

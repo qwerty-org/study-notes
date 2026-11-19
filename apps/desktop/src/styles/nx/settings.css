@@ -1,0 +1,308 @@
+/* ============================================================
+   NX Settings — guruhlangan sozlamalar
+   ============================================================ */
+
+.nx-settings-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 13px 17px;
+  border: 1px solid color-mix(in srgb, var(--nx-warn) 35%, transparent);
+  border-radius: var(--nx-r);
+  background: var(--nx-warn-soft);
+  color: var(--nx-warn);
+  font-size: 12.5px;
+}
+
+.nx-settings-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.nx-settings-nav {
+  position: sticky;
+  top: calc(var(--topbar-h) + 18px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-r);
+  background: var(--nx-surface);
+  box-shadow: var(--nx-shadow);
+}
+
+.nx-settings-nav__item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 13px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--nx-muted);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.nx-settings-nav__item:hover {
+  background: var(--nx-surface-2);
+  color: var(--nx-ink);
+}
+
+.nx-settings-nav__item.is-active {
+  background: var(--nx-accent-soft);
+  color: var(--nx-accent);
+}
+
+.nx-settings-nav__item b {
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.nx-settings-nav__item small {
+  font-size: 10.5px;
+  color: var(--nx-muted);
+}
+
+.nx-settings-nav__foot {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 12px 13px 4px;
+  border-top: 1px solid var(--nx-line);
+  font-size: 10.5px;
+  color: var(--faint);
+}
+
+.nx-settings-content .nx-panel {
+  border-radius: var(--nx-r-lg);
+}
+
+.nx-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--nx-surface-2) 40%, transparent);
+}
+
+.nx-setting-row b {
+  font-size: 13px;
+}
+
+.nx-setting-row--muted {
+  opacity: 0.75;
+}
+
+.nx-avatar-picks {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nx-avatar-pick {
+  width: 46px;
+  height: 46px;
+  border: 2px solid transparent;
+  border-radius: 13px;
+  background: var(--nx-surface-2);
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.nx-avatar-pick:hover {
+  transform: translateY(-2px);
+  background: var(--nx-accent-soft);
+}
+
+.nx-avatar-pick.is-active {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-soft);
+  box-shadow: 0 4px 12px var(--nx-accent-soft);
+}
+
+/* ---------- AI ---------- */
+.nx-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.nx-provider {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px;
+  border: 1.5px solid var(--nx-line);
+  border-radius: 11px;
+  background: var(--nx-surface);
+  color: var(--nx-ink);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.nx-provider:hover {
+  border-color: var(--nx-accent);
+  transform: translateY(-2px);
+}
+
+.nx-provider.is-active {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-soft);
+}
+
+.nx-provider b {
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+.nx-provider small {
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--nx-muted);
+}
+
+.nx-key-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.nx-key-wrap .nx-input {
+  flex: 1;
+}
+
+.nx-inline-error,
+.nx-inline-ok {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-size: 12.5px;
+}
+
+.nx-inline-error {
+  background: var(--red-soft);
+  color: var(--red-dark);
+}
+
+.nx-inline-ok {
+  background: var(--nx-success-soft);
+  color: var(--nx-success);
+}
+
+/* ---------- Ma'lumotlar ---------- */
+.nx-data-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--nx-line);
+  border-radius: 11px;
+}
+
+.nx-data-row__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--nx-accent-soft);
+  color: var(--nx-accent);
+}
+
+.nx-data-row--danger .nx-data-row__icon {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.nx-data-row b {
+  font-size: 13px;
+}
+
+/* ---------- Haqida ---------- */
+.nx-about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 0 24px;
+}
+
+.nx-about__mark {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  margin-bottom: 14px;
+  border-radius: 18px;
+  background: var(--nx-accent);
+  color: #fff;
+  box-shadow: 0 10px 24px var(--nx-accent-soft);
+}
+
+.nx-about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.nx-about-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 16px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--nx-surface-2) 50%, transparent);
+}
+
+.nx-about-grid small {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--nx-muted);
+}
+
+.nx-about-grid b {
+  font-size: 12.5px;
+}
+
+@media (max-width: 900px) {
+  .nx-settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .nx-settings-nav {
+    position: relative;
+    top: 0;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .nx-settings-nav__item {
+    min-width: 150px;
+  }
+
+  .nx-settings-nav__foot {
+    display: none;
+  }
+
+  .nx-provider-grid {
+    grid-template-columns: 1fr;
+  }
+}

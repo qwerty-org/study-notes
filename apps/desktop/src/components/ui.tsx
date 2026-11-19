@@ -21,16 +21,20 @@ export function Cover({
   variant = 'grid',
 }: {
   title: string
-  variant?: 'grid' | 'sm' | 'inline'
+  variant?: 'grid' | 'sm' | 'inline' | 'lg'
 }) {
   const bg = GRADIENTS[hash(title) % GRADIENTS.length]
   const initial = (title.trim()[0] ?? '?').toUpperCase()
+  const cls =
+    variant === 'sm'
+      ? 'cover cover-sm'
+      : variant === 'inline'
+        ? 'cover cover-inline'
+        : variant === 'lg'
+          ? 'cover cover-lg'
+          : 'cover'
   return (
-    <div
-      className={variant === 'sm' ? 'cover cover-sm' : variant === 'inline' ? 'cover cover-inline' : 'cover'}
-      style={{ background: bg }}
-      aria-hidden
-    >
+    <div className={cls} style={{ background: bg }} aria-hidden>
       {initial}
     </div>
   )
@@ -66,9 +70,18 @@ export function EmptyState({
   )
 }
 
-export function Stat({ value, label }: { value: ReactNode; label: string }) {
+export function Stat({
+  value,
+  label,
+  icon,
+}: {
+  value: ReactNode
+  label: string
+  icon?: ReactNode
+}) {
   return (
     <div className="stat">
+      {icon && <span className="stat-head">{icon}</span>}
       <b>{value}</b>
       <span>{label}</span>
     </div>

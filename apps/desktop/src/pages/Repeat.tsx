@@ -2,21 +2,33 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { dueReviews, scheduleReview, touchActiveDay, type QuizItem } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
-import QuizRunner, { type QuizResult } from '../components/QuizRunner'
-import { EmptyState, PageHead, Stat } from '../components/ui'
+import QuizRunner, { type QuizResult } from '../components/nx/QuizRunner'
+import { Bar, Empty, Ring, useToast } from '../components/nx/NxUI'
+import { localDay, niceDate } from '../lib/nxDate'
 import {
   IconArrowRight,
+  IconBookOpen,
   IconCheck,
   IconClock,
   IconFlame,
   IconRepeat,
+  IconTarget,
 } from '../components/icons'
+import { IconCalendar, IconInfo } from '../components/nx/icons'
 
-/** Kunlik takrorlash (spaced repetition) — docs/06 §5 */
+interface DueEntry {
+  item: QuizItem
+  bookSlug: string
+  bookTitle: string
+  dueDate: string
+}
+
 export default function Repeat() {
   const { library, reviews, setReviews, updateBook, updateProfile, profile } = useApp()
   const [quizOn, setQuizOn] = useState(false)
   const [done, setDone] = useState<QuizResult | null>(null)
+  const [showAll, setShowAll] = useState(false)
+  const { show, toast: toastNode } = useToast()
 
   const quizMap = useMemo(() => {
     const m = new Map<string, { item: QuizItem; bookSlug: string; bookTitle: string }>()
@@ -29,12 +41,15 @@ export default function Repeat() {
   }, [library])
 
   const due = dueReviews(reviews)
-  const dueItems = due
-    .map((r) => quizMap.get(r.reviewId))
-    .filter((x): x is { item: QuizItem; bookSlug: string; bookTitle: string } => Boolean(x))
+  const dueItems: DueEntry[] = due
+    .map((r) => {
+      const found = quizMap.get(r.reviewId)
+      return found ? { ...found, dueDate: r.dueDate } : null
+    })
+    .filter((x): x is DueEntry => Boolean(x))
 
   const nextDue = reviews
-    .filter((r) => r.dueDate > new Date().toISOString().slice(0, 10))
+    .filter((r) => r.dueDate > localDay())
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0]
 
   const finish = (r: QuizResult) => {
@@ -43,7 +58,6 @@ export default function Repeat() {
       return d ? scheduleReview(rv, d.correct ? 4 : 1) : rv
     })
     setReviews(updated)
-
     for (const d of r.details) {
       const found = quizMap.get(d.id)
       if (!found) continue
@@ -56,177 +70,154 @@ export default function Repeat() {
         },
       }))
     }
-
     updateProfile(touchActiveDay(profile))
     setDone(r)
     setQuizOn(false)
+    show(`${r.correct}/${r.total} to'g'ri · keyingi takrorlash jadvali yangilandi`)
   }
 
   if (quizOn && dueItems.length) {
     return (
-      <>
-        <PageHead title="Takrorlash" sub="Unutmaslik uchun" />
-        <QuizRunner
-          items={dueItems.map((d) => d.item)}
-          finishLabel="Takrorlashni yakunlash"
-          onFinish={finish}
-          onExit={() => setQuizOn(false)}
-        />
-      </>
+      <QuizRunner
+        items={dueItems.map((d) => d.item)}
+        finishLabel="Natijani saqlash"
+        onFinish={finish}
+        onExit={() => setQuizOn(false)}
+      />
     )
   }
 
   const bookCount = new Set(dueItems.map((d) => d.bookSlug)).size
   const minutes = Math.max(1, Math.ceil(dueItems.length * 0.4))
+  const shown = showAll ? dueItems : dueItems.slice(0, 5)
 
   return (
-    <>
-      <PageHead
-        title="Takrorlash"
-        sub="1-3-7-14-30 kunlik jadval bilan mustahkamlang"
-        right={
-          <span className={`chip ${dueItems.length ? 'chip-primary' : 'chip-green'}`}>
-            {dueItems.length ? `${dueItems.length} ta bugun` : 'bugun bajarildi'}
-          </span>
-        }
-      />
+    <div className="nx-page nx-repeat">
+      <header className="nx-head">
+        <div>
+          <span className="nx-eyebrow">Kunlik odat</span>
+          <h1 className="nx-title">Takrorlash</h1>
+          <p className="nx-subtitle">
+            Savolga javob bering, sababini ko'ring — keyingi takrorlash vaqti avtomatik hisoblanadi.
+          </p>
+        </div>
+        {dueItems.length > 0 && (
+          <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => setQuizOn(true)}>
+            Sessiyani boshlash <IconArrowRight size={17} />
+          </button>
+        )}
+      </header>
 
       {done && (
-        <div className="card" style={{ borderColor: 'var(--primary)' }}>
-          <div className="row-between">
-            <div className="row">
-              <span
-                className="t-icon"
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  display: 'grid',
-                  placeItems: 'center',
-                  background: 'var(--primary-soft)',
-                  color: 'var(--primary-dark)',
-                  flexShrink: 0,
-                }}
-              >
-                <IconCheck size={19} strokeWidth={2.4} />
-              </span>
-              <div>
-                <h3>Takrorlash tugadi</h3>
-                <small>
-                  {done.correct}/{done.total} to'g'ri — jadval yangilandi.
-                </small>
-              </div>
-            </div>
-            <button className="btn btn-ghost btn-sm" onClick={() => setDone(null)}>
-              yopish
-            </button>
+        <div className="nx-repeat-result">
+          <span className="nx-repeat-result__icon"><IconCheck size={20} /></span>
+          <div style={{ flex: 1 }}>
+            <b>Takrorlash tugadi</b>
+            <p>{done.correct}/{done.total} to'g'ri javob · jadval yangilandi</p>
           </div>
+          <Link to="/natijalar" className="nx-btn nx-btn--ghost nx-btn--sm">Natijalarim</Link>
+          <button className="nx-icon-btn" onClick={() => setDone(null)} aria-label="Xabarni yopish">×</button>
         </div>
       )}
 
       {!dueItems.length ? (
-        <EmptyState
-          icon={<IconRepeat size={26} />}
+        <Empty
+          icon={<IconRepeat size={28} />}
           title="Bugun takrorlash yo'q"
           text={
             nextDue
-              ? `Keyingi takrorlash: ${nextDue.dueDate} — xotirangiz joyida.`
-              : "Tahlil qilingan kitoblar paydo bo'lgach, jadval avtomatik yaratiladi."
+              ? `Keyingi takrorlash: ${niceDate(nextDue.dueDate)}. Xotirangiz joyida — keyinroq qayting.`
+              : "Tahlil qilingan kitoblar paydo bo'lgach, takrorlash jadvali avtomatik yaratiladi."
           }
           action={
-            <Link to="/kutubxona" className="btn btn-primary mt">
-              Kutubxonani ko'rish
+            <Link to="/kutubxona" className="nx-btn nx-btn--primary">
+              <IconBookOpen size={16} /> Kutubxonani ko'rish
             </Link>
           }
         />
       ) : (
-        <div className="split">
-          <div className="stack" style={{ gap: 16 }}>
-            <div className="card" style={{ textAlign: 'center', padding: '30px 24px' }}>
-              <div className="empty" style={{ padding: '0 0 14px' }}>
-                <span className="icon">
-                  <IconRepeat size={26} />
-                </span>
-                <h3>Tayyormisiz?</h3>
-                <p>
-                  Savolga javob berasiz → sababni ko'rasiz → jadval avtomatik yangilanadi.
-                  Noto'g'ri javob — savol tezroq qaytadi.
-                </p>
+        <>
+          <section className="nx-repeat-main nx-grid nx-grid--2">
+            <div className="nx-session-card nx-card">
+              <div className="nx-session-card__ring">
+                <Ring value={Math.min(100, (dueItems.length / Math.max(1, reviews.length)) * 100)} size={92} label={String(dueItems.length)} />
+                <span>savol kutmoqda</span>
               </div>
-              <button className="btn btn-primary btn-lg" style={{ minWidth: 300 }} onClick={() => setQuizOn(true)}>
-                {dueItems.length} ta savolni boshlash <IconArrowRight size={18} />
-              </button>
+              <div className="nx-session-card__info">
+                <span className="nx-eyebrow">Bugungi sessiya</span>
+                <h2 className="nx-title nx-title--sm">
+                  {dueItems.length} savol · {bookCount} kitob
+                </h2>
+                <p className="nx-subtitle">
+                  Taxminiy {minutes} daqiqa. Savolga javob berganingizdan keyin jadval sizga moslashadi.
+                </p>
+                <div className="nx-row" style={{ gap: 7, flexWrap: 'wrap', marginTop: 14 }}>
+                  <span className="nx-chip nx-chip--warn"><IconClock size={13} /> ~{minutes} daq</span>
+                  <span className="nx-chip nx-chip--warn"><IconFlame size={13} /> {profile.streak} kun</span>
+                  <span className="nx-chip nx-chip--outline"><IconCalendar size={13} /> {niceDate(localDay())}</span>
+                </div>
+                <button className="nx-btn nx-btn--primary nx-btn--lg nx-session-card__cta" onClick={() => setQuizOn(true)}>
+                  Boshlash <IconArrowRight size={17} />
+                </button>
+              </div>
             </div>
 
-            <div className="card">
-              <div className="card-title">
-                <h3>Kutayotgan savollar</h3>
-                <span className="chip">{dueItems.length} ta</span>
+            <div className="nx-panel nx-queue">
+              <div className="nx-panel__head">
+                <div className="nx-row" style={{ gap: 9 }}>
+                  <IconTarget size={17} />
+                  <b>Navbatdagi savollar</b>
+                </div>
+                <span className="nx-chip nx-chip--accent">{dueItems.length} ta</span>
               </div>
-              <div className="stack" style={{ gap: 8 }}>
-                {dueItems.slice(0, 8).map(({ item, bookTitle }) => (
-                  <div key={item.id} className="book-row" style={{ cursor: 'default' }}>
-                    <span className="chip" style={{ flexShrink: 0 }}>
-                      {item.type === 'scenario' ? 'Vaziyat' : 'Nazariy'}
+              <div className="nx-panel__body nx-queue__list">
+                {shown.map((d) => (
+                  <div className="nx-queue__row" key={d.item.id}>
+                    <span className={`nx-chip ${d.item.type === 'scenario' ? 'nx-chip--accent' : ''}`}>
+                      {d.item.type === 'scenario' ? 'Vaziyat' : 'Nazariy'}
                     </span>
-                    <span className="b-body">
-                      <b style={{ fontSize: 13.5, fontWeight: 700 }}>{item.question.slice(0, 90)}…</b>
-                      <small>{bookTitle}</small>
-                    </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <b>{d.item.question}</b>
+                      <small>{d.bookTitle}</small>
+                    </div>
+                    {d.dueDate < localDay() && <span className="nx-chip nx-chip--warn">kechikkan</span>}
                   </div>
                 ))}
-                {dueItems.length > 8 && <small>… va yana {dueItems.length - 8} ta</small>}
+                {dueItems.length > 5 && (
+                  <button className="nx-btn nx-btn--ghost nx-btn--sm nx-queue__more" onClick={() => setShowAll((v) => !v)}>
+                    {showAll ? 'Qisqartirish' : `Yana ${dueItems.length - 5} ta savol`}
+                  </button>
+                )}
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="stack" style={{ gap: 16 }}>
-            <div className="card">
-              <div className="card-title">
-                <h3>Bugungi raqamlar</h3>
-              </div>
-              <div className="grid grid-2">
-                <Stat value={dueItems.length} label="savol kutmoqda" />
-                <Stat value={bookCount} label="kitob bo'yicha" />
-                <Stat value={profile.streak} label="kunlik streak" />
-                <Stat value={`${minutes} daq`} label="taxminiy vaqt" />
-              </div>
+          <section className="nx-schedule-info nx-card nx-card--pad">
+            <div className="nx-row" style={{ gap: 10, marginBottom: 12 }}>
+              <IconInfo size={17} />
+              <b className="nx-h3">Qanday ishlaydi?</b>
             </div>
-
-            <div className="card">
-              <div className="card-title">
-                <h3>Eslatma</h3>
-              </div>
-              <div className="stack" style={{ gap: 10 }}>
-                <div className="row" style={{ alignItems: 'flex-start', gap: 10 }}>
-                  <span
-                    style={{
-                      color: 'var(--yellow-dark)',
-                      flexShrink: 0,
-                      marginTop: 2,
-                    }}
-                  >
-                    <IconFlame size={18} />
-                  </span>
-                  <p className="hint" style={{ marginTop: 0 }}>
-                    Streak'ni saqlash uchun kuniga kamida bitta savolga javob bering.
-                  </p>
+            <p className="nx-subtitle" style={{ marginBottom: 16 }}>
+              To'g'ri javob — keyingi takrorlash uzoqlashadi, noto'g'ri javob — savol tezroq qaytadi.
+            </p>
+            <div className="nx-intervals">
+              {[1, 3, 7, 14, 30].map((n, i) => (
+                <div className="nx-intervals__step" key={n}>
+                  <span className="nx-intervals__dot nx-mono-num">{i + 1}</span>
+                  <b>{n} kun</b>
                 </div>
-                <div className="row" style={{ alignItems: 'flex-start', gap: 10 }}>
-                  <span style={{ color: 'var(--blue)', flexShrink: 0, marginTop: 2 }}>
-                    <IconClock size={18} />
-                  </span>
-                  <p className="hint" style={{ marginTop: 0 }}>
-                    {nextDue
-                      ? `Keyingi takrorlash: ${nextDue.dueDate} — jadval avtomatik rejalashtiriladi.`
-                      : 'Jadval savol javoblariga qarab avtomatik rejalashtiriladi.'}
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
-        </div>
+            <Bar value={Math.min(100, (dueItems.length / Math.max(1, reviews.length)) * 100)} className="nx-intervals__bar" />
+            <p className="nx-hint">
+              {nextDue
+                ? `Keyingi takrorlash: ${niceDate(nextDue.dueDate)}.`
+                : 'Jadval javob sifatiga qarab avtomatik rejalashtiriladi.'}
+            </p>
+          </section>
+        </>
       )}
-    </>
+      {toastNode}
+    </div>
   )
 }

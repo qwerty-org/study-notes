@@ -23,15 +23,15 @@ export default function App() {
       <HashRouter>
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/" element={<Layout />}>
-            <Route
-              index
-              element={
-                <Gate>
-                  <Dashboard />
-                </Gate>
-              }
-            />
+          <Route
+            path="/"
+            element={
+              <Gate>
+                <Layout />
+              </Gate>
+            }
+          >
+            <Route index element={<Dashboard />} />
             <Route path="kutubxona" element={<Library />} />
             <Route path="kitob/:slug" element={<Book />} />
             <Route path="takrorlash" element={<Repeat />} />

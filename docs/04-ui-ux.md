@@ -5,7 +5,14 @@
 Foydalanuvchi **dasturchi emas**. Hech qanday texnik savol yo'q.
 Har ekranda **bitta asosiy harakat** aniq ko'rinadi.
 
-## Navigatsiya — chap tomonda sidebar
+## Navigatsiya — yuqori panel (2026-11)
+
+> **Eslatma:** Quyidagi chap sidebar chizmasi tarixiy maqsadlarda qoldirildi.
+> Amalda **yuqori panel** qo'llaniladi: `Bosh sahifa · Kutubxona · Takrorlash · Natijalar · Sozlamalar`.
+> `/kitob/:slug` uchun **Kutubxona**, `/sozlamalar` uchun **Sozlamalar** faol ko'rinadi.
+> Deraza tugmalari faqat desktop qobig'ida faol (preview'da `disabled`).
+
+### Arxiv: dastlabki sidebar taklifi
 
 ```
 ┌──────┬──────────────────────────────────────┐
@@ -226,14 +233,16 @@ Har ekranda **bitta asosiy harakat** aniq ko'rinadi.
 6. **Bo'sh holatlar ham chiroyli** — empty state har doim keyingi qadamni ko'rsatadi
 7. **Progress har doim ko'rinadi** — % yoki bob raqami (motivatsiya)
 
-## Ranglar (taxminiy, keyin aniqlashtiramiz)
+## Ranglar — "Iliq qog'oz stoli" (2026-11, amalga oshirilgan)
 
 ```
-Asosiy:    indigo/ko'k (#4F46E5) — ishonch, bilim
-Aksent:    yashil (#10B981) — muvaffaqiyat, "to'g'ri javob"
-Ogohlant.: sariq/orange — streak 🔥, eslatma
-Xato:      qizil (#EF4444) — "noto'g'ri javob"
-Tungi:     #0F172A fon, #1E293B kartochkalar
+Asosiy:    terrakota #B4542D — asosiy harakatlar, progress, faol tab
+Ikkilamchi: ko'k-yashil #3D6D61 — tinch holatlar
+Muvaffaqiyat: #4C7B5B · Ogohlantirish: #BA842C · Xato: #B5473D
+Yorug' fon: #F5F2EA (qog'oz + donador tekstura) · karta: #FFFDF8
+Tungi fon:  #16140F · karta: #201D17 · asosiy: #E08B5C
+Display:   Fraunces Variable (sarlavha, kitob matni, raqamlar)
+UI:        Manrope Variable (label, tugma, izoh)
 ```
 
 ## Skeleton ekranlar (loading)
@@ -241,3 +250,27 @@ Tungi:     #0F172A fon, #1E293B kartochkalar
 - Tahlil vaqtida: **bob bob progress** ("4/12 bob tahlil qilindi...")
   — foydalanuvchi kutayotganini ko'radi, zerikmaydi
 - Skeleton shimmer — har bir yuklanish ekrani uchun
+
+---
+
+## Amalga oshirilgan holat (2026-11)
+
+Dashboard tuzilmasi o'zgarishsiz qoldirildi. Qolgan barcha bo'limlar yangi
+"Iliq qog'oz stoli" dizayn tizimida qayta qurildi:
+
+| Bo'lim | Yangi tuzilma |
+|--------|---------------|
+| Onboarding | 2 ustunli kirish ekrani, 3 label'li bosqich, birinchi kitobni qo'shish |
+| Kutubxona | Statistika, ko'p fayl import (drag & drop), qidiruv/filtr, panel/ro'yxat ko'rinishi |
+| Kitob | Yig'ich hero, 6 tab, fokusli o'qish stoli (Aa, sahifa, boblar), g'oya/termin/vaziyat modularlari |
+| Quiz | To'liq ekranli sessiya, klaviatura (1–4, Enter, Esc), sabablar va zaif mavzular tahlili |
+| Takrorlash | Sessiya karti, navbat ro'yxati, interval jadvali vizualizatsiyasi |
+| Natijalar | 7 kunlik faollik grafigi, badge'lar, "qo'lladim" jurnali (birinchi o'rinda) |
+| Sozlamalar | Guruhlangan ikki ustunli tuzilma, in-app tasdiqlash modali, ulanishni tekshirish |
+
+**Hali yo'q (Bosqich 2+):** AI ustoz chat (tab o'chirilgan, "tez orada" belgisi),
+PDF/EPUB konvertatsiya, FSRS, til tanlagich va eslatma vaqti.
+
+**Tuzatilgan muhim xatolar:** UTC sana o'rniga mahalliy sana; g'oya va vaziyat
+belgilarining aralashib ketishi (`kind`/`refId` bilan ajratildi); dropzone'da
+klaviatura; native `confirm()` o'rniga modal; xom API xatolari o'rniga tushunarli xabar.
