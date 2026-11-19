@@ -92,8 +92,60 @@
 
 .nx-book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 20px;
+}
+
+@media (min-width: 1700px) {
+  .nx-book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  }
+}
+
+.nx-book-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 320px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--nx-r-lg);
+  background: color-mix(in srgb, var(--nx-surface) 55%, transparent);
+  color: var(--nx-muted);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nx-book-add:hover {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-soft);
+  color: var(--nx-accent);
+}
+
+.nx-book-add__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--nx-surface-2);
+}
+
+.nx-book-add:hover .nx-book-add__icon {
+  background: var(--nx-accent);
+  color: #fff;
+}
+
+.nx-book-add b {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.nx-book-add small {
+  font-size: 11px;
 }
 
 .nx-book-card {

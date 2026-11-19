@@ -85,6 +85,12 @@
   border-radius: var(--nx-r-lg);
 }
 
+/* Formlar butun panelga cho'zilmasin — o'qish qulayligi uchun */
+.nx-settings-content .nx-input,
+.nx-settings-content .nx-key-wrap {
+  max-width: 520px;
+}
+
 .nx-setting-row {
   display: flex;
   align-items: center;

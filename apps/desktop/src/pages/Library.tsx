@@ -75,7 +75,7 @@ export default function Library() {
     for (const file of list) {
       const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
       if (!SUPPORTED.includes(ext)) {
-        errors.push(`${file.name}: faqat .md yoki .txt`)
+        errors.push(`${file.name}: faqat .md, .markdown, .mdx yoki .txt`)
         continue
       }
       try {
@@ -286,7 +286,13 @@ export default function Library() {
                   role="link"
                   tabIndex={0}
                   onClick={() => nav(`/kitob/${b.meta.slug}`)}
-                  onKeyDown={(e) => e.key === 'Enter' && nav(`/kitob/${b.meta.slug}`)}
+                  onKeyDown={(e) => {
+                    if (e.target !== e.currentTarget) return
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      nav(`/kitob/${b.meta.slug}`)
+                    }
+                  }}
                 >
                   <div className="nx-book-cover" style={{ background: `linear-gradient(150deg, ${c1}, ${c2})` }}>
                     <span className="nx-book-cover__line" />
@@ -322,6 +328,11 @@ export default function Library() {
                 </article>
               )
             })}
+            <button className="nx-book-add" onClick={() => fileRef.current?.click()}>
+              <span className="nx-book-add__icon"><IconPlus size={24} /></span>
+              <b>Yana kitob qo'shish</b>
+              <small>.md yoki .txt faylni tanlang</small>
+            </button>
           </div>
         )}
       </section>

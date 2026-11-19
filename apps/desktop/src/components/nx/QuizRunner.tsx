@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { QuizItem } from '@study-notes/core'
 import { IconArrowRight, IconBookOpen, IconCheck, IconTarget, IconX } from '../icons'
 import { IconCircleCheck, IconCircleX, IconKeyboard, IconRefresh } from './icons'
-import { Bar, Ring } from './NxUI'
+import { Bar, ConfirmModal, Ring } from './NxUI'
 
 export interface QuizResult {
   correct: number
@@ -13,6 +13,7 @@ export interface QuizResult {
 interface Props {
   items: QuizItem[]
   title?: string
+  conceptLabels?: Record<string, string>
   finishLabel?: string
   onFinish: (r: QuizResult) => void
   onExit: () => void
@@ -21,13 +22,17 @@ interface Props {
 const LETTERS = ['A', 'B', 'C', 'D']
 
 /** Fokusli sessiya: savol → javob → sabab → keyingi → natija tahlili. */
-export default function QuizRunner({ items, title, finishLabel, onFinish, onExit }: Props) {
+export default function QuizRunner({ items, title, conceptLabels, finishLabel, onFinish, onExit }: Props) {
+  // Sessiya boshidagi savollar snapshot'i — tashqi qayta hisoblash natijani buzmasin
+  const [questions] = useState(() => items)
   const [idx, setIdx] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const [details, setDetails] = useState<{ id: string; correct: boolean }[]>([])
   const [finished, setFinished] = useState(false)
+  const [confirmExit, setConfirmExit] = useState(false)
+  const nextRef = useRef<HTMLButtonElement>(null)
 
-  const item = items[idx]
+  const item = questions[idx]
   const revealed = selected !== null
   const isCorrect = item ? selected === item.answer : false
   const correctCount = details.filter((d) => d.correct).length
@@ -36,9 +41,9 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
     () =>
       details
         .filter((d) => !d.correct)
-        .map((d) => items.find((q) => q.id === d.id))
+        .map((d) => questions.find((q) => q.id === d.id))
         .filter((q): q is QuizItem => Boolean(q)),
-    [details, items],
+    [details, questions],
   )
 
   const choose = (key: string) => {
@@ -48,7 +53,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
   }
 
   const next = () => {
-    if (idx + 1 < items.length) {
+    if (idx + 1 < questions.length) {
       setIdx(idx + 1)
       setSelected(null)
     } else {
@@ -56,14 +61,18 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
     }
   }
 
-  // Klaviatura: 1-4 — javob, Enter/Bo'sh joy — keyingi, Esc — chiqish
+  // Klaviatura: 1-4 — javob, Enter/Bo'sh joy — keyingi, Esc — tasdiqlangan chiqish
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
       if (e.key === 'Escape') {
-        onExit()
+        setConfirmExit(true)
         return
       }
-      if (finished) return
+      // Tugma fokusida Enter/Space bosilsa faqat tugmaning o'zi ishlaydi
+      // (aks holda next() ikki marta chaqirilib, bir savol o'tkazib yuboriladi)
+      if (target.closest('button')) return
+      if (finished || confirmExit) return
       if (!revealed && ['1', '2', '3', '4'].includes(e.key)) {
         const opt = item?.options[Number(e.key) - 1]
         if (opt) choose(opt.key)
@@ -74,9 +83,21 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished, revealed, idx, confirmExit])
 
-  if (!items.length) {
+  const exitModal = confirmExit ? (
+    <ConfirmModal
+      title="Sessiyani tark etish?"
+      text="Hozirgi javoblar saqlanmaydi va takrorlash jadvali yangilanmaydi. Sessiyani tugatib, natijani saqlashni tavsiya etamiz."
+      confirmLabel="Saqlamasdan chiqish"
+      danger
+      onClose={() => setConfirmExit(false)}
+      onConfirm={() => { setConfirmExit(false); onExit() }}
+    />
+  ) : null
+
+  if (!questions.length) {
     return (
       <div className="nx-page nx-page--narrow">
         <div className="nx-empty">
@@ -95,8 +116,9 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
 
   /* ---------------- Natija ---------------- */
   if (finished) {
-    const percent = Math.round((correctCount / items.length) * 100)
+    const percent = Math.round((correctCount / questions.length) * 100)
     return (
+      <>
       <div className="nx-page nx-page--narrow nx-quiz-result">
         <div className="nx-result-hero nx-card">
           <Ring value={percent} size={104} label={`${percent}%`} />
@@ -106,7 +128,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
               {percent >= 80 ? "Ajoyib ish!" : percent >= 50 ? "Yaxshi, davom eting" : "Bu qismni takrorlaymiz"}
             </h1>
             <p className="nx-subtitle">
-              {correctCount} / {items.length} to'g'ri javob · {title ?? 'Takrorlash'}
+              {correctCount} / {questions.length} to'g'ri javob · {title ?? 'Takrorlash'}
             </p>
           </div>
         </div>
@@ -124,7 +146,12 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
                 <div className="nx-weak-row" key={q.id}>
                   <IconCircleX size={17} />
                   <span style={{ flex: 1 }}>{q.question}</span>
-                  {q.concepts?.[0] && <span className="nx-chip nx-chip--accent">{q.concepts[0]}</span>}
+                  {q.concepts?.[0] && (
+                    <span className="nx-chip nx-chip--accent" title={q.concepts[0]}>
+                      {(conceptLabels?.[q.concepts[0]] ?? q.concepts[0]).slice(0, 48)}
+                      {(conceptLabels?.[q.concepts[0]] ?? q.concepts[0]).length > 48 ? '…' : ''}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -136,7 +163,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
             Javoblar tafsiloti
           </h2>
           <div className="nx-stack" style={{ gap: 4 }}>
-            {items.map((q, i) => {
+            {questions.map((q, i) => {
               const ok = details.find((d) => d.id === q.id)?.correct
               return (
                 <div className="nx-detail-row" key={q.id}>
@@ -156,17 +183,23 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
           </button>
           <button
             className="nx-btn nx-btn--primary nx-btn--lg"
-            onClick={() => onFinish({ correct: correctCount, total: items.length, details })}
+            onClick={() => onFinish({ correct: correctCount, total: questions.length, details })}
           >
             {finishLabel ?? 'Natijani saqlash'} <IconArrowRight size={17} />
           </button>
         </div>
       </div>
+      {exitModal}
+      </>
     )
   }
 
   /* ---------------- Savol ---------------- */
-  const progress = (idx / items.length) * 100
+  useEffect(() => {
+    if (revealed) window.setTimeout(() => nextRef.current?.focus(), 0)
+  }, [revealed])
+
+  const progress = (idx / questions.length) * 100
   return (
     <div className="nx-page nx-page--narrow nx-quiz-session">
       <div className="nx-session-top">
@@ -174,7 +207,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
           <IconX size={16} /> Chiqish
         </button>
         <span className="nx-mono-num nx-session-count">
-          {String(idx + 1).padStart(2, '0')} <span>/ {String(items.length).padStart(2, '0')}</span>
+          {String(idx + 1).padStart(2, '0')} <span>/ {String(questions.length).padStart(2, '0')}</span>
         </span>
       </div>
 
@@ -224,7 +257,11 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
           <div className={`nx-explain ${isCorrect ? 'nx-explain--ok' : 'nx-explain--bad'}`}>
             <div className="nx-explain__head">
               {isCorrect ? <IconCircleCheck size={20} /> : <IconCircleX size={20} />}
-              <b>{isCorrect ? 'To\'g\'ri javob' : `To\'g\'ri javob — ${item.answer}`}</b>
+              <b>
+                {isCorrect
+                  ? 'To\'g\'ri javob'
+                  : `To\'g\'ri javob: ${item.options.find((o) => o.key === item.answer)?.text ?? item.answer}`}
+              </b>
             </div>
             <p>{item.explain.correct}</p>
             {!isCorrect && selected && item.explain.wrong?.[selected] && (
@@ -232,8 +269,8 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
                 <b>Sizning javobingiz:</b> {item.explain.wrong[selected]}
               </p>
             )}
-            <button className="nx-btn nx-btn--primary nx-btn--lg nx-explain__next" onClick={next}>
-              {idx + 1 === items.length ? 'Natijani ko\'rish' : 'Keyingi savol'}
+            <button ref={nextRef} className="nx-btn nx-btn--primary nx-btn--lg nx-explain__next" onClick={next}>
+              {idx + 1 === questions.length ? 'Natijani ko\'rish' : 'Keyingi savol'}
               <IconArrowRight size={18} />
             </button>
           </div>
@@ -247,6 +284,7 @@ export default function QuizRunner({ items, title, finishLabel, onFinish, onExit
           <span className="nx-kbd">Enter</span> keyingi · <span className="nx-kbd">Esc</span> chiqish
         </span>
       </div>
+      {exitModal}
     </div>
   )
 }

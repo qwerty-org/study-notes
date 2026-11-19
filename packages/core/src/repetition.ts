@@ -4,6 +4,7 @@
  * Keyinroq FSRS algoritmiga o'tish rejalashtirilgan.
  */
 import type { Review } from './types'
+import { localDay } from './date'
 
 export const DEFAULT_INTERVALS = [1, 3, 7, 14, 30]
 
@@ -14,7 +15,7 @@ export function newReview(reviewId: string, book: string, type: Review['type']):
     reviewId,
     book,
     type,
-    dueDate: today.toISOString().slice(0, 10),
+    dueDate: localDay(today),
     interval: 0,
     ease: 2.5,
     reps: 0,
@@ -30,7 +31,7 @@ export function newReview(reviewId: string, book: string, type: Review['type']):
 export function scheduleReview(r: Review, quality: number): Review {
   const today = new Date()
   const due = (days: number) =>
-    new Date(today.getTime() + days * 86400000).toISOString().slice(0, 10)
+    localDay(new Date(today.getTime() + days * 86400000))
 
   if (quality < 3) {
     // Unutdi — boshidan
@@ -68,6 +69,6 @@ export function scheduleReview(r: Review, quality: number): Review {
 
 /** Bugunga to'g'ri kelgan takrorlashlar */
 export function dueReviews(reviews: Review[]): Review[] {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = localDay()
   return reviews.filter((r) => r.dueDate <= today)
 }

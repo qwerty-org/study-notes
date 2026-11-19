@@ -96,12 +96,28 @@ export interface BookRecord {
   progress: BookProgress
 }
 
+export interface SavedHighlight {
+  id: string
+  text: string
+  chapter: number
+  page: number
+}
+
+export interface ReaderPrefs {
+  fontSize: number
+  paper: 'paper' | 'sepia'
+}
+
 export interface BookProgress {
   percent: number
   currentChapter: number
+  currentPage?: number
   readChapters: number[]
   quizCorrect: number
   quizTotal: number
+  /** O'qish sozlamalari kitob bilan birga saqlanadi (eksport/importga kiradi) */
+  reader?: ReaderPrefs
+  highlights?: SavedHighlight[]
 }
 
 /* ---------- Spaced repetition (docs/06 §5) ---------- */

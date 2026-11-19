@@ -19,7 +19,7 @@ export function splitChapters(content: string): Chapter[] {
     const m = line.match(/^#\s+(.*)$/)
     if (m) {
       push()
-      current = { title: m[1].trim(), lines: [] }
+      current = { title: m[1].trim().replace(/^\d+[-–—]\s*bob\s*:\s*/i, '').trim(), lines: [] }
     } else if (current) {
       current.lines.push(line)
     } else {

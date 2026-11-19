@@ -35,7 +35,7 @@
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 30px 34px 88px;
+  padding: 30px clamp(20px, 3vw, 56px) 88px;
   color: var(--nx-ink);
   animation: nx-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -52,11 +52,27 @@
 }
 
 .nx-page--wide {
-  max-width: 1460px;
+  max-width: none;
 }
 
 .nx-page--narrow {
   max-width: 880px;
+}
+
+/* Layout barcha route'larni `.page` ichiga oladi — yangi sahifalarda
+   ota-elementning eski max-width/padding'ini bekor qilamiz (Dashboard saqlanadi) */
+.main > .page:has(.nx-page),
+.main > .page:has(.nx-book-quiz) {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 900px) {
+  .main > .page:has(.nx-page),
+  .main > .page:has(.nx-book-quiz) {
+    padding: 0;
+  }
 }
 
 

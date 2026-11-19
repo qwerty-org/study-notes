@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { scheduleReview, touchActiveDay } from '@study-notes/core'
+import { niceDate, scheduleReview, touchActiveDay } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
 import { PHASES, useAnalyze } from '../lib/useAnalyze'
 import QuizRunner, { type QuizResult } from '../components/nx/QuizRunner'
@@ -48,6 +48,12 @@ function coverColors(title: string) {
   return COVERS[Math.abs(h) % COVERS.length]
 }
 
+/** Muqovadagi sarlavhani so'z o'rtasidan emas, so'z chegarasidan kesadi */
+function coverTitle(title: string): string {
+  // CSS da 4 qatorga clamp qilinadi — so'z o'rtasidan kesish yo'q
+  return title
+}
+
 export default function Book() {
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -77,14 +83,35 @@ export default function Book() {
   }
 
   const rawTab = sp.get('tab') as TabKey | null
-  const tab: TabKey = rawTab && TABS.some(({ key }) => key === rawTab) ? rawTab : 'read'
-  const setTab = (k: TabKey) => {
+  const tab: TabKey =
+    rawTab && TABS.some(({ key, soon }) => key === rawTab && !soon) ? rawTab : 'read'
+  const setTab = useCallback((k: TabKey, scroll = false) => {
     if (k === 'tutor') return
     const next = new URLSearchParams(sp)
     next.set('tab', k)
     setSp(next, { replace: true })
     setQuizOn(false)
-    tabRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (scroll && tabRef.current) {
+      const top = tabRef.current.getBoundingClientRect().top
+      if (top < 70 || top > window.innerHeight - 120) {
+        tabRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+  }, [sp, setSp])
+
+  const onTabKey = (e: ReactKeyboardEvent, index: number) => {
+    const enabled = TABS.filter((t) => !t.soon)
+    let nextIndex = index
+    if (e.key === 'ArrowRight') nextIndex = (index + 1) % enabled.length
+    else if (e.key === 'ArrowLeft') nextIndex = (index - 1 + enabled.length) % enabled.length
+    else if (e.key === 'Home') nextIndex = 0
+    else if (e.key === 'End') nextIndex = enabled.length - 1
+    else return
+    e.preventDefault()
+    setTab(enabled[nextIndex].key, true)
+    window.setTimeout(() => {
+      tabRef.current?.querySelectorAll<HTMLButtonElement>('.nx-book-tab')[nextIndex]?.focus()
+    }, 0)
   }
 
   const analysis = book.analysis
@@ -97,8 +124,12 @@ export default function Book() {
   }
   const accuracy = book.progress.quizTotal > 0
     ? Math.round((book.progress.quizCorrect / book.progress.quizTotal) * 100) : null
-  const added = new Date(book.meta.addedAt).toLocaleDateString('uz-UZ')
+  const added = niceDate(book.meta.addedAt)
   const [c1, c2] = coverColors(book.meta.title)
+  const conceptLabels: Record<string, string> = {}
+  for (const ch of analysis?.chapters ?? []) {
+    for (const idea of ch.keyIdeas) conceptLabels[idea.id] = idea.idea
+  }
 
   const finishQuiz = (r: QuizResult) => {
     updateBook(book.meta.slug, (b) => ({
@@ -109,9 +140,11 @@ export default function Book() {
         quizTotal: b.progress.quizTotal + r.total,
       },
     }))
+    // Faqat birinchi marta javob berilgan savollar takrorlash jadvaliga kiradi.
+    // Kitob ichidagi qayta ishlash (retake) jadvalni sun'iy oldinga surmaydi.
     const updated = reviews.map((rv) => {
       const d = r.details.find((x) => x.id === rv.reviewId)
-      return d ? scheduleReview(rv, d.correct ? 4 : 1) : rv
+      return d && rv.reps === 0 ? scheduleReview(rv, d.correct ? 4 : 1) : rv
     })
     if (updated.some((x, i) => x !== reviews[i])) setReviews(updated)
     updateProfile(touchActiveDay(profile))
@@ -133,6 +166,7 @@ export default function Book() {
         <QuizRunner
           items={quizzes}
           title={book.meta.title}
+          conceptLabels={conceptLabels}
           finishLabel="Natijani saqlash"
           onFinish={finishQuiz}
           onExit={() => setQuizOn(false)}
@@ -155,7 +189,7 @@ export default function Book() {
 
       <header className="nx-book-hero nx-card">
         <div className="nx-book-hero__cover" style={{ background: `linear-gradient(150deg, ${c1}, ${c2})` }}>
-          <span>{book.meta.title.slice(0, 28)}</span>
+          <span>{coverTitle(book.meta.title)}</span>
           <small>{book.meta.author ?? 'Study Notes'}</small>
         </div>
         <div className="nx-book-hero__info">
@@ -178,8 +212,10 @@ export default function Book() {
         <div className="nx-book-hero__action">
           <Ring value={book.progress.percent} size={72} />
           {analysis ? (
-            <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => setTab('read')}>
-              {book.progress.percent > 0 ? 'O‘qishni davom ettir' : 'O‘qishni boshlash'}
+            <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => setTab('read', true)}>
+              {book.progress.percent > 0
+                ? `Bob ${book.progress.currentChapter + 1} dan davom etish`
+                : 'O‘qishni boshlash'}
               <IconArrowRight size={17} />
             </button>
           ) : (
@@ -223,16 +259,20 @@ export default function Book() {
         </div>
       )}
 
-      <div className="nx-book-tabs" role="tablist" ref={tabRef}>
-        {TABS.map(({ key, label, icon: Icon, soon }) => {
+      <div className="nx-book-tabs" role="tablist" aria-label="Kitob bo'limlari" ref={tabRef}>
+        {TABS.map(({ key, label, icon: Icon, soon }, index) => {
           const n = counts[key]
           return (
             <button
               key={key}
+              id={`tab-${key}`}
               className={`nx-book-tab${tab === key ? ' is-active' : ''}${soon ? ' is-soon' : ''}`}
               onClick={() => setTab(key)}
+              onKeyDown={(e) => onTabKey(e, index)}
               role="tab"
               aria-selected={tab === key}
+              aria-controls="nx-book-panel"
+              tabIndex={tab === key ? 0 : -1}
               disabled={soon}
               title={soon ? 'Keyingi bosqichda qo\'shiladi' : undefined}
             >
@@ -244,8 +284,8 @@ export default function Book() {
         })}
       </div>
 
-      <div className="nx-book-panel" role="tabpanel">
-        {tab === 'read' && <ReadTab book={book} />}
+      <div className="nx-book-panel" id="nx-book-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
+        {tab === 'read' && <ReadTab book={book} onOpenTab={(k) => setTab(k, true)} />}
 
         {tab === 'ideas' && (analysis ? <IdeasTab book={book} /> : (
           <Empty icon={<IconLightbulb size={26} />} title="Xulosalar tahlildan keyin paydo bo'ladi"

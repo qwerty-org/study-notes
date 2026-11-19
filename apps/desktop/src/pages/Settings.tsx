@@ -133,7 +133,7 @@ export default function Settings() {
               key={s.key}
               className={`nx-settings-nav__item${section === s.key ? ' is-active' : ''}`}
               onClick={() => setSection(s.key)}
-              aria-current={section === s.key ? 'page' : undefined}
+              aria-pressed={section === s.key}
             >
               <b>{s.label}</b>
               <small>{s.hint}</small>

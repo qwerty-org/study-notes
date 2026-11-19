@@ -10,6 +10,7 @@ import type {
   Profile,
   Review,
 } from './types'
+import { localDay } from './date'
 
 const K = {
   profile: 'sn.profile',
@@ -98,9 +99,9 @@ export const store = {
 /* ---------- Streak (har faol kun) ---------- */
 
 export function touchActiveDay(profile: Profile): Profile {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = localDay()
   if (profile.lastActive === today) return profile
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+  const yesterday = localDay(new Date(Date.now() - 86400000))
   const streak = profile.lastActive === yesterday ? profile.streak + 1 : 1
   return { ...profile, streak, lastActive: today }
 }

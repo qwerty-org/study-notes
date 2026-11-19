@@ -88,8 +88,8 @@
   border-radius: 999px;
   border: 1px solid var(--nx-line);
   background: var(--nx-surface-2);
-  opacity: 0.5;
-  filter: grayscale(1);
+  color: var(--nx-muted);
+  opacity: 1;
   transition: all 0.2s ease;
 }
 
@@ -218,6 +218,10 @@
 }
 
 /* ---------- Pastki bloklar ---------- */
+.nx-stats-bottom {
+  align-items: start;
+}
+
 .nx-stats-bottom .nx-panel {
   border-radius: var(--nx-r-lg);
 }

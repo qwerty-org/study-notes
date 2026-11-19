@@ -48,6 +48,13 @@ export default function Repeat() {
     })
     .filter((x): x is DueEntry => Boolean(x))
 
+  const conceptLabels: Record<string, string> = {}
+  for (const b of library) {
+    for (const ch of b.analysis?.chapters ?? []) {
+      for (const idea of ch.keyIdeas) conceptLabels[idea.id] = idea.idea
+    }
+  }
+
   const nextDue = reviews
     .filter((r) => r.dueDate > localDay())
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0]
@@ -80,6 +87,7 @@ export default function Repeat() {
     return (
       <QuizRunner
         items={dueItems.map((d) => d.item)}
+        conceptLabels={conceptLabels}
         finishLabel="Natijani saqlash"
         onFinish={finish}
         onExit={() => setQuizOn(false)}
@@ -101,11 +109,6 @@ export default function Repeat() {
             Savolga javob bering, sababini ko'ring — keyingi takrorlash vaqti avtomatik hisoblanadi.
           </p>
         </div>
-        {dueItems.length > 0 && (
-          <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => setQuizOn(true)}>
-            Sessiyani boshlash <IconArrowRight size={17} />
-          </button>
-        )}
       </header>
 
       {done && (
@@ -207,6 +210,10 @@ export default function Repeat() {
                   <b>{n} kun</b>
                 </div>
               ))}
+            </div>
+            <div className="nx-intervals__caption">
+              <span>Bugun bajarilishi kerak</span>
+              <b className="nx-mono-num">{dueItems.length} / {reviews.length}</b>
             </div>
             <Bar value={Math.min(100, (dueItems.length / Math.max(1, reviews.length)) * 100)} className="nx-intervals__bar" />
             <p className="nx-hint">
