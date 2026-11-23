@@ -1,0 +1,799 @@
+/* Premium Stats — Wave 3 / P29
+   Owns: .nx-stats, .nx-stats-hero(+__profile/__ring), .nx-stats-grid(.nx-stat),
+         .nx-activity / .nx-stats-activity, .nx-activity-chart,
+         .nx-activity-bar-wrap, .nx-activity-bar, .nx-badges, .nx-badge,
+         .nx-journal, .nx-timeline, .nx-timeline__body, .nx-stats-bottom.
+
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/05-repeat-stats.md D6–D11
+          docs/superpowers/specs/design/07-critique.md D6/D10/D11
+
+   Faqat --pm-* tokenlari; yangi token yo'q, hex/rgb yo'q, !important yo'q
+   (faqat prefers-reduced-motion blokida). Fokus halqalari va ARIA
+   (.nx-sr-only jadval) o'zgarishsiz qoldiriladi.
+
+   DIQQAT — nol holat uchun JSX'da aria-valuenow yo'q (chart aria-hidden).
+   Haqiqiy hook: .nx-activity-bar.has-data (count > 0 bo'lgandagina qo'yiladi).
+   Shuning uchun o'tirgich (wrap) doim faqat 2px neutral baseline, to'ldirish
+   esa faqat .has-data barlarga beriladi. count=0 dagi inline height:8% shaffof
+   bo'lgani uchun hech qanday kulrang blok ko'rinmaydi. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Profil hero — 144px, freymsiz, bitta ham gradient yo'q
+ * ------------------------------------------------------------------ */
+.nx-stats .nx-stats-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-4);
+  height: 144px;
+  min-height: 0;
+  margin: 0 0 var(--pm-s-3);
+  padding: var(--pm-s-5);
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* D11: pushti radial glow butunlay olinadi. */
+.nx-stats .nx-stats-hero::after,
+.nx-stats .nx-stats-hero::before {
+  display: none;
+}
+
+.nx-stats .nx-stats-hero__profile {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);
+  min-width: 0;
+  position: relative;
+}
+
+.nx-stats .nx-stats-hero__avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-30);
+  line-height: 1;
+  box-shadow: none;
+}
+
+.nx-stats .nx-stats-hero__profile .nx-title--sm {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-30);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-stats-hero__profile .nx-subtitle {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  flex-wrap: wrap;
+  margin: 4px 0 0;
+  font-size: var(--pm-fs-13);
+  line-height: 1.5;
+  color: var(--pm-ink-2);
+}
+
+.nx-stats .nx-stats-hero__profile .nx-subtitle svg {
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-stats-hero__ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pm-s-1);
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Ring diametri JSX (size=64) bilan o'rnatilgan — rang/og'irlik bilan passivlashtiriladi. */
+.nx-stats .nx-stats-hero__ring .nx-ring circle.track {
+  stroke: var(--pm-surface-3);
+}
+
+.nx-stats .nx-stats-hero__ring .nx-ring circle.value {
+  stroke: var(--pm-line-strong);
+}
+
+.nx-stats .nx-stats-hero__ring span {
+  font-size: var(--pm-fs-12);
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Stat qatori — 4 jim ajratgich hujayra, rangli plitka yo'q
+ * ------------------------------------------------------------------ */
+.nx-stats .nx-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 0 var(--pm-s-5);
+  padding: 0;
+  border-top: 1px solid var(--pm-line);
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+.nx-stats .nx-stats-grid .nx-stat {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 128px;
+  padding: var(--pm-s-4);
+  border: 0;
+  border-right: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+.nx-stats .nx-stats-grid .nx-stat:last-child {
+  border-right: 0;
+}
+
+.nx-stats .nx-stats-grid .nx-stat__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-1);
+  margin-bottom: var(--pm-s-2);
+}
+
+.nx-stats .nx-stats-grid .nx-stat__label {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--pm-ink-2);
+}
+
+.nx-stats .nx-stats-grid .nx-stat__top svg {
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-stats-grid .nx-stat__value {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-30);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  color: var(--pm-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Yagona fokus nuqtasi: qo'llangan qoida soni (birinchi hujayra). */
+.nx-stats .nx-stats-grid .nx-stat:first-child .nx-stat__value {
+  font-size: var(--pm-fs-54);
+  line-height: 1;
+}
+
+/* eski accent/success/warn ranglari butunlay neutralga tushiriladi */
+.nx-stats .nx-stats-grid .nx-stat--accent .nx-stat__value,
+.nx-stats .nx-stats-grid .nx-stat--success .nx-stat__value,
+.nx-stats .nx-stats-grid .nx-stat--warn .nx-stat__value {
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-stats-grid .nx-stat__hint {
+  margin-top: var(--pm-s-1);
+  font-size: var(--pm-fs-12);
+  line-height: 1.4;
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Haftalik faollik — nol holatda faqat tekis baseline
+ * ------------------------------------------------------------------ */
+.nx-stats .nx-stats-activity {
+  margin: 0 0 var(--pm-s-5);
+  padding: var(--pm-s-5);
+  border: 0;
+  border-radius: var(--pm-r-lg);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+}
+
+.nx-stats .nx-stats-activity .nx-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pm-s-4);
+  margin: 0 0 var(--pm-s-4);
+  padding-bottom: 0;
+  border: 0;
+}
+
+.nx-stats .nx-stats-activity .nx-h2 {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-stats-activity .nx-section-head .nx-hint {
+  margin: 4px 0 0;
+  font-size: var(--pm-fs-13);
+  line-height: 1.5;
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-activity-chart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--pm-s-3);
+  align-items: end;
+  height: 144px;
+  margin-top: var(--pm-s-4);
+  min-width: 0;
+}
+
+.nx-stats .nx-activity-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pm-s-2);
+  height: 100%;
+  min-width: 0;
+}
+
+/* O'tirgich: hech qachon to'ldirilmaydi — faqat 2px neutral chiziq. */
+.nx-stats .nx-activity-bar-wrap {
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+  width: 64px;
+  max-width: 100%;
+  margin-inline: auto;
+  border: 0;
+  border-bottom: 2px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+  overflow: visible;
+}
+
+/* count=0: inline height:8% shaffof, hech qanday kulrang blok yo'q. */
+.nx-stats .nx-activity-bar {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  transition: none;
+}
+
+/* Faqat ma'lumotli kunlar ko'rinadi; gradient yo'q. */
+.nx-stats .nx-activity-bar.has-data {
+  background: var(--pm-ink-3);
+  border-radius: var(--pm-r-sm) var(--pm-r-sm) 0 0;
+}
+
+/* Bugun (oxirgi kun) — kichik, yagona faol rang. */
+.nx-stats .nx-activity-day:last-child .nx-activity-bar.has-data {
+  background: var(--pm-accent);
+}
+
+.nx-stats .nx-activity-day small {
+  font-size: var(--pm-fs-12);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--pm-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Yutuq pill'lari — neutral, faqat qo'lga kiritilgani accent
+ * ------------------------------------------------------------------ */
+.nx-stats .nx-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pm-s-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nx-stats .nx-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  min-height: 28px;
+  padding: 0 var(--pm-s-2);
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  filter: none;
+  opacity: 1;
+  transition: none;
+}
+
+.nx-stats .nx-badge > span[aria-hidden='true'] {
+  font-size: var(--pm-fs-13);
+  line-height: 1;
+}
+
+.nx-stats .nx-badge small {
+  font-size: var(--pm-fs-12);
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  color: inherit;
+}
+
+.nx-stats .nx-badge.is-earned {
+  border-color: var(--pm-accent-soft);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Jurnal — faqat ajratgichli qatorlar
+ * ------------------------------------------------------------------ */
+.nx-stats .nx-journal {
+  margin: 0 0 var(--pm-s-5);
+  padding: 0;
+  border: 0;
+  border-radius: var(--pm-r-lg);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+  overflow: visible;
+}
+
+.nx-stats .nx-journal .nx-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-4);
+  padding: var(--pm-s-5);
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+}
+
+.nx-stats .nx-journal__title {
+  gap: var(--pm-s-1);
+}
+
+.nx-stats .nx-journal__title svg {
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-journal .nx-h2 {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-journal .nx-hint {
+  font-size: var(--pm-fs-13);
+  line-height: 1.5;
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-journal .nx-panel__body {
+  padding: var(--pm-s-5);
+  background: var(--pm-transparent);
+}
+
+.nx-stats .nx-journal .nx-filter-row {
+  margin-bottom: var(--pm-s-4);
+  padding: 4px;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+}
+
+.nx-stats .nx-journal .nx-segmented button {
+  min-height: 36px;
+  padding: 0 var(--pm-s-3);
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  transition: background var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-stats .nx-journal .nx-segmented button:hover {
+  background: var(--pm-surface);
+}
+
+.nx-stats .nx-journal .nx-segmented button[aria-pressed='true'] {
+  background: var(--pm-surface);
+  color: var(--pm-ink);
+  box-shadow: var(--pm-shadow-1);
+}
+
+.nx-stats .nx-journal .nx-segmented button:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* Timeline: plitka yo'q, faqat pastki ajratgich. */
+.nx-stats .nx-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.nx-stats .nx-timeline__item {
+  position: relative;
+  display: flex;
+  padding: 0;
+}
+
+.nx-stats .nx-timeline__item:not(:last-child)::before {
+  display: none;
+}
+
+.nx-stats .nx-timeline__body {
+  flex: 1;
+  min-width: 0;
+  padding: var(--pm-s-3) 0;
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+}
+
+.nx-stats .nx-timeline__item:last-child .nx-timeline__body {
+  border-bottom: 0;
+}
+
+.nx-stats .nx-timeline__body b {
+  display: block;
+  margin: 0 0 var(--pm-s-1);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-journal__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  flex-wrap: wrap;
+  font-size: var(--pm-fs-13);
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-journal__meta .nx-chip,
+.nx-stats .nx-journal__meta .nx-hint {
+  font-size: var(--pm-fs-13);
+  line-height: 1.4;
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-journal__meta .nx-chip {
+  border-color: var(--pm-line);
+  background: var(--pm-surface-2);
+}
+
+/* Bo'sh jurnal holati — bitta aniq harakat (buttons agentining primary'si). */
+.nx-stats .nx-journal .nx-empty {
+  padding: var(--pm-s-7) var(--pm-s-4);
+  text-align: center;
+}
+
+.nx-stats .nx-journal .nx-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--pm-s-3);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+.nx-stats .nx-journal .nx-empty__title {
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-journal .nx-empty__text {
+  max-width: 46ch;
+  margin: var(--pm-s-1) auto var(--pm-s-4);
+  font-size: var(--pm-fs-14);
+  line-height: 1.6;
+  color: var(--pm-ink-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Pastki panellar
+ * ------------------------------------------------------------------ */
+.nx-stats .nx-stats-bottom {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pm-s-4);
+  align-items: start;
+  margin: 0;
+}
+
+.nx-stats .nx-stats-bottom .nx-panel {
+  padding: var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+}
+
+.nx-stats .nx-stats-bottom .nx-h3 {
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-18);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--pm-ink);
+}
+
+.nx-stats .nx-stats-bottom .nx-progress--inline {
+  width: 88px;
+  height: 4px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+}
+
+.nx-stats .nx-stats-bottom .nx-progress--inline > span {
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-ink-3);
+}
+
+.nx-stats .nx-next-step__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pm-s-2);
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+}
+
+.nx-stats .nx-next-step__row:last-child {
+  border-bottom: 0;
+}
+
+.nx-stats .nx-next-step__row > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--pm-ink-3);
+}
+
+.nx-stats .nx-next-step__row p {
+  margin: 0;
+  font-size: var(--pm-fs-14);
+  line-height: 1.5;
+  color: var(--pm-ink-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. 900px — 2 ustun stat, kichikroq hero/chart
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .nx-stats .nx-stats-hero {
+    height: 128px;
+    padding: var(--pm-s-4);
+  }
+
+  .nx-stats .nx-stats-hero__avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .nx-stats .nx-stats-hero__profile .nx-title--sm {
+    font-size: var(--pm-fs-24);
+  }
+
+  .nx-stats .nx-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nx-stats .nx-stats-grid .nx-stat {
+    min-height: 120px;
+    border-right: 0;
+    border-bottom: 1px solid var(--pm-line);
+  }
+
+  .nx-stats .nx-stats-grid .nx-stat:nth-child(odd) {
+    border-right: 1px solid var(--pm-line);
+  }
+
+  .nx-stats .nx-stats-grid .nx-stat:nth-child(n + 3) {
+    border-bottom: 0;
+  }
+
+  .nx-stats .nx-stats-activity,
+  .nx-stats .nx-journal .nx-panel__head,
+  .nx-stats .nx-journal .nx-panel__body {
+    padding: var(--pm-s-4);
+  }
+
+  .nx-stats .nx-activity-chart {
+    gap: var(--pm-s-1);
+    height: 128px;
+  }
+
+  .nx-stats .nx-activity-bar-wrap {
+    width: 48px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. 620px — yagona ustun ritmi
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .nx-stats .nx-stats-hero {
+    height: auto;
+    min-height: 112px;
+    padding: calc(var(--pm-s-2) + var(--pm-s-1));   /* 20px */
+  }
+
+  .nx-stats .nx-stats-hero__profile {
+    gap: 12px;
+  }
+
+  .nx-stats .nx-stats-hero__avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .nx-stats .nx-stats-activity,
+  .nx-stats .nx-journal .nx-panel__head,
+  .nx-stats .nx-journal .nx-panel__body {
+    padding: calc(var(--pm-s-2) + var(--pm-s-1));   /* 20px */
+  }
+
+  .nx-stats .nx-stats-activity .nx-section-head {
+    flex-direction: column;
+    gap: var(--pm-s-3);
+  }
+
+  .nx-stats .nx-stats-activity .nx-h2 {
+    font-size: var(--pm-fs-18);
+  }
+
+  .nx-stats .nx-journal .nx-h2 {
+    font-size: var(--pm-fs-18);
+  }
+
+  .nx-stats .nx-journal .nx-hint {
+    font-size: var(--pm-fs-12);
+  }
+
+  .nx-stats .nx-journal .nx-panel__head {
+    flex-wrap: wrap;
+  }
+
+  .nx-stats .nx-journal .nx-filter-row {
+    margin-bottom: var(--pm-s-3);
+  }
+
+  .nx-stats .nx-journal .nx-segmented button {
+    min-height: 32px;
+    padding: 0 var(--pm-s-3);
+    font-size: var(--pm-fs-12);
+  }
+
+  .nx-stats .nx-activity-chart {
+    gap: 4px;
+    height: 112px;
+  }
+
+  .nx-stats .nx-activity-day {
+    gap: var(--pm-s-1);
+  }
+
+  .nx-stats .nx-activity-bar-wrap {
+    width: 32px;
+  }
+
+  .nx-stats .nx-stats-grid .nx-stat {
+    min-height: 112px;
+    padding: var(--pm-s-3);
+  }
+
+  .nx-stats .nx-stats-bottom {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. 375px — tor ekran
+ * ------------------------------------------------------------------ */
+@media (max-width: 420px) {
+  .nx-stats .nx-stats-hero__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--pm-r-sm);
+    font-size: var(--pm-fs-24);
+  }
+
+  .nx-stats .nx-stats-hero__profile .nx-title--sm {
+    font-size: var(--pm-fs-20);
+  }
+
+  .nx-stats .nx-stats-hero__profile .nx-subtitle {
+    font-size: var(--pm-fs-12);
+  }
+
+  /* Ring inline kengligi 64 — faqat max-width bilan cheklanadi. */
+  .nx-stats .nx-stats-hero__ring .nx-ring {
+    max-width: 48px;
+    height: auto;
+  }
+
+  .nx-stats .nx-activity-chart {
+    height: 96px;
+  }
+
+  .nx-stats .nx-activity-bar-wrap {
+    width: 24px;
+  }
+
+  .nx-stats .nx-stats-grid .nx-stat {
+    min-height: 104px;
+    padding: 12px;
+  }
+
+  .nx-stats .nx-timeline__body {
+    padding: 12px 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. Harakat — reduced motion da to'liq o'chadi
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-stats .nx-stats-hero,
+  .nx-stats .nx-stats-grid .nx-stat,
+  .nx-stats .nx-activity-bar,
+  .nx-stats .nx-activity-bar-wrap,
+  .nx-stats .nx-badge,
+  .nx-stats .nx-journal .nx-segmented button {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Ma'lumot yo'q: bo'sh grafik ko'p joy eg'amasin — chiziq qisqa bo'ladi */
+.nx-stats .nx-activity-chart:not(:has(.has-data)) {
+  height: 80px;
+}

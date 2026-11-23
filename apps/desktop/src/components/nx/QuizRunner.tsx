@@ -31,6 +31,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
   const [finished, setFinished] = useState(false)
   const [confirmExit, setConfirmExit] = useState(false)
   const nextRef = useRef<HTMLButtonElement>(null)
+  const focusReturnRef = useRef<HTMLElement | null>(null)
 
   const item = questions[idx]
   const revealed = selected !== null
@@ -61,22 +62,52 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
     }
   }
 
+  const restart = () => {
+    setIdx(0)
+    setSelected(null)
+    setDetails([])
+    setFinished(false)
+    setConfirmExit(false)
+  }
+
+  // Modalgacha bo'lgan fokusni eslab, yopilganda qaytaramiz: fokus na yo'qoladi, na qamaladi
+  const openExit = () => {
+    focusReturnRef.current = document.activeElement as HTMLElement | null
+    setConfirmExit(true)
+  }
+  const closeExit = () => {
+    setConfirmExit(false)
+    window.setTimeout(() => focusReturnRef.current?.focus(), 0)
+  }
+
   // Klaviatura: 1-4 — javob, Enter/Bo'sh joy — keyingi, Esc — tasdiqlangan chiqish
   useEffect(() => {
+    // Natija ekranida global qisqartmalar ishlamaydi — aniq tugmalar ishlatiladi.
+    // Modal ochiq bo'lsa, uning o'z Escape handleri ishlaydi (ikkinchi eshitgich qo'shmaymiz).
+    if (finished || confirmExit || !questions.length) return
     const onKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement
       if (e.key === 'Escape') {
-        setConfirmExit(true)
+        e.preventDefault()
+        openExit()
         return
       }
-      // Tugma fokusida Enter/Space bosilsa faqat tugmaning o'zi ishlaydi
-      // (aks holda next() ikki marta chaqirilib, bir savol o'tkazib yuboriladi)
-      if (target.closest('button')) return
-      if (finished || confirmExit) return
+      const target = e.target as HTMLElement | null
+      const onControl = Boolean(
+        target?.closest('button:not(:disabled), a[href], input, select, textarea, [role="button"]'),
+      )
+      // 1–4 — sessiyaning global qisqartmalari: fokus tugmada bo'lsa ham ishlaydi
+      // (sessiyada matn kiritish maydoni yo'q, shuning uchun bosib yuborish xavfi yo'q)
       if (!revealed && ['1', '2', '3', '4'].includes(e.key)) {
         const opt = item?.options[Number(e.key) - 1]
-        if (opt) choose(opt.key)
-      } else if (revealed && (e.key === 'Enter' || e.key === ' ')) {
+        if (opt) {
+          e.preventDefault()
+          choose(opt.key)
+        }
+        return
+      }
+      // Fokusdagi tugma Enter/Space'ni o'zi boshqaradi — next() ikki marta chaqirilmaydi
+      if (revealed && (e.key === 'Enter' || e.key === ' ')) {
+        if (onControl) return
         e.preventDefault()
         next()
       }
@@ -84,7 +115,20 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finished, revealed, idx, confirmExit])
+  }, [finished, revealed, idx, confirmExit, item, questions.length])
+
+  // Javob ochilganda asosiy harakat tugmasiga fokus beramiz.
+  // E'tibor: barcha hook'lar shartli qaytishlardan OLDIN chaqirilishi shart.
+  useEffect(() => {
+    if (!revealed || finished || !questions.length) return
+    const id = window.setTimeout(() => {
+      const active = document.activeElement as HTMLElement | null
+      // Fokus allaqachon boshqa tugmada bo'lsa, uni tortib olmaymiz (qamash xavfi)
+      const onControl = Boolean(active?.closest('button:not(:disabled), a[href], input, select, textarea'))
+      if (!onControl) nextRef.current?.focus()
+    }, 0)
+    return () => window.clearTimeout(id)
+  }, [revealed, finished, questions.length])
 
   const exitModal = confirmExit ? (
     <ConfirmModal
@@ -92,7 +136,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
       text="Hozirgi javoblar saqlanmaydi va takrorlash jadvali yangilanmaydi. Sessiyani tugatib, natijani saqlashni tavsiya etamiz."
       confirmLabel="Saqlamasdan chiqish"
       danger
-      onClose={() => setConfirmExit(false)}
+      onClose={closeExit}
       onConfirm={() => { setConfirmExit(false); onExit() }}
     />
   ) : null
@@ -102,7 +146,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
       <div className="nx-page nx-page--narrow">
         <div className="nx-empty">
           <div className="nx-empty__icon">
-            <IconTarget size={26} />
+            <IconTarget size={24} />
           </div>
           <div className="nx-empty__title">Savollar topilmadi</div>
           <p className="nx-empty__text">Bu kitob uchun hali quiz yaratilmagan.</p>
@@ -135,16 +179,23 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
 
         {weak.length > 0 && (
           <section className="nx-card nx-card--pad">
-            <h2 className="nx-h2" style={{ marginBottom: 6 }}>
-              E'tibor talab qiladigan mavzular
-            </h2>
-            <p className="nx-hint" style={{ marginBottom: 16 }}>
-              Bu savollar jadvalda tezroq qaytadi. G'oyani qayta o'qish foyda beradi.
-            </p>
+            <div className="nx-weak-head">
+              <div>
+                <h2 className="nx-h2" style={{ marginBottom: 8 }}>
+                  E'tibor talab qiladigan mavzular
+                </h2>
+                <p className="nx-hint" style={{ marginBottom: 16 }}>
+                  Bu savollar jadvalda tezroq qaytadi. G'oyani qayta o'qish foyda beradi.
+                </p>
+              </div>
+              <button className="nx-btn nx-btn--ghost nx-weak-retry" onClick={restart}>
+                <IconRefresh size={16} /> Qayta takrorlash
+              </button>
+            </div>
             <div className="nx-stack" style={{ gap: 8 }}>
               {weak.slice(0, 5).map((q) => (
                 <div className="nx-weak-row" key={q.id}>
-                  <IconCircleX size={17} />
+                  <IconCircleX size={18} />
                   <span style={{ flex: 1 }}>{q.question}</span>
                   {q.concepts?.[0] && (
                     <span className="nx-chip nx-chip--accent" title={q.concepts[0]}>
@@ -159,7 +210,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
         )}
 
         <section className="nx-card nx-card--pad">
-          <h2 className="nx-h2" style={{ marginBottom: 14 }}>
+          <h2 className="nx-h2" style={{ marginBottom: 16 }}>
             Javoblar tafsiloti
           </h2>
           <div className="nx-stack" style={{ gap: 4 }}>
@@ -185,7 +236,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
             className="nx-btn nx-btn--primary nx-btn--lg"
             onClick={() => onFinish({ correct: correctCount, total: questions.length, details })}
           >
-            {finishLabel ?? 'Natijani saqlash'} <IconArrowRight size={17} />
+            {finishLabel ?? 'Natijani saqlash'} <IconArrowRight size={18} />
           </button>
         </div>
       </div>
@@ -195,15 +246,11 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
   }
 
   /* ---------------- Savol ---------------- */
-  useEffect(() => {
-    if (revealed) window.setTimeout(() => nextRef.current?.focus(), 0)
-  }, [revealed])
-
   const progress = (idx / questions.length) * 100
   return (
     <div className="nx-page nx-page--narrow nx-quiz-session">
       <div className="nx-session-top">
-        <button className="nx-back" onClick={onExit} style={{ margin: 0 }}>
+        <button className="nx-back" onClick={openExit} style={{ margin: 0 }}>
           <IconX size={16} /> Chiqish
         </button>
         <span className="nx-mono-num nx-session-count">
@@ -211,7 +258,21 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
         </span>
       </div>
 
-      <Bar value={progress} className="nx-session-bar" />
+      <div
+        className="nx-quiz-progress"
+        role="progressbar"
+        aria-label="Sessiya jarayoni"
+        aria-valuemin={0}
+        aria-valuemax={questions.length}
+        aria-valuenow={idx}
+        aria-valuetext={`Savol ${idx + 1} / ${questions.length}`}
+      >
+        <Bar value={progress} className="nx-session-bar" />
+      </div>
+      <div className="nx-quiz-sr-only" role="status" aria-live="polite" aria-atomic="true">
+        Savol {idx + 1} / {questions.length}.{' '}
+        {revealed ? (isCorrect ? "To'g'ri javob." : "Noto'g'ri javob.") : 'Javob kutilmoqda.'}
+      </div>
 
       <div className="nx-question-card nx-card">
         <div className="nx-row" style={{ marginBottom: 20 }}>
@@ -237,7 +298,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
             return (
               <button
                 key={opt.key}
-                className={`nx-option${state}${selected === opt.key ? ' picked' : ''}`}
+                className={`nx-option ${state}${selected === opt.key ? ' picked' : ''}`}
                 onClick={() => choose(opt.key)}
                 disabled={revealed}
                 role="radio"
@@ -245,8 +306,8 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
               >
                 <span className="nx-option__key">{LETTERS[i] ?? opt.key}</span>
                 <span className="nx-option__text">{opt.text}</span>
-                {state === 'correct' && <IconCircleCheck size={19} />}
-                {state === 'wrong' && <IconCircleX size={19} />}
+                {state === 'correct' && <IconCircleCheck size={20} />}
+                {state === 'wrong' && <IconCircleX size={20} />}
                 {!revealed && <span className="nx-kbd">{i + 1}</span>}
               </button>
             )
@@ -263,13 +324,22 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
                   : `To\'g\'ri javob: ${item.options.find((o) => o.key === item.answer)?.text ?? item.answer}`}
               </b>
             </div>
-            <p>{item.explain.correct}</p>
-            {!isCorrect && selected && item.explain.wrong?.[selected] && (
-              <p className="nx-explain__mine">
-                <b>Sizning javobingiz:</b> {item.explain.wrong[selected]}
+            <div id="nx-quiz-feedback">
+              <p>
+                <b>Sabab:</b> {item.explain.correct}
               </p>
-            )}
-            <button ref={nextRef} className="nx-btn nx-btn--primary nx-btn--lg nx-explain__next" onClick={next}>
+              {!isCorrect && selected && item.explain.wrong?.[selected] && (
+                <p className="nx-explain__mine">
+                  <b>Sizning javobingiz:</b> {item.explain.wrong[selected]}
+                </p>
+              )}
+            </div>
+            <button
+              ref={nextRef}
+              className="nx-btn nx-btn--primary nx-btn--lg nx-explain__next"
+              onClick={next}
+              aria-describedby="nx-quiz-feedback"
+            >
               {idx + 1 === questions.length ? 'Natijani ko\'rish' : 'Keyingi savol'}
               <IconArrowRight size={18} />
             </button>
@@ -278,7 +348,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
       </div>
 
       <div className="nx-quiz-help">
-        <IconKeyboard size={15} />
+        <IconKeyboard size={16} />
         <span>
           <span className="nx-kbd">1</span>–<span className="nx-kbd">4</span> javob tanlash ·{' '}
           <span className="nx-kbd">Enter</span> keyingi · <span className="nx-kbd">Esc</span> chiqish
@@ -292,7 +362,7 @@ export default function QuizRunner({ items, title, conceptLabels, finishLabel, o
 /** Qayta boshlash uchun kichik yordamchi (import qilingan IconRefresh ishlatiladi). */
 export function QuizRestartHint() {
   return (
-    <span className="nx-row" style={{ gap: 6, color: 'var(--nx-muted)', fontSize: 12 }}>
+    <span className="nx-row" style={{ gap: 8, color: 'var(--nx-muted)', fontSize: 12 }}>
       <IconRefresh size={14} /> Javoblar jadvalga yoziladi
     </span>
   )

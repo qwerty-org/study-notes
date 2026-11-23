@@ -1,0 +1,84 @@
+/* Premium Window Controls — Wave 3 / P06.
+   Faqat titlebar deraza tugmalari: .win-controls / .win-btn / .win-close.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+   Eski qatlamlardagi 1.5px border, kichik hit-area va keskin qizil close hover
+   o'rniga sokin, faqat --pm-* tokenlaridan tuzilgan titlebar. */
+
+.win-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  margin-left: var(--pm-s-2);
+  padding-left: var(--pm-s-3);
+  border-left: 1px solid var(--pm-line);
+
+  /* Ikonkalar currentColor bo'lgani uchun rang shu yerdan ham meros bo'ladi
+     (disabled + hover holatida theme.css 'color: inherit' qoidasi bilan mos). */
+  color: var(--pm-ink-3);
+  -webkit-app-region: no-drag;
+}
+
+.win-btn {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+  padding: 0;
+
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: transparent;
+  color: var(--pm-ink-3);
+
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+
+  /* Focus halqasi global :focus-visible qoidasidan saqlanadi — outline/box-shadow
+     bu yerda umuman o'zgartirilmaydi. ARIA va disabled atributlari TSX dan keladi. */
+}
+
+.win-btn:hover {
+  background-color: var(--pm-surface-2);
+}
+
+.win-close {
+  /* Rest holatida minimize/maximize bilan bir xil — indigo faqat hover'da. */
+  color: var(--pm-ink-3);
+}
+
+.win-close:hover {
+  background-color: var(--pm-accent);
+  /* Ikonka rangi har doim --pm-on-accent: light chuqur indigoda oq, dark och
+     indigoda to'q — aksentfon bilan kontrast token orqali kafolatlanadi. */
+  color: var(--pm-on-accent);
+}
+
+/* E'lon tartibi muhim: disabled qoidasi close:hover dan keyin keladi, shuning
+   uchun o'chirilgan tugma hover'da ham hech qanday fon rangi olmaydi. */
+.win-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background-color: transparent;
+  color: var(--pm-ink-3);
+}
+
+/* 900px: hit-area 32x32 ga qisqaradi, divider va 16px padding saqlanadi. */
+@media (max-width: 900px) {
+  .win-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* 620px: faqat yopish tugmasi qoladi; kichraytirish/kattalashtirish yashiriladi.
+   375px ham shu qoidaga kiradi (alohida 480px qoida kerak emas). */
+@media (max-width: 620px) {
+  .win-btn:not(.win-close) {
+    display: none;
+  }
+}

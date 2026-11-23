@@ -1,0 +1,148 @@
+/* Premium Primary Navigation — Wave 3 / P03.
+   Faqat .topnav, .nav-item(.active), .nav-txt va .nav-badge ga tegishli.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+   Eski qatlamlardagi pill/checkka/soya o'rniga sokin matn navigatsiyasi. */
+
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-4); /* 24px — elementlar orasi */
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* Fokus halqasi (2px + 3px offset) kesilmasligi uchun nafas. */
+  padding: var(--pm-s-1) 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.topnav::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-1); /* 8px — ikonka va yozuv orasi */
+  padding: 10px 0; /* pastki 10px = faol chiziq matndan 10px pastda */
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transition: color 0.16s ease;
+}
+
+/* Hover: faqat matn asosiy rangga o'tadi — fon, border, soya yo'q. */
+.nav-item:hover {
+  color: var(--pm-ink);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+/* Faol: --pm-ink + matndan 10px pastda 2px --pm-accent chiziq (box-shadow emas). */
+.nav-item.active {
+  color: var(--pm-ink);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent);
+}
+
+.nav-txt {
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Badge faqat count > 0 bo'lganda render qilinadi (Layout.tsx: due > 0). */
+.nav-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+  font-family: var(--pm-font);
+  font-size: 11px; /* kichik hisob chipi: 11px uchun token yo'q */
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  box-shadow: none;
+}
+
+/* Klaviatura fokusi saqlanadi: 2px --pm-accent, offset 3px. */
+.nav-item:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  border-radius: var(--pm-r-sm);
+}
+
+/* 900px: yozuv yashiriladi, faqat ikonka — 40px tegish maydoni qoladi. */
+@media (max-width: 900px) {
+  .topnav {
+    gap: var(--pm-s-3);
+  }
+  .nav-txt {
+    display: none;
+  }
+  .nav-item {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* 620px: faqat ikonkalar, 8px oraliq, ko'rinmaydigan gorizontal scroll. */
+@media (max-width: 620px) {
+  .topnav {
+    justify-content: flex-start;
+    gap: var(--pm-s-1);
+    padding: var(--pm-s-1);
+  }
+  .nav-item {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Spec 6: harakat o'chadi. */
+@media (prefers-reduced-motion: reduce) {
+  .nav-item {
+    transition: none;
+  }
+}

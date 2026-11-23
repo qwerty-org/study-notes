@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { dueReviews } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
 import {
@@ -44,16 +44,45 @@ export default function Layout() {
   }
 
   const [menuOpen, setMenuOpen] = useState(false)
+  const [skipFocused, setSkipFocused] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const popupRef = useRef<HTMLDivElement>(null)
+  const avatarBtnRef = useRef<HTMLButtonElement>(null)
 
-  // Tashqaridan bosish yoki Escape — menyu yopiladi
+  // Popup yopilganda focus profil tugmasiga qaytadi
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false)
+    avatarBtnRef.current?.focus()
+  }, [])
+
+  // Tashqaridan bosish, Escape yoki Tab — menyu yopiladi / focus ichida qoladi
   useEffect(() => {
     if (!menuOpen) return
+    const focusables = () =>
+      popupRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )
     const onDown = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false)
+      if (e.key === 'Escape') {
+        closeMenu()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const items = focusables()
+      if (!items || items.length === 0) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      const activeEl = document.activeElement
+      if (e.shiftKey && (activeEl === first || !popupRef.current?.contains(activeEl))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (activeEl === last || !popupRef.current?.contains(activeEl))) {
+        e.preventDefault()
+        first.focus()
+      }
     }
     document.addEventListener('mousedown', onDown)
     document.addEventListener('keydown', onKey)
@@ -61,6 +90,14 @@ export default function Layout() {
       document.removeEventListener('mousedown', onDown)
       document.removeEventListener('keydown', onKey)
     }
+  }, [menuOpen, closeMenu])
+
+  // Menyu ochilganda birinchi bandga focus beriladi
+  useEffect(() => {
+    if (!menuOpen) return
+    popupRef.current
+      ?.querySelector<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+      ?.focus()
   }, [menuOpen])
 
   // Sahifa almashganda menyu yopiladi
@@ -70,6 +107,27 @@ export default function Layout() {
 
   return (
     <div className="app">
+      <a
+        href="#main-content"
+        onFocus={() => setSkipFocused(true)}
+        onBlur={() => setSkipFocused(false)}
+        style={{
+          position: 'fixed',
+          top: skipFocused ? 8 : -64,
+          left: 8,
+          zIndex: 200,
+          padding: '12px 16px',
+          borderRadius: 8,
+          background: 'var(--pm-accent)',
+          color: 'var(--pm-on-accent)',
+          fontSize: 14,
+          fontWeight: 700,
+          textDecoration: 'none',
+        }}
+      >
+        Asosiy mazmunga o'ting
+      </a>
+
       <header className="topbar" data-tauri-drag-region>
         <Link to="/" className="brand" data-tauri-drag-region aria-label="Bosh sahifa">
           <span className="mark">
@@ -79,18 +137,21 @@ export default function Layout() {
         </Link>
 
         <nav className="topnav" aria-label="Asosiy navigatsiya">
-          {NAV.map(({ to, icon: Icon, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={`nav-item${isActive(to, end) ? ' active' : ''}`}
-            >
-              <Icon size={19} />
-              <span className="nav-txt">{label}</span>
-              {to === '/takrorlash' && due > 0 && <span className="nav-badge">{due}</span>}
-            </NavLink>
-          ))}
+          {NAV.map(({ to, icon: Icon, label, end }) => {
+            const active = isActive(to, end)
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={`nav-item${active ? ' active' : ''}`}
+                aria-current={active ? 'page' : undefined}
+              >
+                <Icon size={18} />
+                <span className="nav-txt">{label}</span>
+                {to === '/takrorlash' && due > 0 && <span className="nav-badge">{due}</span>}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="topbar-right">
@@ -100,9 +161,12 @@ export default function Layout() {
 
           <div className="avatar-wrap" ref={menuRef}>
             <button
+              ref={avatarBtnRef}
               className={`avatar-btn${menuOpen ? ' on' : ''}`}
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="Profil menyusi"
+              aria-haspopup="menu"
+              aria-controls="profile-menu"
               aria-expanded={menuOpen}
               title="Profil"
             >
@@ -110,20 +174,20 @@ export default function Layout() {
             </button>
 
             {menuOpen && (
-              <div className="popmenu" role="menu">
+              <div className="popmenu" id="profile-menu" role="menu" ref={popupRef} aria-label="Profil menyusi">
                 <div className="popmenu-head">
                   <span className="popmenu-avatar">{profile.avatar}</span>
                   <div style={{ minWidth: 0 }}>
                     <b>{profile.name || "o'quvchi"}</b>
                     <small>
-                      <IconFlame size={12} /> {profile.streak} kunlik streak
+                      {profile.streak} kunlik streak
                     </small>
                   </div>
                 </div>
 
                 <div className="popmenu-list">
                   <Link to="/sozlamalar" className="popmenu-item" role="menuitem">
-                    <IconSliders size={17} /> Sozlamalar
+                    <IconSliders size={18} /> Sozlamalar
                   </Link>
                 </div>
 
@@ -134,6 +198,7 @@ export default function Layout() {
                       className={profile.theme === 'light' ? 'on' : ''}
                       role="menuitemradio"
                       aria-checked={profile.theme === 'light'}
+                      aria-label="Kunduzi mavzu"
                       onClick={() => updateProfile({ theme: 'light' })}
                     >
                       Kunduzi
@@ -142,6 +207,7 @@ export default function Layout() {
                       className={profile.theme === 'dark' ? 'on' : ''}
                       role="menuitemradio"
                       aria-checked={profile.theme === 'dark'}
+                      aria-label="Tungi mavzu"
                       onClick={() => updateProfile({ theme: 'dark' })}
                     >
                       Tungi
@@ -162,7 +228,7 @@ export default function Layout() {
               disabled={!windowControls}
               onClick={() => void minimizeWindow()}
             >
-              <IconMinus size={17} />
+              <IconMinus size={16} />
             </button>
             <button
               className="win-btn"
@@ -171,7 +237,7 @@ export default function Layout() {
               disabled={!windowControls}
               onClick={() => void maximizeWindow()}
             >
-              <IconMaximize size={15} />
+              <IconMaximize size={16} />
             </button>
             <button
               className="win-btn win-close"
@@ -186,7 +252,7 @@ export default function Layout() {
         </div>
       </header>
 
-      <main className="main">
+      <main className="main" id="main-content" tabIndex={-1}>
         <div className="page" key={location.pathname}>
           <Outlet />
         </div>

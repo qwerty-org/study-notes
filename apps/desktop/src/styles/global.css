@@ -63,7 +63,8 @@
   --r-lg: 16px;
   --r-pill: 999px;
 
-  --topbar-h: 56px;
+  /* theme.css tasdiqlagan 64px (overline mos keladi) */
+  --topbar-h: 64px;
   --content-max: none;
 
   --font:
@@ -125,7 +126,7 @@ body {
 }
 
 :focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--blue) 55%, transparent);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -148,10 +149,10 @@ h4 {
   letter-spacing: -0.01em;
 }
 h1 {
-  font-size: 27px;
+  font-size: var(--fs-30);
 }
 h2 {
-  font-size: 19px;
+  font-size: var(--fs-20);
 }
 h3 {
   font-size: 16px;
@@ -186,6 +187,18 @@ button {
   border: 3px solid transparent;
   background-clip: content-box;
 }
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Matn tanlash — mavjud tokenlar bilan, tema ranglariga mos */
+::selection {
+  background: var(--primary-soft);
+  color: var(--text);
+}
 
 /* ---------- Desktop shell: top navbar + window controls ---------- */
 
@@ -202,8 +215,8 @@ button {
   display: grid;
   grid-template-columns: minmax(140px, 1fr) auto minmax(140px, 1fr);
   align-items: center;
-  gap: 14px;
-  padding: 0 6px 0 16px;
+  gap: var(--sp-4);
+  padding: 0 var(--sp-2) 0 var(--sp-4);
   background: var(--sidebar);
   border-bottom: 1.5px solid var(--border);
   z-index: 80;
@@ -218,14 +231,14 @@ button {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-2);
   justify-self: start;
   min-width: 0;
 }
 .brand .mark {
   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   background: linear-gradient(135deg, var(--primary), var(--blue));
   display: grid;
   place-items: center;
@@ -245,7 +258,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: var(--sp-1);
   min-width: 0;
   max-width: 100%;
   overflow-x: auto;
@@ -260,9 +273,9 @@ button {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px 13px;
-  border-radius: 11px;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r);
   color: var(--muted);
   font-size: 14px;
   font-weight: 700;
@@ -295,7 +308,7 @@ button {
 .nav-badge {
   min-width: 20px;
   height: 20px;
-  padding: 0 6px;
+  padding: 0 var(--sp-2);
   border-radius: 999px;
   background: var(--primary);
   color: #fff;
@@ -310,7 +323,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--sp-2);
   justify-self: end;
   min-width: 0;
 }
@@ -325,13 +338,13 @@ button {
 .win-controls {
   display: flex;
   align-items: center;
-  margin-left: 2px;
-  padding-left: 8px;
+  margin-left: var(--sp-1);
+  padding-left: var(--sp-2);
   border-left: 1.5px solid var(--border);
 }
 .win-btn {
-  width: 42px;
-  height: 34px;
+  width: var(--h-md);
+  height: var(--h-md);
   display: grid;
   place-items: center;
   border: none;
@@ -394,9 +407,9 @@ button {
   width: 264px;
   background: var(--card);
   border: 1.5px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--r-lg);
   box-shadow: var(--shadow-pop);
-  padding: 8px;
+  padding: var(--sp-2);
   z-index: 95;
   transform-origin: top right;
   animation: popIn 0.16s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -424,25 +437,25 @@ button {
 .popmenu-head {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 8px 8px 12px;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-2) var(--sp-3);
   border-bottom: 1.5px solid var(--border);
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
 }
 .popmenu-avatar {
-  width: 42px;
-  height: 42px;
+  width: var(--h-md);
+  height: var(--h-md);
   border-radius: 999px;
   background: linear-gradient(135deg, var(--primary), var(--blue));
   display: grid;
   place-items: center;
-  font-size: 22px;
+  font-size: var(--fs-20);
   flex-shrink: 0;
   box-shadow: 0 3px 10px rgba(88, 204, 2, 0.3);
 }
 .popmenu-head b {
   display: block;
-  font-size: 15px;
+  font-size: var(--fs-16);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -450,8 +463,8 @@ button {
 .popmenu-head small {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 12.5px;
+  gap: var(--sp-1);
+  font-size: var(--fs-12);
   color: var(--muted);
 }
 .popmenu-head small svg {
@@ -469,11 +482,11 @@ button {
 .popmenu-item {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 10px;
-  border-radius: 11px;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--r);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-14);
   font-weight: 700;
   text-decoration: none;
   transition: background 0.12s;
@@ -497,31 +510,32 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 11px 10px 9px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-3) var(--sp-2);
   border-top: 1.5px solid var(--border);
-  margin-top: 7px;
+  margin-top: var(--sp-2);
 }
 .popmenu-theme > span {
-  font-size: 13px;
+  font-size: var(--fs-13);
   font-weight: 800;
   color: var(--muted);
 }
 .mini-seg {
   display: flex;
-  gap: 3px;
+  gap: var(--sp-1);
   background: var(--elevated);
-  padding: 3px;
-  border-radius: 10px;
+  padding: var(--sp-1);
+  border-radius: var(--r-sm);
 }
 .mini-seg button {
   border: none;
   background: none;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   font-weight: 800;
-  padding: 5px 11px;
-  border-radius: 8px;
+  padding: var(--sp-1) var(--sp-3);
+  min-height: var(--h-sm);
+  border-radius: var(--r-sm);
   cursor: pointer;
   transition:
     background 0.13s,
@@ -534,12 +548,12 @@ button {
 }
 
 .popmenu-foot {
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   color: var(--faint);
   text-align: center;
-  padding: 9px 6px 4px;
+  padding: var(--sp-2) var(--sp-2) var(--sp-1);
   border-top: 1.5px solid var(--border);
-  margin-top: 4px;
+  margin-top: var(--sp-1);
 }
 
 .main {
@@ -551,10 +565,10 @@ button {
 .page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--sp-5);
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 32px 34px 70px;
+  padding: var(--sp-8) var(--sp-8) 72px;
   animation: pageIn 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 @keyframes pageIn {
@@ -570,9 +584,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 26px 28px;
-  border-radius: 20px;
+  gap: var(--sp-6);
+  padding: var(--sp-6) 28px;
+  border-radius: var(--r-lg);
   border: 1.5px solid var(--border);
   background:
     radial-gradient(420px 200px at 100% 0%, var(--blue-soft), transparent),
@@ -580,24 +594,25 @@ button {
     var(--card);
   box-shadow: var(--shadow-card);
 }
-.hero h1 {
-  font-size: 25px;
+.hero h1,
+.hero .profile-col .info h1 {
+  font-size: var(--fs-24);
 }
 .hero p {
   color: var(--muted);
-  margin-top: 7px;
-  font-size: 14.5px;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-14);
   max-width: 540px;
 }
 .hero-goal {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   flex-shrink: 0;
 }
 .hero-goal small {
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -612,8 +627,12 @@ button {
 .ring span {
   position: absolute;
   font-weight: 800;
-  font-size: 17px;
+  font-size: var(--fs-16);
   letter-spacing: -0.02em;
+}
+/* Dashboard hero halqasi kichraytirilgani (80px) uchun label kattaroq */
+.hero .ring span {
+  font-size: var(--fs-20);
 }
 .ring svg {
   display: block;
@@ -622,6 +641,10 @@ button {
 /* ---------- Dashboard bloklari ---------- */
 
 .grid-fit {
+  /* Grid elementlari default bo'yicha balandligiga cho'ziladi (align-items:
+     stretch). Qisqa kartalarning pastida katta bo'sh qolmasligi uchun
+     har bir karta o'z kontenti balandligicha bo'lsin. */
+  align-items: start;
   grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
 }
 
@@ -629,15 +652,15 @@ button {
 .todo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 .todo-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
   border: 1.5px solid var(--border);
-  border-radius: 13px;
+  border-radius: var(--r);
   background: var(--card);
   text-decoration: none;
   color: var(--text);
@@ -653,9 +676,9 @@ button {
   transform: translateY(-1px);
 }
 .todo-row .t-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
+  width: var(--sp-9);
+  height: var(--sp-9);
+  border-radius: var(--r);
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -685,19 +708,19 @@ button {
 }
 .todo-row .t-body b {
   display: block;
-  font-size: 14.5px;
+  font-size: var(--fs-14);
   line-height: 1.3;
 }
 .todo-row .t-body small {
   display: block;
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .todo-row .t-check {
-  width: 25px;
-  height: 25px;
+  width: var(--h-sm);
+  height: var(--h-sm);
   border-radius: 999px;
   background: var(--elevated);
   color: var(--faint);
@@ -721,16 +744,17 @@ button {
 .qactions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--sp-3);
+  align-items: stretch;
 }
 .qaction {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 14px;
+  gap: var(--sp-1);
+  padding: var(--sp-4);
   border: 1.5px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--r);
   background: var(--card);
   text-decoration: none;
   color: var(--text);
@@ -750,14 +774,14 @@ button {
   transform: translateY(0);
 }
 .qaction .qicon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
+  width: var(--h-md);
+  height: var(--h-md);
+  border-radius: var(--r);
   display: grid;
   place-items: center;
   background: var(--primary-soft);
   color: var(--primary-dark);
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
 }
 [data-theme='dark'] .qaction .qicon {
   color: var(--primary);
@@ -781,11 +805,11 @@ button {
   color: var(--purple-dark);
 }
 .qaction b {
-  font-size: 14.5px;
+  font-size: var(--fs-14);
   line-height: 1.3;
 }
 .qaction small {
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   line-height: 1.4;
 }
 
@@ -793,10 +817,10 @@ button {
 .book-row {
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 10px 12px;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
   border: 1.5px solid var(--border);
-  border-radius: 13px;
+  border-radius: var(--r);
   text-decoration: none;
   color: var(--text);
   background: var(--card);
@@ -814,16 +838,16 @@ button {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--sp-1);
 }
 .book-row .b-body b {
-  font-size: 14.5px;
+  font-size: var(--fs-14);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .book-row .b-body small {
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -837,15 +861,15 @@ button {
 .reveal-box {
   background: var(--primary-soft);
   border: 1.5px solid color-mix(in srgb, var(--primary) 40%, transparent);
-  border-radius: 12px;
-  padding: 13px 14px;
-  font-size: 14px;
+  border-radius: var(--r);
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-14);
   line-height: 1.55;
 }
 .reveal-box b {
   display: block;
   color: var(--primary-dark);
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 4px;
@@ -867,23 +891,24 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
 }
 .card-title h1,
 .card-title h2,
 .card-title h3 {
-  font-size: 16.5px;
+  font-size: var(--fs-16);
 }
 
 /* ---------- Grid / flex yordamchilari ---------- */
 
 .grid {
   display: grid;
-  gap: 12px;
+  gap: var(--sp-3);
+  align-items: start;
 }
 .grid-2 {
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 .grid-3 {
   grid-template-columns: repeat(3, 1fr);
@@ -892,46 +917,14 @@ button {
   grid-template-columns: repeat(4, 1fr);
 }
 
-/* Kutubxona kompakt kartalari */
-.grid-compact {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-}
-.book-card-compact {
-  padding: 10px;
-  gap: 6px;
-}
-.book-card-compact h3 {
-  font-size: 14px;
-  margin-top: 6px;
-  line-height: 1.3;
-  -webkit-line-clamp: 2;
-}
-.book-card-compact .author {
-  font-size: 11.5px;
-}
-.book-cover-compact .cover {
-  width: 70px;
-  height: 95px;
-  font-size: 26px;
-  border-radius: 10px;
-}
-.book-del-compact {
-  top: 6px;
-  right: 6px;
-  width: 26px;
-  height: 26px;
-  font-size: 13px;
-}
-
 /* ---------- Kitob sahifasi: professional hero-karta ---------- */
 
 .book-hero {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 22px 24px;
-  border-radius: 20px;
+  gap: var(--sp-4);
+  padding: var(--sp-6);
+  border-radius: var(--r-lg);
   border: 1.5px solid var(--border);
   background:
     radial-gradient(480px 220px at 100% 0%, var(--blue-soft), transparent),
@@ -951,9 +944,9 @@ button {
 }
 .cover-lg {
   width: 88px;
-  height: 117px;
+  height: 116px;
   font-size: 40px;
-  border-radius: 14px;
+  border-radius: var(--r);
   flex-shrink: 0;
   box-shadow: 0 8px 22px rgba(24, 28, 40, 0.16);
 }
@@ -962,9 +955,9 @@ button {
   min-width: 240px;
 }
 .book-hero-info h1 {
-  font-size: 23px;
+  font-size: var(--fs-24);
   line-height: 1.25;
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
   word-break: break-word;
 }
 .book-hero-info small {
@@ -976,13 +969,13 @@ button {
 .book-hero-goal {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: var(--sp-5);
   flex-shrink: 0;
 }
 .book-hero-actions {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: var(--sp-2);
   min-width: 200px;
 }
 .book-hero-actions .btn {
@@ -991,8 +984,8 @@ button {
 .book-hero-progress {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-top: 14px;
+  gap: var(--sp-3);
+  padding-top: var(--sp-4);
   border-top: 1.5px solid var(--border);
 }
 
@@ -1013,11 +1006,11 @@ button {
   opacity: 1;
 }
 .tab-count {
-  font-size: 11px;
+  font-size: var(--fs-11);
   font-weight: 800;
   background: var(--elevated);
   color: var(--muted);
-  padding: 1px 7px;
+  padding: var(--sp-1) var(--sp-2);
   border-radius: 999px;
   line-height: 1.5;
 }
@@ -1031,7 +1024,7 @@ button {
 
 .split {
   display: grid;
-  gap: 18px;
+  gap: var(--sp-5);
   grid-template-columns: 1fr;
   align-items: start;
 }
@@ -1044,13 +1037,13 @@ button {
 .row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-3);
 }
 .row-between {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--sp-3);
 }
 .wrap {
   flex-wrap: wrap;
@@ -1062,7 +1055,7 @@ button {
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: var(--sp-3);
 }
 .mt {
   margin-top: 12px;
@@ -1084,14 +1077,14 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 0 18px;
-  min-height: 46px;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-4);
+  min-height: var(--h-md);
   border: none;
-  border-radius: 14px;
+  border-radius: var(--r);
   background: var(--btn-face);
   color: var(--btn-text);
-  font-size: 15px;
+  font-size: var(--fs-14);
   font-weight: 800;
   letter-spacing: 0.01em;
   cursor: pointer;
@@ -1156,16 +1149,16 @@ button {
 }
 
 .btn-lg {
-  min-height: 52px;
-  font-size: 15.5px;
-  border-radius: 16px;
+  min-height: var(--h-lg);
+  font-size: var(--fs-16);
+  border-radius: var(--r-lg);
 }
 .btn-sm {
-  min-height: 36px;
-  padding: 0 13px;
-  font-size: 13.5px;
-  border-radius: 11px;
-  box-shadow: 0 2.5px 0 var(--btn-shadow);
+  min-height: var(--h-sm);
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-13);
+  border-radius: var(--r);
+  box-shadow: 0 2px 0 var(--btn-shadow);
 }
 .btn-sm:active {
   transform: translateY(1.5px);
@@ -1180,11 +1173,11 @@ button {
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 11px;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
   border-radius: var(--r-pill);
   background: var(--elevated);
-  font-size: 12.5px;
+  font-size: var(--fs-13);
   font-weight: 800;
   color: var(--muted);
   white-space: nowrap;
@@ -1237,7 +1230,7 @@ button {
   height: 100%;
   background: var(--primary);
   border-radius: var(--r-pill);
-  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12);
   transition: width 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -1247,15 +1240,15 @@ button {
 .select,
 .textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: var(--sp-2) var(--sp-4);
   background: var(--input-bg);
   border: 2px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--r);
   color: var(--text);
-  font-size: 15.5px;
+  font-size: var(--fs-16);
   font-family: inherit;
   transition: border-color 0.13s;
-  min-height: 48px;
+  min-height: var(--sp-11);
 }
 .input::placeholder,
 .textarea::placeholder {
@@ -1264,15 +1257,21 @@ button {
 .input:focus,
 .select:focus,
 .textarea:focus {
-  outline: none;
-  border-color: var(--blue);
+  border-color: var(--primary);
+}
+/* Klaviatura fokusi ko'rinadi: umumiy :focus-visible bilan bir xil token */
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
 }
 .label {
   display: block;
-  font-size: 13.5px;
+  font-size: var(--fs-13);
   font-weight: 800;
   color: var(--muted);
-  margin-bottom: 7px;
+  margin-bottom: var(--sp-2);
 }
 .hint {
   font-size: 13px;
@@ -1285,10 +1284,10 @@ button {
 
 .tabs {
   display: flex;
-  gap: 4px;
+  gap: var(--sp-1);
   background: var(--elevated);
-  border-radius: 14px;
-  padding: 5px;
+  border-radius: var(--r);
+  padding: var(--sp-1);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -1297,19 +1296,19 @@ button {
 }
 .tab {
   flex: 1 0 auto;
-  padding: 9px 15px;
+  padding: var(--sp-2) var(--sp-4);
   border: none;
   background: none;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-14);
   font-weight: 800;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: var(--r);
   white-space: nowrap;
   transition:
     background 0.15s,
     color 0.15s;
-  min-height: 36px;
+  min-height: var(--h-md);
 }
 .tab:hover {
   color: var(--text);
@@ -1326,17 +1325,17 @@ button {
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r);
-  padding: 15px 16px;
+  padding: var(--sp-3) var(--sp-4);
 }
 .stat b {
   display: block;
-  font-size: 24px;
+  font-size: var(--fs-24);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 .stat span {
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
@@ -1347,27 +1346,27 @@ button {
 
 .empty {
   text-align: center;
-  padding: 44px 24px;
+  padding: var(--sp-12) var(--sp-6);
   color: var(--muted);
 }
 .empty .icon {
   display: grid;
   place-items: center;
-  width: 66px;
-  height: 66px;
-  margin: 0 auto 16px;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--sp-4);
   border-radius: 999px;
   background: var(--blue-soft);
   color: var(--blue);
 }
 .empty h3 {
   color: var(--text);
-  margin-bottom: 7px;
-  font-size: 18px;
+  margin-bottom: var(--sp-2);
+  font-size: var(--fs-18);
 }
 .empty p {
-  font-size: 14.5px;
-  max-width: 340px;
+  font-size: var(--fs-16);
+  max-width: 336px;
   margin: 0 auto;
 }
 
@@ -1377,7 +1376,7 @@ button {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 14px;
+  gap: var(--sp-4);
   flex-wrap: wrap;
 }
 .page-head h1 {
@@ -1391,11 +1390,11 @@ button {
 .page-back {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 13.5px;
+  gap: var(--sp-1);
+  font-size: var(--fs-13);
   font-weight: 800;
   color: var(--blue-dark);
-  margin-bottom: 5px;
+  margin-bottom: var(--sp-1);
 }
 
 /* ---------- Kitob kartochkasi ---------- */
@@ -1404,11 +1403,11 @@ button {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-2);
   background: var(--card);
   border: 2px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 14px;
+  padding: var(--sp-4);
   text-decoration: none;
   color: var(--text);
   cursor: pointer;
@@ -1465,10 +1464,10 @@ button {
 }
 .book-del {
   position: absolute;
-  top: 9px;
-  right: 9px;
-  width: 32px;
-  height: 32px;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  width: var(--h-sm);
+  height: var(--h-sm);
   border-radius: 999px;
   display: grid;
   place-items: center;
@@ -1489,14 +1488,14 @@ button {
 .cover-sm {
   width: 48px;
   aspect-ratio: 3 / 4;
-  font-size: 20px;
-  border-radius: 9px;
+  font-size: var(--fs-20);
+  border-radius: var(--r-sm);
 }
 .cover-inline {
   width: 44px;
   aspect-ratio: 3 / 4;
-  font-size: 18px;
-  border-radius: 9px;
+  font-size: var(--fs-18);
+  border-radius: var(--r-sm);
 }
 
 /* ---------- Dropzone ---------- */
@@ -1504,14 +1503,14 @@ button {
 .dropzone {
   border: 2px dashed var(--border-strong);
   border-radius: var(--r-lg);
-  padding: 24px 18px;
+  padding: var(--sp-6) var(--sp-5);
   text-align: center;
   color: var(--muted);
   cursor: pointer;
   transition:
     border-color 0.15s,
     background 0.15s;
-  font-size: 14.5px;
+  font-size: var(--fs-14);
 }
 .dropzone:hover,
 .dropzone.over {
@@ -1522,10 +1521,10 @@ button {
 .dropzone .icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 10px;
-  border-radius: 14px;
+  width: var(--h-lg);
+  height: var(--h-lg);
+  margin: 0 auto var(--sp-3);
+  border-radius: var(--r);
   background: var(--primary-soft);
   color: var(--primary-dark);
 }
@@ -1538,13 +1537,6 @@ button {
 
 /* ---------- Quiz ---------- */
 
-.narrow {
-  width: 100%;
-  max-width: 780px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .quiz-wrap {
   display: flex;
   flex-direction: column;
@@ -1555,11 +1547,11 @@ button {
 }
 .quiz-dots {
   display: flex;
-  gap: 6px;
+  gap: var(--sp-2);
 }
 .quiz-dot {
   flex: 1;
-  height: 7px;
+  height: var(--sp-2);
   border-radius: var(--r-pill);
   background: var(--elevated);
   transition: background 0.25s;
@@ -1576,16 +1568,16 @@ button {
 
 .quiz-option {
   display: flex;
-  gap: 13px;
+  gap: var(--sp-3);
   align-items: center;
   width: 100%;
   text-align: left;
-  padding: 14px 15px;
+  padding: var(--sp-4);
   border-radius: var(--r);
   border: 2px solid var(--border);
   background: var(--card);
   color: var(--text);
-  font-size: 15px;
+  font-size: var(--fs-16);
   line-height: 1.45;
   font-weight: 600;
   cursor: pointer;
@@ -1607,13 +1599,13 @@ button {
 .quiz-option .key {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: var(--h-sm);
+  height: var(--h-sm);
   flex-shrink: 0;
-  border-radius: 9px;
+  border-radius: var(--r-sm);
   background: var(--elevated);
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: var(--fs-14);
   font-weight: 800;
 }
 .quiz-option.correct {
@@ -1638,8 +1630,8 @@ button {
 
 .explain {
   border-radius: var(--r);
-  padding: 14px 15px;
-  font-size: 14px;
+  padding: var(--sp-4);
+  font-size: var(--fs-14);
   background: var(--elevated);
   border-left: 4px solid var(--blue);
   line-height: 1.6;
@@ -1653,19 +1645,13 @@ button {
   background: var(--red-soft);
 }
 
-/* ---------- G'oya kartasi ---------- */
-
-.idea-card {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 18px;
-  box-shadow: var(--shadow-card);
-}
+/* ---------- G'oya kartasi ----------
+   .idea-card asosiy qoidasi pastdagi (keyingi) blokda — bu yerda faqat
+   o'sha blokda yo'q descendant selectorlar qoldirildi (dup bo'lmaydi). */
 .idea-card h3 {
-  font-size: 16px;
+  font-size: var(--fs-16);
   line-height: 1.4;
-  margin-bottom: 9px;
+  margin-bottom: var(--sp-2);
 }
 .idea-card .why {
   color: var(--muted);
@@ -1674,10 +1660,10 @@ button {
 .idea-card .why b,
 .idea-card .apply b {
   display: block;
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
 }
 .idea-card .why b {
   color: var(--blue-dark);
@@ -1687,10 +1673,10 @@ button {
 }
 .idea-card .apply {
   background: var(--primary-soft);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 14px;
-  margin-top: 12px;
+  border-radius: var(--r);
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-14);
+  margin-top: var(--sp-3);
 }
 .idea-card .apply b {
   color: var(--primary-dark);
@@ -1699,66 +1685,11 @@ button {
   color: var(--primary);
 }
 
-.chapter-label {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--blue-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  margin: 8px 0;
-}
-[data-theme='dark'] .chapter-label {
-  color: var(--blue);
-}
-
-/* ---------- Termin kartochkalari ---------- */
-
-.term-card {
-  perspective: 900px;
-  min-height: 142px;
-  cursor: pointer;
-}
-.term-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 142px;
-  transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
-  transform-style: preserve-3d;
-}
-.term-card.flipped .term-inner {
-  transform: rotateY(180deg);
-}
-.term-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  box-shadow: var(--shadow-card);
-}
-.term-face.back {
-  transform: rotateY(180deg);
-  background: var(--primary);
-  border-color: transparent;
-  color: #fff;
-}
-.term-face.back small {
-  color: rgba(255, 255, 255, 0.82);
-}
-.term-face h3 {
-  font-size: 15.5px;
-  line-height: 1.3;
-}
+/* .chapter-label, .term-card, .term-inner, .term-face va ularning
+   flipped/back/h3 variantlari pastdagi keyingi blokda to'liq berilgan —
+   ziddiyatli nusxalari olib tashlandi. Faqat o'sha blokda yo'q qoida qoldi: */
 .term-face p {
-  font-size: 14px;
+  font-size: var(--fs-14);
   line-height: 1.5;
 }
 
@@ -1768,30 +1699,30 @@ button {
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 18px;
+  padding: var(--sp-5);
   box-shadow: var(--shadow-card);
 }
 .scenario .situation {
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: var(--fs-16);
+  line-height: 1.5;
 }
 .scenario .actions {
   display: grid;
-  gap: 10px;
-  margin-top: 14px;
+  gap: var(--sp-3);
+  margin-top: var(--sp-4);
 }
 .scenario .right {
   background: var(--primary-soft);
   border: 1.5px solid color-mix(in srgb, var(--primary) 40%, transparent);
-  border-radius: 12px;
-  padding: 13px 14px;
-  font-size: 14px;
+  border-radius: var(--r);
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-14);
   line-height: 1.55;
 }
 .scenario .right b {
   display: block;
   color: var(--primary-dark);
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 4px;
@@ -1801,15 +1732,15 @@ button {
 }
 .scenario .wrong {
   background: var(--red-soft);
-  border-radius: 12px;
-  padding: 13px 14px;
-  font-size: 14px;
+  border-radius: var(--r);
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-14);
   line-height: 1.55;
 }
 .scenario .wrong b {
   display: block;
   color: var(--red-dark);
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 4px;
@@ -1848,11 +1779,11 @@ button {
 .reader-side-progress {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: var(--sp-3);
 }
 .reader-side-progress b {
   display: block;
-  font-size: 17px;
+  font-size: var(--fs-18);
   line-height: 1.2;
 }
 .reader-side-progress small {
@@ -1860,7 +1791,7 @@ button {
   color: var(--muted);
 }
 .reader-side-label {
-  font-size: 11.5px;
+  font-size: var(--fs-12);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -1870,21 +1801,21 @@ button {
 .chapter-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--sp-1);
   overflow-y: auto;
-  margin: 0 -6px;
-  padding: 0 6px 4px;
+  margin: 0 calc(var(--sp-2) * -1);
+  padding: 0 var(--sp-2) var(--sp-1);
 }
 .chapter-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
   border: none;
   background: none;
-  border-radius: 11px;
+  border-radius: var(--r);
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: var(--fs-13);
   font-weight: 700;
   text-align: left;
   cursor: pointer;
@@ -1953,9 +1884,9 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-2);
 }
 .onboarding-logo .mark {
   width: 64px;
@@ -1977,7 +1908,7 @@ button {
 
 .steps {
   display: flex;
-  gap: 7px;
+  gap: var(--sp-2);
 }
 .step-dot {
   flex: 1;
@@ -1993,13 +1924,13 @@ button {
 
 .provider-pick {
   display: grid;
-  gap: 10px;
+  gap: var(--sp-3);
 }
 .provider {
   display: flex;
-  gap: 13px;
+  gap: var(--sp-3);
   align-items: flex-start;
-  padding: 14px 15px;
+  padding: var(--sp-4);
   border: 2px solid var(--border);
   border-radius: var(--r);
   background: var(--card);
@@ -2029,14 +1960,14 @@ button {
 
 .avatar-pick {
   display: flex;
-  gap: 9px;
+  gap: var(--sp-2);
   flex-wrap: wrap;
 }
 .avatar {
-  width: 50px;
-  height: 50px;
-  font-size: 26px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  font-size: var(--fs-24);
+  border-radius: var(--r);
   border: 2px solid var(--border);
   background: var(--card);
   cursor: pointer;
@@ -2057,8 +1988,8 @@ button {
 .analyze-run {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
   flex-wrap: wrap;
 }
 .analyze-run .phase-line {
@@ -2086,7 +2017,7 @@ button {
 .phase-line {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-3);
   font-size: 14px;
   font-weight: 700;
   color: var(--muted);
@@ -2110,7 +2041,7 @@ button {
 
 .toast {
   position: fixed;
-  bottom: 28px;
+  bottom: var(--sp-8);
   left: 50%;
   transform: translateX(-50%);
   background: var(--text);
@@ -2155,20 +2086,20 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  padding-bottom: var(--sp-3);
   border-bottom: 1px solid var(--border);
 }
 .section-head h3 {
-  font-size: 15px;
+  font-size: var(--fs-16);
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--text);
 }
 .section-head .chip {
-  font-size: 11.5px;
-  padding: 3px 10px;
+  font-size: var(--fs-12);
+  padding: var(--sp-1) var(--sp-3);
 }
 
 /* Statistika plitkasi — ikon bilan, markazlashdırilgan */
@@ -2176,11 +2107,14 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 7px;
+  /* Ikon · qiymat · label uchun 4px ritm: plitka ~88–96px balandlikda
+     bo'lib, qiymat va label yonma-yon o'qiladi, pastida bo'sh qolmaydi. */
+  gap: var(--sp-1);
+  min-height: 88px;
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r);
-  padding: 17px 18px;
+  padding: var(--sp-3) var(--sp-4);
   transition: border-color 0.15s, transform 0.1s;
 }
 .stat:hover {
@@ -2190,25 +2124,26 @@ button {
 .stat .stat-head {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 .stat b {
-  font-size: 27px;
+  font-size: var(--fs-24);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
 .stat span {
-  font-size: 11px;
+  font-size: var(--fs-12);
   font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1.35;
 }
 .stat .icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: var(--sp-10);
+  height: var(--sp-10);
+  border-radius: var(--r);
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -2243,8 +2178,8 @@ button {
 .book-row .meta-foot {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 6px;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
   font-size: 12.5px;
   color: var(--muted);
 }
@@ -2268,7 +2203,7 @@ button {
   box-shadow: 0 6px 18px rgba(88, 204, 2, 0.35);
 }
 .hero .profile-col .info h1 {
-  font-size: 22px;
+  font-size: var(--fs-24);
 }
 .hero .profile-col .info small {
   display: block;
@@ -2279,11 +2214,11 @@ button {
 
 /* Ayirish qator (split) uchun qo'shimcha bo'shliq */
 .split {
-  gap: 20px;
+  gap: var(--sp-5);
 }
 
 .book-tabs {
-  margin-bottom: 14px;
+  margin-bottom: var(--sp-4);
 }
 
 /* ---------- O'qish sahifasi (e-reader): o'ng maydon ---------- */
@@ -2298,11 +2233,11 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--sp-3);
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 12px 18px;
+  padding: var(--sp-3) var(--sp-5);
   box-shadow: var(--shadow-card);
   flex-wrap: wrap;
 }
@@ -2318,15 +2253,20 @@ button {
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 34px 40px;
+  padding: var(--sp-8) 40px;
   font-size: 17px;
   line-height: 1.9;
   box-shadow: var(--shadow-card);
   width: 100%;
   color: var(--text);
 }
+/* O'qish matni 66ch dan keng cho'zilmasin — marker chiziq uzunligi qulay. */
+.reader-card article {
+  max-width: 66ch;
+  margin-inline: auto;
+}
 .reader-card p {
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-5);
 }
 .reader-card p:last-child {
   margin-bottom: 0;
@@ -2334,27 +2274,27 @@ button {
 .reader-card h1,
 .reader-card h2,
 .reader-card h3 {
-  font-size: 20px;
-  margin: 10px 0 16px;
+  font-size: var(--fs-20);
+  margin: var(--sp-2) 0 var(--sp-4);
 }
 .reader-card ul,
 .reader-card ol {
-  padding-left: 24px;
-  margin: 0 0 18px;
+  padding-left: var(--sp-6);
+  margin: 0 0 var(--sp-5);
 }
 .reader-card li {
   margin-bottom: 8px;
 }
 .reader-card blockquote {
   border-left: 4px solid var(--primary);
-  margin: 0 0 18px;
-  padding: 2px 16px;
+  margin: 0 0 var(--sp-5);
+  padding: var(--sp-1) var(--sp-4);
   color: var(--muted);
 }
 .reader-card code {
   background: var(--elevated);
-  padding: 1px 6px;
-  border-radius: 6px;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
   font-size: 0.9em;
 }
 .reader-nav {
@@ -2368,11 +2308,11 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 10px 18px;
-  min-height: 44px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5);
+  min-height: var(--h-lg);
   border: 1.5px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--r);
   background: var(--card);
   color: var(--text);
   font-size: 14.5px;
@@ -2412,15 +2352,15 @@ button {
 .chapter-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--sp-2);
 }
 .chapter-label {
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   font-weight: 800;
   color: var(--blue-dark);
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  margin-bottom: 2px;
+  margin-bottom: var(--sp-1);
 }
 [ data-theme='dark' ] .chapter-label {
   color: var(--blue);
@@ -2439,16 +2379,16 @@ button {
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 18px;
+  padding: var(--sp-5);
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--sp-3);
 }
 .idea-head h3 {
-  font-size: 15.5px;
+  font-size: var(--fs-16);
   line-height: 1.4;
-  margin-bottom: 2px;
+  margin-bottom: var(--sp-2);
 }
 .idea-body {
   display: flex;
@@ -2484,11 +2424,11 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 10px 16px;
-  min-height: 42px;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  min-height: var(--h-md);
   border: 1.5px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--r);
   background: var(--card);
   color: var(--text);
   font-size: 14px;
@@ -2515,20 +2455,20 @@ button {
 
 .terms-grid {
   display: grid;
-  gap: 12px;
+  gap: var(--sp-3);
   grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-  margin-top: 10px;
+  margin-top: var(--sp-2);
 }
 .term-card {
   perspective: 900px;
-  min-height: 150px;
+  min-height: 152px;
   cursor: pointer;
 }
 .term-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 150px;
+  min-height: 152px;
   transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
 }
@@ -2543,11 +2483,11 @@ button {
   background: var(--card);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 16px;
+  padding: var(--sp-4);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: var(--sp-2);
   box-shadow: var(--shadow-card);
 }
 .term-face.back {
@@ -2581,8 +2521,8 @@ button {
 }
 .term-metaphor {
   display: block;
-  margin-top: 6px;
-  font-size: 12.5px;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-12);
   color: rgba(255, 255, 255, 0.8);
   font-style: italic;
 }
@@ -2607,8 +2547,8 @@ button {
 .scenario-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5);
   border-bottom: 1px solid var(--border);
   background: var(--elevated);
 }
@@ -2616,9 +2556,9 @@ button {
   font-size: 11px;
 }
 .situation {
-  padding: 16px 18px;
-  font-size: 15px;
-  line-height: 1.7;
+  padding: var(--sp-4) var(--sp-5);
+  font-size: var(--fs-16);
+  line-height: 1.5;
   color: var(--text);
   border-bottom: 1px solid var(--border);
 }
@@ -2628,8 +2568,8 @@ button {
   gap: 0;
 }
 .scenario-side {
-  padding: 14px 18px;
-  font-size: 14px;
+  padding: var(--sp-4) var(--sp-5);
+  font-size: var(--fs-14);
   line-height: 1.6;
 }
 .scenario-side.right {
@@ -2639,7 +2579,7 @@ button {
 }
 .scenario-side.right b {
   display: block;
-  font-size: 10.5px;
+  font-size: var(--fs-11);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 4px;
@@ -2652,7 +2592,7 @@ button {
 }
 .scenario-side.wrong b {
   display: block;
-  font-size: 10.5px;
+  font-size: var(--fs-11);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 4px;
@@ -2663,9 +2603,9 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  padding: 14px 18px;
-  min-height: 46px;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5);
+  min-height: var(--h-lg);
   border: none;
   border-radius: 0;
   background: var(--card);
@@ -2696,9 +2636,9 @@ button {
 .reveal-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 14px 18px;
-  min-height: 46px;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5);
+  min-height: var(--h-lg);
   border: none;
   background: transparent;
   color: var(--blue-dark);
@@ -2750,5 +2690,37 @@ button {
   }
   .page-head {
     align-items: flex-start;
+  }
+}
+
+/* ---------- 375px: tor ekranda gorizontal to'kilish yo'q ---------- */
+@media (max-width: 480px) {
+  .topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 0 4px 0 10px;
+  }
+  .win-controls {
+    padding-left: 4px;
+  }
+  .win-btn {
+    width: 28px;
+    height: 30px;
+  }
+  .page {
+    padding: 20px 14px 56px;
+  }
+  .hero,
+  .book-hero {
+    padding: 20px 16px;
+  }
+  .card,
+  .idea-card,
+  .scenario {
+    padding: 16px;
+  }
+  .reader-card {
+    padding: 22px 18px;
+    font-size: 16px;
   }
 }

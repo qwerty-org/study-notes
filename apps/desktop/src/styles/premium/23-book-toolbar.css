@@ -1,0 +1,198 @@
+/* Premium Reader toolbar — Wave 3 / P23.
+   Owns: .nx-reader-toolbar, .nx-reader-toolbar .nx-icon-btn,
+         .nx-reader-aa, .nx-reader-aa button, .nx-toc-toggle.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md (§2, §4, §5, §6)
+          docs/superpowers/specs/layout/04-book.md — D4 (Reader toolbar).
+
+   Eski qatlamdagi 1px border / 3D soya / 11px kulrang matn o'rniga:
+   tekis --pm-surface-2 yuz, 12px Fraunces harflar, neytral --pm-ink-2 matn.
+   Faqat --pm-* tokenlari (yangi token yo'q), kuchaytirgich yo'q.
+   ARIA bog'langan holatlar, focus halqasi va reduced-motion saqlanadi. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Toolbar — 56px, bitta qator (1440 / 900)
+ * ------------------------------------------------------------------ */
+.nx-reader-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;                       /* 900 gacha bitta qator */
+  gap: var(--pm-s-1);                      /* 8px */
+  height: 56px;
+  box-sizing: border-box;                  /* padding 56px ichida qoladi */
+  padding: var(--pm-s-1) var(--pm-s-3);    /* 8px 16px */
+  background: var(--pm-surface-2);         /* neytral ikkilamchi yuz */
+  border: 0;                               /* eski 1px --nx-line o'chadi */
+  border-radius: var(--pm-r-control);      /* 12px */
+  box-shadow: none;                        /* soya yo'q */
+}
+
+/* Sahifa ko'rsatkichi (.nx-chip.nx-mono-num) 12px / tabular-nums /
+   --pm-ink-2 — P09 ning yagona chip retsepti bilan allaqachon qoplangan.
+   Bu faylda uni qayta e'lon qilmaymiz (boshqa agentning selektori). */
+
+/* ------------------------------------------------------------------ *
+ * 2. A− / Aa / A+ — 40×40, 12px Fraunces, chegara va soya yo'q
+ * ------------------------------------------------------------------ */
+.nx-reader-aa {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  background: var(--pm-surface-2);
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.nx-reader-aa button {
+  width: 40px;
+  height: 40px;
+  min-width: 0;                            /* eski min-width:40px bilan bir xil */
+  padding: 0;
+  border: 0;                               /* segment ajratgichlari yo'q */
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);                  /* neytral matn, accent emas */
+  font-family: var(--pm-font-display);     /* Fraunces harflar */
+  font-size: var(--pm-fs-12);              /* 12px */
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-reader-aa button:hover:not(:disabled) {
+  background: var(--pm-surface-3);         /* bir qadam chuqurroq neytral */
+  color: var(--pm-ink);
+}
+
+/* ARIA bog'langan faol holat (kelajakdagi aria-pressed/aria-current uchun). */
+.nx-reader-aa button[aria-pressed='true'],
+.nx-reader-aa button[aria-current='true'] {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Toolbar ikonka tugmalari — 40×40 tekis neytral
+ *    (global .nx-icon-btn ga tegmaymiz: faqat toolbar ichida)
+ * ------------------------------------------------------------------ */
+.nx-reader-toolbar .nx-icon-btn {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  box-shadow: none;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-reader-toolbar .nx-icon-btn:hover:not(:disabled) {
+  background: var(--pm-surface-3);
+  color: var(--pm-ink);
+}
+
+/* Sepiya (aria-pressed) va chetdagi izohlar (is-on + aria-pressed). */
+.nx-reader-toolbar .nx-icon-btn.is-on,
+.nx-reader-toolbar .nx-icon-btn[aria-pressed='true'] {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Bob navigatsiyasi toggle — eng chap 40×40, ≤900 da KO'RINADI
+ *    Eski "yashirish" qoidasi tuzatildi: faqat >900 da yashiriladi.
+ * ------------------------------------------------------------------ */
+.nx-toc-toggle {
+  display: none;                           /* >900: sidebar doim ko'rinadi */
+  order: -1;                               /* toolbarning eng chap controli */
+}
+
+@media (max-width: 900px) {
+  .nx-toc-toggle {
+    display: inline-grid;                  /* ≤900: doim ko'rinishda */
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Focus halqasi — 2px --pm-accent, offset 3px (spec §5)
+ *    Eski keng rangli box-shadow halqasi o'chiriladi.
+ * ------------------------------------------------------------------ */
+.nx-reader-toolbar .nx-icon-btn:focus-visible,
+.nx-reader-aa button:focus-visible,
+.nx-toc-toggle:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+@media (forced-colors: active) {
+  .nx-reader-toolbar .nx-icon-btn:focus-visible,
+  .nx-reader-aa button:focus-visible,
+  .nx-toc-toggle:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. 1440 / 900 / 620 / 375
+ *    1440/900 — 56px bitta qator (yuqoridagi asos).
+ *    620/375  — 48 + 8 + 48 = 104px, ikki qator, flex-wrap.
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .nx-reader-toolbar {
+    height: auto;
+    min-height: 104px;                     /* 48 + 8 + 48 */
+    flex-wrap: wrap;
+    row-gap: var(--pm-s-1);                /* 8px */
+    align-content: center;
+  }
+
+  /* Faqat o'z elementim ichidagi kichik tuzatish: eski qatlamdagi
+     flex:1 1 100% toggle'ni 1-qatorga chiqarmay, 3-qator yaratadi.
+     1-qator: ☰ + bob label; 2-qator: AA + ikonkalar + sahifa counter. */
+  .nx-reader-toolbar > .nx-reader-toolbar__title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-reader-toolbar {
+    padding: var(--pm-s-1);                /* 8px — 375 da sig'ish uchun */
+  }
+
+  /* Teginish maydonlari qisqartirilmaydi. */
+  .nx-reader-aa button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nx-toc-toggle,
+  .nx-reader-toolbar .nx-icon-btn {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Harakatni kamaytirish (spec §6)
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-reader-toolbar,
+  .nx-reader-toolbar .nx-icon-btn,
+  .nx-reader-aa,
+  .nx-reader-aa button,
+  .nx-toc-toggle {
+    transition: none;
+    animation: none;
+  }
+}

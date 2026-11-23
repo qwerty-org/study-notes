@@ -1,0 +1,513 @@
+/* ============================================================
+   27 — Quiz (fullscreen) · premium layer
+   Spec  : docs/superpowers/specs/2026-11-23-premium-design-system.md
+   Layout: docs/superpowers/specs/layout/07-quiz-feedback.md (D1–D5, D7)
+   Owned : .nx-book-quiz, .nx-quiz-stage, .nx-quiz-head, .nx-quiz-progress,
+           .nx-quiz-count, .nx-option, .nx-option .key, .nx-quiz-feedback,
+           .nx-quiz-reason, .nx-quiz-next, .nx-quiz-result, .nx-quiz-help
+
+   Qoidalar: faqat --pm-* tokenlari · rang literalari yo'q · majburiy e'lon yo'q ·
+   ARIA (radiogroup / radio / progressbar / status), klaviatura, focus va
+   reduced-motion saqlanadi · 1440 / 900 / 620 / 375.
+   ============================================================ */
+
+/* ---------- 1. To'liq ekran ramka + bitta markaziy sahna (D1) ---------- */
+.nx-book-quiz {
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-inline: clamp(var(--pm-s-3), 3vw, var(--pm-s-5));
+  padding-block: var(--pm-s-5) var(--pm-s-8);
+  background: var(--pm-bg);
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+}
+
+/* Sessiya sahnasi: yagona fokus markazi, 720px, markazda */
+.nx-quiz-stage {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+/* Natija sahnasi: kengroq (layout D5), lekin baribir bitta ustun */
+.nx-quiz-result {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 880px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-5);
+}
+
+/* Savol matni — bitta blok, 24px Fraunces, 66ch o'lchov (D3) */
+.nx-quiz-stage h2 {
+  margin: 0 0 var(--pm-s-4);
+  max-width: 66ch;
+  color: var(--pm-ink);
+  font: 500 var(--pm-fs-24) / 1.4 var(--pm-font-display);
+  letter-spacing: -0.035em;
+}
+
+/* ---------- 2. Header: 48px, ghost chiqish + tabular hisob (D2) ---------- */
+.nx-quiz-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-3);
+  min-height: var(--pm-s-6);
+  margin-bottom: var(--pm-s-3);
+}
+
+/* Chiqish — ghost: ikkilamchi harakat, 44px hit area */
+.nx-quiz-head > button:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  min-height: 44px;
+  padding: 0 var(--pm-s-2);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-2);
+  font: 600 var(--pm-fs-14) / 1 var(--pm-font);
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-quiz-head > button:first-child:hover {
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+}
+.nx-quiz-head > button:first-child:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* Hisob: raqamlar tabular, Fraunces 24 / yordamchi 13 ink-3 */
+.nx-quiz-count {
+  color: var(--pm-accent);
+  font: 600 var(--pm-fs-24) / 1 var(--pm-font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+.nx-quiz-count span {
+  color: var(--pm-ink-3);
+  font: 650 var(--pm-fs-13) / 1 var(--pm-font);
+  letter-spacing: 0;
+}
+
+/* ---------- 3. Progress: 8px pill track (D2) ----------
+   role="progressbar" elementi o'zgarishsiz qoladi — faqat ko'rinish. */
+.nx-quiz-progress {
+  display: block;
+  height: var(--pm-s-1);
+  margin-bottom: var(--pm-s-4);
+  overflow: hidden;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+}
+.nx-quiz-progress > * {
+  display: block;
+  height: 100%;
+  background: var(--pm-transparent);
+}
+.nx-quiz-progress span {
+  display: block;
+  height: 100%;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent);
+}
+
+/* ---------- 4. Variantlar: 56px qator, 32px marker, neytral yuz (D3) ----------
+   role="radiogroup" / role="radio" / aria-checked o'zgarishsiz. */
+.nx-option {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-2);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--pm-s-2) var(--pm-s-3);
+  border: 0;
+  border-left: 2px solid var(--pm-transparent);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+  font: 600 var(--pm-fs-14) / 1.5 var(--pm-font);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    border-color var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-option[role='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+}
+.nx-option:hover:not(:disabled) {
+  background: var(--pm-accent-soft);
+}
+/* Tanlangan: accent-soft fon + 2px accent rels */
+.nx-option[aria-checked='true'],
+.nx-option.picked {
+  background: var(--pm-accent-soft);
+  border-left-color: var(--pm-accent);
+}
+/* To'g'ri/xato: rangli to'ldirish YO'Q — faqat yupqa rels + matn */
+.nx-option.correct {
+  background: var(--pm-surface-2);
+  border-left-color: var(--pm-sage);
+  color: var(--pm-sage);
+}
+.nx-option.wrong {
+  background: var(--pm-surface-2);
+  border-left-color: var(--pm-accent);
+  color: var(--pm-accent);
+}
+.nx-option.dim {
+  /* Javob ochilgach matn o'qilishi shart — faqat rang bilan ajratamiz */
+  opacity: 1;
+  color: var(--pm-ink-2);
+}
+.nx-option:disabled {
+  /* Eski nx/quiz.css dagi opacity:.55 ni bekor qilamiz */
+  opacity: 1;
+  cursor: default;
+}
+.nx-option:disabled .nx-option__text,
+.nx-option.dim .nx-option__text {
+  color: var(--pm-ink-2);
+}
+.nx-option.correct .nx-option__text {
+  color: var(--pm-sage);
+}
+.nx-option.wrong .nx-option__text {
+  color: var(--pm-danger);
+}
+/* Javob ochilgandan keyin ham matn o'qilishi shart */
+.nx-book-quiz .nx-options .nx-option .nx-option__text {
+  color: var(--pm-ink);
+}
+.nx-option:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* 32px A/B/C/D doira */
+.nx-option .key {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface);
+  color: var(--pm-ink-2);
+  font: 600 var(--pm-fs-14) / 1 var(--pm-font-display);
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-option[aria-checked='true'] .key,
+.nx-option.picked .key {
+  background: var(--pm-accent);
+  color: var(--pm-on-accent);
+}
+.nx-option.correct .key {
+  background: var(--pm-surface);
+  color: var(--pm-sage);
+}
+.nx-option.wrong .key {
+  background: var(--pm-surface);
+  color: var(--pm-accent);
+}
+
+/* ---------- 5. Feedback: 24px panel, 3px rels (D4) ----------
+   role="status"/aria-live o'zgarishsiz — ekran o'quvchi e'lon buzilmaydi. */
+.nx-quiz-feedback {
+  box-sizing: border-box;
+  margin-top: var(--pm-s-4);
+  padding: var(--pm-s-4);
+  border: 0;
+  border-left: 3px solid var(--pm-accent);
+  border-radius: var(--pm-r);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+  animation: nx-quiz-feedback-in var(--pm-d-enter) var(--pm-ease-out) both;
+}
+.nx-quiz-feedback--ok,
+.nx-quiz-feedback[data-state='ok'] {
+  border-left-color: var(--pm-sage);
+}
+@keyframes nx-quiz-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sabab matni: 14px / 1.6, ink-2, 66ch */
+.nx-quiz-reason {
+  max-width: 66ch;
+  color: var(--pm-ink-2);
+  font: var(--pm-fs-14) / 1.6 var(--pm-font);
+}
+.nx-quiz-reason p {
+  margin: 0;
+  max-width: 66ch;
+}
+.nx-quiz-reason + .nx-quiz-reason {
+  margin-top: var(--pm-s-1);
+  padding-top: var(--pm-s-1);
+  border-top: 1px solid var(--pm-line);
+  color: var(--pm-ink-3);
+}
+
+/* ---------- 6. Yagona asosiy harakat: 48px primary (D4/D7) ---------- */
+.nx-quiz-next {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-2);
+  min-height: var(--pm-s-6);
+  margin-top: var(--pm-s-4);
+  padding: 0 var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-accent);
+  color: var(--pm-on-accent);
+  font: 700 var(--pm-fs-14) / 1 var(--pm-font);
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    transform var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-quiz-next:hover {
+  background: var(--pm-accent-hover);
+}
+.nx-quiz-next:active {
+  transform: translateY(1px);
+}
+/* Oxiridagi strelka matn oldiga o'tadi (critique D8) */
+.nx-quiz-next > svg:last-child:not(:first-child) {
+  order: -1;
+}
+.nx-quiz-next:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- 7. Klaviatura yordami (D7) ---------- */
+.nx-quiz-help {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-1);
+  margin-top: var(--pm-s-4);
+  color: var(--pm-ink-3);
+  font: var(--pm-fs-12) / 1.5 var(--pm-font);
+}
+
+/* ---------- 8. Natija: 40px hero raqam, tinch chip, bitta harakat (D5) ---------- */
+.nx-quiz-result h1,
+.nx-quiz-result [role='status'] h3 {
+  margin: 0;
+  color: var(--pm-ink);
+  font: 600 var(--pm-fs-40) / 1.1 var(--pm-font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+}
+.nx-quiz-result [role='status'] {
+  text-align: center;
+}
+/* Zaif mavzular — tinch chip (surface-2 / ink-2), faqat kichik maydon */
+.nx-quiz-result span[title] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 var(--pm-s-2);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font: var(--pm-fs-12) / 1 var(--pm-font);
+  white-space: nowrap;
+}
+/* Yagona primary natijada ham markazda */
+.nx-quiz-result .nx-quiz-next {
+  display: flex;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+/* ============================================================
+   Responsive — 1440 (default) / 900 / 620 / 375
+   ============================================================ */
+@media (max-width: 900px) {
+  .nx-quiz-result h1,
+  .nx-quiz-result [role='status'] h3 {
+    font-size: var(--pm-fs-30);
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-book-quiz {
+    padding-inline: var(--pm-s-3);
+    padding-block: var(--pm-s-4) var(--pm-s-6);
+  }
+  .nx-quiz-stage,
+  .nx-quiz-result {
+    max-width: none;
+  }
+  .nx-quiz-stage h2 {
+    font-size: var(--pm-fs-20);
+  }
+  .nx-quiz-count {
+    font-size: var(--pm-fs-20);
+  }
+  .nx-option {
+    padding: var(--pm-s-2);
+  }
+  .nx-quiz-feedback {
+    padding: var(--pm-s-3);
+  }
+  .nx-quiz-next {
+    width: 100%;
+  }
+  .nx-quiz-result .nx-quiz-next {
+    width: 100%;
+  }
+  .nx-quiz-help {
+    flex-wrap: wrap;
+    text-align: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-quiz-feedback {
+    padding: var(--pm-s-3);
+  }
+  .nx-quiz-result h1,
+  .nx-quiz-result [role='status'] h3 {
+    font-size: var(--pm-fs-20);
+  }
+}
+
+/* ---------- Harakat o'chirish (reduced motion) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .nx-quiz-feedback {
+    animation: none;
+  }
+  .nx-quiz-head > button:first-child,
+  .nx-option,
+  .nx-option .key,
+  .nx-quiz-next {
+    transition: none;
+  }
+  .nx-quiz-next:active {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Integratsiya: haqiqiy QuizRunner DOM klasslari (premium nomlari bilan birga)
+   ============================================================ */
+.nx-quiz-session,
+.nx-quiz-result {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding-inline: clamp(var(--pm-s-3), 3vw, var(--pm-s-5));
+  padding-block: var(--pm-s-5) var(--pm-s-8);
+  background: var(--pm-bg);
+  color: var(--pm-ink);
+}
+.nx-quiz-result {
+  max-width: 880px;
+}
+.nx-session-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-3);
+  min-height: var(--pm-s-6);
+  margin-bottom: var(--pm-s-3);
+}
+.nx-session-count {
+  color: var(--pm-ink);
+  font: 600 var(--pm-fs-24) / 1 var(--pm-font-display);
+  font-variant-numeric: tabular-nums;
+}
+.nx-session-count span {
+  color: var(--pm-ink-3);
+  font-size: var(--pm-fs-13);
+}
+.nx-question-text {
+  max-width: 66ch;
+  margin: 0 0 var(--pm-s-4);
+  color: var(--pm-ink);
+  font: 500 var(--pm-fs-24) / 1.4 var(--pm-font-display);
+  letter-spacing: -0.035em;
+}
+.nx-option__key {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font: 700 var(--pm-fs-12) / 1 var(--pm-font);
+}
+.nx-option[aria-checked='true'] .nx-option__key,
+.nx-option.correct .nx-option__key,
+.nx-option.picked .nx-option__key {
+  background: var(--pm-accent);
+  color: var(--pm-on-accent);
+}
+.nx-explain {
+  padding: var(--pm-s-4);
+  border-left: 3px solid var(--pm-accent);
+  border-radius: var(--pm-r);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font: var(--pm-fs-14) / 1.6 var(--pm-font);
+}
+.nx-explain__head {
+  margin-bottom: var(--pm-s-2);
+  color: var(--pm-ink);
+  font-size: var(--pm-fs-16);
+}
+.nx-explain__mine,
+.nx-explain__next {
+  margin-top: var(--pm-s-3);
+}
+@media (max-width: 620px) {
+  .nx-quiz-session,
+  .nx-quiz-result {
+    max-width: none;
+    padding-inline: var(--pm-s-3);
+  }
+  .nx-question-text {
+    font-size: var(--pm-fs-20);
+  }
+  .nx-session-count {
+    font-size: var(--pm-fs-20);
+  }
+  .nx-explain {
+    padding: var(--pm-s-3);
+  }
+}

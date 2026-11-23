@@ -1,0 +1,188 @@
+/* Premium Page Header — Wave 3 / P07.
+   Owns: .nx-page .nx-head, .nx-eyebrow, .nx-title, .nx-title--sm,
+         .nx-subtitle, .nx-head__actions, .page-head,
+         .section-head, .section-head h2/h3/p.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/01-shell.md (§4.6)
+   Motiv (D05): "Marginal Folio" — chap gutter'da 2px accent vertikal chiziq.
+   Faqat --pm-* tokenlari. premium/index.css oxirida yuklanadi; ustunlik qo'shimchasi yo'q. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Sahifa boshi — .nx-page .nx-head + legacy .page-head
+ * ------------------------------------------------------------------ */
+.nx-page .nx-head,
+.page-head {
+  position: relative;                       /* folio chizig'i uchun anchor */
+  display: flex;
+  align-items: flex-end;                    /* harakatlar subtitle baseline'ida */
+  justify-content: space-between;
+  gap: var(--pm-s-4);                       /* 24px */
+  /* D05: 20px ajratilgan gutter = 12 + 8 (faqat tokenlardan tuzilgan). */
+  padding-left: calc(var(--pm-s-2) + var(--pm-s-1));
+  margin-bottom: var(--pm-s-5);             /* 32px — editorial ritm */
+  border-bottom: 0;                         /* butun bosh ostida divider YO'Q */
+}
+
+/* Matn ustuni kichraya olishi kerak — 375px da to'kilish bo'lmasin. */
+.nx-page .nx-head > div:first-child,
+.page-head > div:first-child {
+  min-width: 0;
+  max-width: 72ch;
+}
+
+/* D05 — Marginal Folio: header'ning yagona imzo belgisi.
+   Folio raqamlari uchun markup yo'q — ularni reader agent qo'shadi. */
+.nx-page .nx-head::before,
+.page-head::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;                                   /* eyebrow blokining yuqorisiga tekis */
+  width: 2px;
+  height: 24px;
+  background: var(--pm-accent);
+  border-radius: var(--pm-r-pill);          /* 999px */
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Tipografiya — eyebrow / title / subtitle
+ * ------------------------------------------------------------------ */
+
+/* Gap: 12px / 700 / accent, sentence case. Eski dekorativ chiziq olinadi
+   (D05 chizig'i gutter'da — ikkinchi chiziq ortiqcha bezak bo'lardi). */
+.nx-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pm-s-1);                       /* 8px ikonka–matn */
+  margin-bottom: var(--pm-s-1);             /* 8px, title oldidan */
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: none;                     /* ALL CAPS YO'Q */
+  color: var(--pm-accent);
+}
+.nx-eyebrow::before {
+  content: none;                            /* eski 20px gorizontal chiziq */
+}
+
+.nx-title,
+.page-head h1 {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-40);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--pm-ink);
+}
+
+.nx-title--sm {
+  font-size: var(--pm-fs-20);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.nx-subtitle,
+.page-head small {
+  display: block;
+  margin: var(--pm-s-3) 0 0;                /* title'dan 16px past */
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-16);
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--pm-ink-2);
+  max-width: 66ch;
+}
+
+.nx-head__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--pm-s-2);                       /* 12px */
+  flex: 0 0 auto;
+  padding-bottom: 2px;                      /* optik baseline tuzatish */
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Bo'lim sarlavhalari — .section-head
+ * ------------------------------------------------------------------ */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-3);                       /* 16px */
+  margin: var(--pm-s-4) 0 var(--pm-s-3);    /* 24px yuqorida, 16px pastda */
+  padding-bottom: 0;
+  border-bottom: 0;                         /* eski 1px divider olinadi */
+}
+.section-head:first-child {
+  margin-top: 0;                            /* konteyner boshida bo'sh joy yo'q */
+}
+
+.section-head h2,
+.section-head h3 {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--pm-ink);
+}
+
+.section-head p {
+  margin: var(--pm-s-1) 0 0;                /* 8px, sarlavha ostida */
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  line-height: 1.5;
+  color: var(--pm-ink-2);
+  max-width: 66ch;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Responsiv — 1440 / 900 / 620 / 375
+ * ------------------------------------------------------------------ */
+
+/* 900: uzun sarlavhalar bir qatorda qolishi uchun 30px ga tushadi. */
+@media (max-width: 899px) {
+  .nx-title,
+  .page-head h1 {
+    font-size: var(--pm-fs-30);
+  }
+  .nx-title--sm {
+    font-size: var(--pm-fs-18);
+  }
+}
+
+/* 620 va 375: gutter 12px, chiziq 16px, bosh ustun, harakatlar to'liq keng. */
+@media (max-width: 620px) {
+  .nx-page .nx-head,
+  .page-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--pm-s-3);                     /* 16px */
+    padding-left: var(--pm-s-2);            /* 12px gutter */
+    margin-bottom: var(--pm-s-4);           /* 24px */
+  }
+  .nx-page .nx-head::before,
+  .page-head::before {
+    height: 16px;
+  }
+  .nx-head__actions {
+    width: 100%;
+    justify-content: flex-start;
+    padding-bottom: 0;
+  }
+  .nx-head__actions .nx-btn,
+  .nx-head__actions .btn,
+  .nx-head__actions .btn-primary,
+  .page-head > .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .section-head {
+    margin-top: var(--pm-s-3);              /* 16px — mobil ritm */
+  }
+}

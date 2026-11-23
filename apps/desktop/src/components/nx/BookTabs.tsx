@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import {
   splitChapters,
   type ApplyLogEntry,
@@ -23,7 +23,7 @@ import {
   IconRefresh,
 } from './icons'
 import { IconTrash } from '../icons'
-import { Bar, Empty, Ring, useToast } from './NxUI'
+import { Empty, Ring, useToast } from './NxUI'
 
 const WORDS_PER_PAGE = 420
 
@@ -76,14 +76,19 @@ export function ReadTab({
 }) {
   const { updateBook } = useApp()
   const { show, toast: toastNode } = useToast()
+  const tocId = useId()
   const chapters = useMemo(() => splitChapters(book.content), [book.content])
   const [current, setCurrent] = useState(
     Math.min(book.progress.currentChapter, Math.max(0, chapters.length - 1)),
   )
   const [page, setPage] = useState(book.progress.currentPage ?? 0)
-  const [fontSize, setFontSize] = useState(book.progress.reader?.fontSize ?? 19)
+  const [fontSize, setFontSize] = useState(book.progress.reader?.fontSize ?? 20)
   const [paper, setPaper] = useState<'paper' | 'sepia'>(book.progress.reader?.paper ?? 'paper')
-  const [tocOpen, setTocOpen] = useState(true)
+  // Kichik ekranlarda boblar ro'yxati yopiq boshlanadi — aks holda u butun
+  // kenglikka yoyilib, o'qish matnini ekrandan pastga surib qo'yadi.
+  const [tocOpen, setTocOpen] = useState(() =>
+    typeof window === 'undefined' ? true : window.innerWidth > 900,
+  )
   const [notesOpen, setNotesOpen] = useState(true)
   const [pendingQuote, setPendingQuote] = useState('')
   const quotes = book.progress.highlights ?? []
@@ -132,7 +137,7 @@ export function ReadTab({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, pageIndex, chapters.length])
 
-  if (!ch) return <Empty icon={<IconBookOpen size={26} />} title="Matn topilmadi" text="Kitob matni bo'sh." />
+  if (!ch) return <Empty icon={<IconBookOpen size={24} />} title="Matn topilmadi" text="Kitob matni bo'sh." />
 
   const markRead = () => {
     const read = isRead ? book.progress.readChapters : [...book.progress.readChapters, ch.index]
@@ -205,7 +210,7 @@ export function ReadTab({
     <div className={`nx-reader${notesOpen ? '' : ' nx-reader--wide'}`}>
       <aside className={`nx-reader-side${tocOpen ? '' : ' is-collapsed'}`}>
         <div className="nx-reader-progress">
-          <Ring value={book.progress.percent} size={58} />
+          <Ring value={book.progress.percent} size={56} />
           <div>
             <b className="nx-mono-num">{readCount} / {chapters.length}</b>
             <span>bob o'qildi</span>
@@ -217,13 +222,13 @@ export function ReadTab({
           onClick={() => (isRead ? goChapter(Math.min(current + 1, chapters.length - 1)) : markRead())}
           disabled={isRead && current === chapters.length - 1}
         >
-          {isRead ? (current === chapters.length - 1 ? <><IconCheck size={15} /> Kitob o‘qildi</> : 'Keyingi bob') : <><IconCheck size={15} /> Bobni tugattim</>}
+          {isRead ? (current === chapters.length - 1 ? <><IconCheck size={16} /> Kitob o‘qildi</> : 'Keyingi bob') : <><IconCheck size={16} /> Bobni tugattim</>}
         </button>
 
         <div className="nx-reader-side__label">
           Boblar <span className="nx-mono-num">{chapters.length}</span>
         </div>
-        <nav className="nx-toc">
+        <nav className="nx-toc" id={tocId}>
           {chapters.map((c) => {
             const done = book.progress.readChapters.includes(c.index)
             return (
@@ -234,7 +239,7 @@ export function ReadTab({
                 aria-current={c.index === current ? 'step' : undefined}
               >
                 <span className={`nx-toc__num${done ? ' is-done' : ''}`}>
-                  {done ? <IconCheck size={12} strokeWidth={2.8} /> : c.index + 1}
+                  {done ? <IconCheck size={14} strokeWidth={2.8} /> : c.index + 1}
                 </span>
                 <span>{c.title || `${c.index + 1}-bob`}</span>
               </button>
@@ -245,8 +250,14 @@ export function ReadTab({
 
       <div className="nx-reader-main">
         <div className="nx-reader-toolbar">
-          <button className="nx-icon-btn nx-toc-toggle" onClick={() => setTocOpen((v) => !v)} aria-label="Boblar ro'yxati">
-            <IconList size={17} />
+          <button
+            className="nx-icon-btn nx-toc-toggle"
+            onClick={() => setTocOpen((v) => !v)}
+            aria-label="Boblar ro'yxati"
+            aria-expanded={tocOpen}
+            aria-controls={tocId}
+          >
+            <IconList size={18} />
           </button>
           <div className="nx-reader-toolbar__title">
             <b>Bob {current + 1} / {chapters.length}</b>
@@ -255,16 +266,22 @@ export function ReadTab({
           <span className="nx-chip nx-mono-num">{pageIndex + 1} / {pages.length} sahifa</span>
           <div className="nx-reader-aa">
             <button onClick={() => setFontSize((s) => Math.max(15, s - 1))} aria-label="Shriftni kichraytirish">A−</button>
-            <button onClick={() => setFontSize(19)} aria-label="Shriftni tiklash">Aa</button>
+            <button onClick={() => setFontSize(20)} aria-label="Shriftni tiklash">Aa</button>
             <button onClick={() => setFontSize((s) => Math.min(26, s + 1))} aria-label="Shriftni kattalashtirish">A+</button>
           </div>
-          <button className="nx-icon-btn" title="Sahifa fonini almashtirish"
-            onClick={() => setPaper((p) => (p === 'paper' ? 'sepia' : 'paper'))}>
+          <button
+            className="nx-icon-btn"
+            title="Sahifa fonini almashtirish"
+            aria-label="Sepiya fon"
+            aria-pressed={paper === 'sepia'}
+            onClick={() => setPaper((p) => (p === 'paper' ? 'sepia' : 'paper'))}
+          >
             <IconFeather size={16} />
           </button>
           <button
             className={`nx-icon-btn${notesOpen ? ' is-on' : ''}`}
             title="Chetdagi izohlar"
+            aria-label="Chetdagi izohlar"
             aria-pressed={notesOpen}
             onClick={() => setNotesOpen((v) => !v)}
           >
@@ -277,7 +294,7 @@ export function ReadTab({
             <IconQuote size={16} />
             <span>«{pendingQuote.slice(0, 110)}{pendingQuote.length > 110 ? '…' : ''}»</span>
             <div className="nx-spacer" />
-            <button className="nx-btn nx-btn--soft nx-btn--sm" onClick={saveQuote}><IconBookmark size={13} /> Saqlash</button>
+            <button className="nx-btn nx-btn--soft nx-btn--sm" onClick={saveQuote}><IconBookmark size={14} /> Saqlash</button>
             <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={() => setPendingQuote('')}>Bekor</button>
           </div>
         )}
@@ -320,7 +337,7 @@ export function ReadTab({
                 </div>
               ))}
               <button className="nx-link-btn" onClick={() => onOpenTab?.('ideas')}>
-                Barcha g'oyalar <IconArrowRight size={13} />
+                Barcha g'oyalar <IconArrowRight size={14} />
               </button>
             </div>
           )}
@@ -335,21 +352,21 @@ export function ReadTab({
                 </div>
               ))}
               <button className="nx-link-btn" onClick={() => onOpenTab?.('apply')}>
-                Vaziyatlarni ko'rish <IconArrowRight size={13} />
+                Vaziyatlarni ko'rish <IconArrowRight size={14} />
               </button>
             </div>
           )}
 
           <div className="nx-marginalia-group">
-            <div className="nx-marginalia-label">Saqqlangan iqtiboslar</div>
+            <div className="nx-marginalia-label">Saqlangan iqtiboslar</div>
             {quotes.length ? quotes.slice().reverse().map((q) => (
               <div className="nx-marginalia nx-marginalia--quote" key={q.id}>
                 <IconQuote size={14} />
                 <p>«{q.text}»</p>
                 <div className="nx-row" style={{ justifyContent: 'space-between' }}>
                   <small>{q.chapter + 1}-bob · {q.page + 1}-sahifa</small>
-                  <button className="nx-icon-btn nx-icon-btn--danger" style={{ width: 24, height: 24 }} onClick={() => deleteQuote(q.id)} aria-label="Iqtibosni o'chirish">
-                    <IconTrash size={12} />
+                  <button className="nx-icon-btn nx-icon-btn--danger" onClick={() => deleteQuote(q.id)} aria-label="Iqtibosni o'chirish">
+                    <IconTrash size={14} />
                   </button>
                 </div>
               </div>
@@ -425,7 +442,7 @@ export function IdeasTab({ book }: { book: BookRecord }) {
                     <p>{idea.howToApply}</p>
                   </div>
                   <footer className="nx-idea-card__foot">
-                    <div className="nx-row" style={{ gap: 5, flexWrap: 'wrap' }}>
+                    <div className="nx-row" style={{ gap: 8, flexWrap: 'wrap' }}>
                       {idea.applyTags?.map((t) => <span className="nx-chip" key={t}>{t}</span>)}
                     </div>
                     <button
@@ -466,7 +483,7 @@ export function TermsTab({ book }: { book: BookRecord }) {
   const [chapter, setChapter] = useState<number | 'all'>('all')
 
   if (!terms.length)
-    return <Empty icon={<IconList size={26} />} title="Termin topilmadi" text="Tahlildan keyin shu yerda paydo bo'ladi." />
+    return <Empty icon={<IconList size={24} />} title="Termin topilmadi" text="Tahlildan keyin shu yerda paydo bo'ladi." />
 
   const shown = chapter === 'all' ? terms : terms.filter((t) => t.chapter === chapter)
   const chapters = [...new Set(terms.map((t) => t.chapter))].sort((a, b) => a - b)
@@ -501,7 +518,7 @@ export function TermsTab({ book }: { book: BookRecord }) {
               {open ? (
                 <>
                   <span className="nx-term-card__def">{t.definitionSimple}</span>
-                  {t.metaphor && <span className="nx-term-card__metaphor"><IconQuote size={13} /> {t.metaphor}</span>}
+                  {t.metaphor && <span className="nx-term-card__metaphor"><IconQuote size={14} /> {t.metaphor}</span>}
                 </>
               ) : (
                 <span className="nx-term-card__hint">Izohni ko‘rish <IconChevronDown size={14} /></span>
@@ -525,7 +542,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
   const contexts = [...new Set(scenarios.map((s) => s.context).filter(Boolean))] as string[]
 
   if (!scenarios.length)
-    return <Empty icon={<IconGlobe size={26} />} title="Senariylar yo'q" text="AI tahlili vaziyatlarni shu yerga yaratadi." />
+    return <Empty icon={<IconGlobe size={24} />} title="Senariylar yo'q" text="AI tahlili vaziyatlarni shu yerga yaratadi." />
 
   const scenarioIdeaIds = new Set(scenarios.map((sc) => sc.ideaId))
   const loggedToday = new Set(
@@ -574,7 +591,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
                 <span className="nx-scenario__no nx-mono-num">{String(i + 1).padStart(2, '0')}</span>
                 <span className="nx-chip nx-chip--accent">Vaziyat</span>
                 {s.context && <span className="nx-chip nx-chip--outline">{s.context}</span>}
-                {done && <span className="nx-chip nx-chip--success"><IconCheck size={11} /> bugun qo'llandi</span>}
+                {done && <span className="nx-chip nx-chip--success"><IconCheck size={14} /> bugun qo'llandi</span>}
               </header>
               <p className="nx-scenario__text">{s.situation}</p>
               {revealed ? (
@@ -597,13 +614,13 @@ export function ApplyTab({ book }: { book: BookRecord }) {
                       {done ? <><IconCheck size={14} /> Bugun qo'lladim</> : "Men buni sinab ko'raman"}
                     </button>
                     <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={() => setOpen((p) => { const n = new Set(p); n.delete(s.id); return n })}>
-                      <IconRefresh size={13} /> Yashirish
+                      <IconRefresh size={14} /> Yashirish
                     </button>
                   </div>
                 </div>
               ) : (
                 <button className="nx-scenario__reveal-btn" onClick={() => setOpen((p) => new Set(p).add(s.id))}>
-                  Qanday javob berish kerak? <IconChevronDown size={15} />
+                  Qanday javob berish kerak? <IconChevronDown size={16} />
                 </button>
               )}
             </article>
@@ -620,7 +637,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
 export function TutorTab({ book }: { book: BookRecord }) {
   return (
     <Empty
-      icon={<IconChat size={27} />}
+      icon={<IconChat size={24} />}
       title="AI ustoz — keyingi bosqichda"
       text={`«${book.meta.title}» bo'yicha savol-javob rejimi Bosqich 2'da qo'shiladi. Hozircha Xulosalar, Terminlar va Hayotda qo'llash bo'limlaridan foydalaning.`}
       action={<span className="nx-chip nx-chip--warn">tez orada</span>}

@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PROVIDERS } from '@study-notes/ai'
 import {
@@ -10,7 +10,7 @@ import {
   type BookRecord,
 } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
-import { IconArrowRight, IconBookOpen, IconCheck, IconLock, IconSparkles, IconUpload } from '../components/icons'
+import { IconArrowRight, IconBookOpen, IconCheck, IconUpload } from '../components/icons'
 import { IconEye, IconEyeOff, IconInfo } from '../components/nx/icons'
 
 const AVATARS = ['🦊', '🐨', '🦉', '🐳', '🐱', '🐼', '🦁', '🐰']
@@ -20,6 +20,9 @@ export default function Onboarding() {
   const { ai, profile, library, updateAI, updateProfile, setOnboarding, addBook } = useApp()
   const nav = useNavigate()
   const fileRef = useRef<HTMLInputElement>(null)
+  const keyRef = useRef<HTMLInputElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const didMount = useRef(false)
 
   const [step, setStep] = useState(0)
   const [provider, setProvider] = useState<AIProvider>(ai.provider)
@@ -31,12 +34,23 @@ export default function Onboarding() {
   const [warn, setWarn] = useState('')
   const [importing, setImporting] = useState(false)
 
+  // Qadam almashganda e'tiborni shu qadam sarlavhasiga olib boramiz —
+  // klaviatura va ekran o'quvchilar yangi bosqichni darhol eshitadi.
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true
+      return
+    }
+    headingRef.current?.focus()
+  }, [step])
+
   const info = PROVIDERS.find((p) => p.id === provider) ?? PROVIDERS[0]
   const needKey = info.needsKey
 
   const nextFromAI = (skip = false) => {
     if (needKey && !apiKey.trim() && !skip) {
-      setWarn('Kalit kiritilmadi. Keyinroq Sozlamalardan qo‘shishingiz mumkin — «Keyinroq sozlayman» ni bosing.')
+      setWarn('Kalit kiritilmadi. Davom etish uchun kalitni joylang yoki «Keyinroq sozlayman» ni tanlang.')
+      keyRef.current?.focus()
       return
     }
     updateAI({ provider, apiKey: apiKey.trim(), model: model.trim() })
@@ -95,7 +109,7 @@ export default function Onboarding() {
     <div className="nx-onboarding">
       <aside className="nx-onboarding-aside">
         <div className="nx-onboarding-brand">
-          <span className="nx-onboarding-mark"><IconBookOpen size={26} /></span>
+          <span className="nx-onboarding-mark"><IconBookOpen size={24} /></span>
           <span>Study Notes</span>
         </div>
         <div className="nx-onboarding-quote">
@@ -109,9 +123,9 @@ export default function Onboarding() {
           </p>
         </div>
         <div className="nx-onboarding-features">
-          <div><IconSparkles size={16} /> AI bilan chuqur tahlil</div>
-          <div><IconCheck size={16} /> Kunlik takrorlash</div>
-          <div><IconLock size={16} /> Ma'lumot faqat sizda</div>
+          <div>AI bilan chuqur tahlil</div>
+          <div>Kunlik takrorlash</div>
+          <div>Ma'lumot faqat sizda</div>
         </div>
         <div className="nx-onboarding-aside-foot">v0.1.0 · bepul va ochiq kodli</div>
       </aside>
@@ -120,8 +134,12 @@ export default function Onboarding() {
         <div className="nx-onboarding-card">
           <ol className="nx-onboarding-steps" aria-label="Bosqichlar">
             {STEPS.map((label, i) => (
-              <li key={label} className={i === step ? 'is-active' : i < step ? 'is-done' : ''}>
-                <span className="nx-mono-num">{i < step ? <IconCheck size={12} /> : `0${i + 1}`}</span>
+              <li
+                key={label}
+                className={i === step ? 'is-active' : i < step ? 'is-done' : ''}
+                aria-current={i === step ? 'step' : undefined}
+              >
+                <span className="nx-mono-num">{i < step ? <IconCheck size={14} /> : `0${i + 1}`}</span>
                 <span>{label}</span>
               </li>
             ))}
@@ -130,7 +148,7 @@ export default function Onboarding() {
           {step === 0 && (
             <form className="nx-onboarding-step" onSubmit={submitAI}>
               <span className="nx-eyebrow">1-qadam</span>
-              <h2 className="nx-title nx-title--sm">AI'ni ulang</h2>
+              <h2 className="nx-title nx-title--sm" ref={headingRef} tabIndex={-1}>AI'ni ulang</h2>
               <p className="nx-subtitle">Kitoblarni siz uchun tahlil qiladigan yordamchi tanlang.</p>
 
               <div className="nx-onb-providers">
@@ -151,19 +169,28 @@ export default function Onboarding() {
 
               {needKey ? (
                 <>
+                  <div className="nx-onb-note" id="onb-key-why">
+                    <IconInfo size={16} />
+                    <span>
+                      <b>Nega kalit kerak?</b> Yordamchi kitoblarni tahlil qilish uchun
+                      tanlagan xizmatingizga ulanadi. Kalit faqat shu kompyuterda saqlanadi.
+                    </span>
+                  </div>
                   <div className="nx-field">
                     <label className="nx-label" htmlFor="onb-key">API kalit</label>
                     <div className="nx-key-wrap">
-                      <input id="onb-key" className="nx-input" type={keyVisible ? 'text' : 'password'}
+                      <input id="onb-key" ref={keyRef} className="nx-input" type={keyVisible ? 'text' : 'password'}
                         value={apiKey} placeholder="Kalitni shu yerga joylang"
+                        aria-invalid={!!warn}
+                        aria-describedby="onb-key-why onb-key-help"
                         onChange={(e) => { setApiKey(e.target.value); setWarn('') }} />
                       <button type="button" className="nx-icon-btn" onClick={() => setKeyVisible((v) => !v)}
                         aria-label={keyVisible ? 'Kalitni yashirish' : 'Kalitni ko‘rsatish'}>
                         {keyVisible ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                       </button>
                     </div>
-                    <span className="nx-hint">
-                      {info.keyUrl && <a href={info.keyUrl} target="_blank" rel="noreferrer">Kalitni qayerdan olish?</a>} · faqat shu qurilmada saqlanadi.
+                    <span className="nx-hint" id="onb-key-help">
+                      {info.keyUrl && <a href={info.keyUrl} target="_blank" rel="noreferrer">Kalitni qayerdan olish?</a>}
                     </span>
                   </div>
                   <div className="nx-field">
@@ -179,12 +206,12 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {warn && <div className="nx-inline-error"><IconInfo size={15} /> {warn}</div>}
+              {warn && <div className="nx-inline-error" role="alert"><IconInfo size={16} /> {warn}</div>}
 
               <div className="nx-onb-actions">
                 <button type="button" className="nx-btn nx-btn--ghost" onClick={() => nextFromAI(true)}>Keyinroq sozlayman</button>
                 <button type="submit" className="nx-btn nx-btn--primary nx-btn--lg">
-                  Davom etish <IconArrowRight size={17} />
+                  Davom etish <IconArrowRight size={16} />
                 </button>
               </div>
             </form>
@@ -193,7 +220,7 @@ export default function Onboarding() {
           {step === 1 && (
             <div className="nx-onboarding-step">
               <span className="nx-eyebrow">2-qadam</span>
-              <h2 className="nx-title nx-title--sm">O'zingiz haqingizda</h2>
+              <h2 className="nx-title nx-title--sm" ref={headingRef} tabIndex={-1}>O'zingiz haqingizda</h2>
               <p className="nx-subtitle">Parol yoki hisob kerak emas — ma'lumot shu qurilmada qoladi.</p>
 
               <div className="nx-field">
@@ -214,7 +241,7 @@ export default function Onboarding() {
               <div className="nx-onb-actions">
                 <button className="nx-btn nx-btn--ghost" onClick={() => setStep(0)}>Orqaga</button>
                 <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => setStep(2)}>
-                  Davom etish <IconArrowRight size={17} />
+                  Davom etish <IconArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -223,14 +250,14 @@ export default function Onboarding() {
           {step === 2 && (
             <div className="nx-onboarding-step">
               <span className="nx-eyebrow">3-qadam</span>
-              <h2 className="nx-title nx-title--sm">Birinchi kitobni qo'shing</h2>
+              <h2 className="nx-title nx-title--sm" ref={headingRef} tabIndex={-1}>Birinchi kitobni qo'shing</h2>
               <p className="nx-subtitle">Demo kitob allaqachon tayyor — unda tahlil, quiz va hayotiy vaziyatlar bor.</p>
 
               <input ref={fileRef} type="file" accept=".md,.txt,.markdown" hidden
                 onChange={(e) => { void importFirst(e.target.files); e.target.value = '' }} />
 
               <div className="nx-onb-drop"
-                role="button" tabIndex={0}
+                role="button" tabIndex={0} aria-busy={importing}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileRef.current?.click() } }}
                 onClick={() => fileRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
@@ -240,11 +267,11 @@ export default function Onboarding() {
                 <small>yoki bosib kompyuterdan tanlang</small>
               </div>
 
-              {warn && <div className="nx-inline-error"><IconInfo size={15} /> {warn}</div>}
+              {warn && <div className="nx-inline-error" role="alert"><IconInfo size={16} /> {warn}</div>}
 
               <div className="nx-onb-demo">
-                <span className="nx-onb-demo__icon"><IconBookOpen size={19} /></span>
-                <div style={{ flex: 1 }}>
+                <span className="nx-onb-demo__icon"><IconBookOpen size={20} /></span>
+                <div className="nx-onb-demo__body">
                   <b>Namunaviy kitob bilan boshlash</b>
                   <p className="nx-hint">Tayyor tahlil va vaziyatlar bilan tanishib chiqing.</p>
                 </div>
@@ -254,7 +281,7 @@ export default function Onboarding() {
               <div className="nx-onb-actions">
                 <button className="nx-btn nx-btn--ghost" onClick={() => setStep(1)}>Orqaga</button>
                 <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={finish}>
-                  Kutubxonani ochish <IconArrowRight size={17} />
+                  Kutubxonani ochish <IconArrowRight size={16} />
                 </button>
               </div>
             </div>

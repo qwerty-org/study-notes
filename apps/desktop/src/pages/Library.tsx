@@ -16,7 +16,6 @@ import {
   IconSearch,
   IconSparkles,
   IconTrash,
-  IconUpload,
 } from '../components/icons'
 import { IconList } from '../components/icons'
 import { IconCircleCheck, IconGrid, IconInfo, IconLayers } from '../components/nx/icons'
@@ -28,12 +27,12 @@ type View = 'grid' | 'list'
 const ACCEPT = '.md,.txt,.markdown,.mdx'
 const SUPPORTED = ['md', 'txt', 'markdown', 'mdx']
 const COVERS = [
-  ['#8d3f24', '#d98a4e'],
-  ['#2f5d55', '#7fae9a'],
-  ['#4b4260', '#9788ae'],
-  ['#7a5220', '#c9a25e'],
-  ['#6b2f3a', '#b97277'],
-  ['#34506b', '#7d9cbd'],
+  ['#2e3a8c', '#4453a8'], // deep indigo
+  ['#3b5170', '#4e6789'], // steel
+  ['#46586e', '#5a6f88'], // slate
+  ['#2c5c5c', '#3e7474'], // muted teal-navy
+  ['#46589c', '#5869ac'], // soft periwinkle
+  ['#3a4252', '#4e586c'], // graphite
 ]
 
 function coverColors(title: string) {
@@ -52,8 +51,15 @@ export default function Library() {
   const [query, setQuery] = useState('')
   const [over, setOver] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [importProgress, setImportProgress] = useState<{ done: number; total: number } | null>(null)
   const [removeSlug, setRemoveSlug] = useState<string | null>(null)
   const { show, toast: toastNode } = useToast()
+
+  // Yagona, klaviatura bilan ishlaydigan fayl tanlash nuqtasi.
+  const openPicker = () => {
+    if (busy) return
+    fileRef.current?.click()
+  }
 
   const counts = useMemo(
     () => ({
@@ -69,10 +75,13 @@ export default function Library() {
     const list = files ? Array.from(files) : []
     if (!list.length) return
     setBusy(true)
+    setImportProgress({ done: 0, total: list.length })
     let added = 0
     const errors: string[] = []
 
-    for (const file of list) {
+    for (let i = 0; i < list.length; i++) {
+      const file = list[i]
+      setImportProgress({ done: i, total: list.length })
       const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
       if (!SUPPORTED.includes(ext)) {
         errors.push(`${file.name}: faqat .md, .markdown, .mdx yoki .txt`)
@@ -110,6 +119,7 @@ export default function Library() {
     }
 
     setBusy(false)
+    setImportProgress(null)
     if (added) show(`${added} ta kitob qo'shildi · AI tahlilni kitob sahifasida boshlang`)
     if (errors.length) show(errors[0])
   }
@@ -154,17 +164,17 @@ export default function Library() {
           </p>
         </div>
         <div className="nx-head__actions">
-          <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => fileRef.current?.click()}>
+          <button type="button" className="nx-btn nx-btn--primary nx-btn--lg" onClick={openPicker}>
             <IconPlus size={18} /> Kitob qo'shish
           </button>
         </div>
       </header>
 
       <section className="nx-grid nx-grid--4 nx-library-stats">
-        <Stat label="Jami kitoblar" value={counts.all} icon={<IconBookOpen size={17} />} />
-        <Stat label="O'qilmoqda" value={counts.reading} tone="accent" icon={<IconClock size={17} />} />
-        <Stat label="Tugatilgan" value={counts.done} tone="success" icon={<IconCheck size={17} />} />
-        <Stat label="Tahlil kutyapti" value={counts.pending} tone="warn" icon={<IconSparkles size={17} />} />
+        <Stat label="Jami kitoblar" value={counts.all} icon={<IconBookOpen size={18} />} />
+        <Stat label="O'qilmoqda" value={counts.reading} tone="accent" icon={<IconClock size={18} />} />
+        <Stat label="Tugatilgan" value={counts.done} tone="success" icon={<IconCheck size={18} />} />
+        <Stat label="Tahlil kutyapti" value={counts.pending} tone="warn" icon={<IconSparkles size={18} />} />
       </section>
 
       <section className="nx-dropzone-wrapper">
@@ -173,10 +183,12 @@ export default function Library() {
           role="button"
           tabIndex={0}
           aria-label="Kitob fayllarini qo'shish"
+          aria-describedby="nx-dropzone-note"
+          aria-busy={busy}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault()
-              fileRef.current?.click()
+              openPicker()
             }
           }}
           onDragEnter={(e) => {
@@ -196,17 +208,28 @@ export default function Library() {
             void importFiles(e.dataTransfer.files)
           }}
         >
-          <div className="nx-dropzone__icon"><IconUpload size={24} /></div>
           <div className="nx-dropzone__copy">
-            <b>{busy ? 'Fayllar o‘qilmoqda…' : 'Kitoblarni bu yerga tashlang'}</b>
+            <b>
+              {busy && importProgress
+                ? `Fayllar o'qilmoqda… ${importProgress.done}/${importProgress.total}`
+                : 'Kitoblarni bu yerga tashlang'}
+            </b>
             <span>Bir nechta faylni bir vaqtning o‘zida qo‘shishingiz mumkin · .md, .txt</span>
           </div>
-          <button className="nx-btn nx-btn--ghost" onClick={() => fileRef.current?.click()} disabled={busy}>
+          <span className="nx-btn nx-btn--ghost nx-dropzone__pick" aria-hidden="true" onClick={openPicker}>
             Fayl tanlash
-          </button>
+          </span>
+          {busy && importProgress && (
+            <span className="nx-dropzone__progress" aria-hidden="true">
+              <span style={{ width: `${(importProgress.done / importProgress.total) * 100}%` }} />
+            </span>
+          )}
         </div>
-        <p className="nx-hint nx-dropzone__note">
-          <IconInfo size={13} /> PDF va EPUB konvertatsiyasi keyingi bosqichda. Matnli fayllar eng yaxshi natija beradi.
+        <p className="nx-hint nx-dropzone__note" id="nx-dropzone-note">
+          <IconInfo size={14} /> PDF va EPUB konvertatsiyasi keyingi bosqichda. Matnli fayllar eng yaxshi natija beradi.
+        </p>
+        <p className="nx-library__sr-only" role="status" aria-live="polite">
+          {busy && importProgress ? `${importProgress.done} / ${importProgress.total} fayl o'qilmoqda` : ''}
         </p>
       </section>
 
@@ -226,12 +249,24 @@ export default function Library() {
                   aria-label="Kutubxonada qidirish"
                 />
               </div>
-              <div className="nx-segmented" aria-label="Ko'rinish">
-                <button aria-pressed={view === 'grid'} onClick={() => setView('grid')} title="Panellar">
-                  <IconGrid size={15} />
+              <div className="nx-segmented nx-library__view" role="group" aria-label="Ko'rinish">
+                <button
+                  type="button"
+                  aria-pressed={view === 'grid'}
+                  aria-label="Panellar ko'rinishi"
+                  onClick={() => setView('grid')}
+                  title="Panellar"
+                >
+                  <IconGrid size={16} />
                 </button>
-                <button aria-pressed={view === 'list'} onClick={() => setView('list')} title="Ro'yxat">
-                  <IconList size={15} />
+                <button
+                  type="button"
+                  aria-pressed={view === 'list'}
+                  aria-label="Ro'yxat ko'rinishi"
+                  onClick={() => setView('list')}
+                  title="Ro'yxat"
+                >
+                  <IconList size={16} />
                 </button>
               </div>
             </div>
@@ -240,38 +275,50 @@ export default function Library() {
 
         <div className="nx-filter-row nx-segmented" role="group" aria-label="Filtr">
           {filters.map(([key, label]) => (
-            <button key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>
+            <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(key)}>
               {label}
             </button>
           ))}
         </div>
 
+        <p className="nx-library__sr-only" role="status" aria-live="polite">
+          {q || filter !== 'all' ? `${shown.length} ta natija topildi` : ''}
+        </p>
+
         {!shown.length ? (
-          <div style={{ marginTop: 22 }}>
+          <div style={{ marginTop: 24 }}>
             <Empty
-              icon={<IconLayers size={27} />}
+              icon={<IconLayers size={24} />}
               title={q ? `«${query.trim()}» topilmadi` : filter === 'all' ? 'Kutubxona bo‘sh' : 'Bu filtrda kitob yo‘q'}
               text={
                 q || filter !== 'all'
-                  ? 'Boshqa so‘z yoki filtr sinab ko‘ring.'
+                  ? 'Boshqa so‘z yoki filtr sinab ko‘ring, yoki yangi kitob qo‘shing.'
                   : 'Birinchi kitobni qo‘shing — keyin AI uni bobma-bob tahlil qiladi.'
               }
               action={
-                q || filter !== 'all' ? (
-                  <button
-                    className="nx-btn nx-btn--ghost"
-                    onClick={() => {
-                      setQuery('')
-                      setFilter('all')
-                    }}
-                  >
-                    Filterni tozalash
-                  </button>
-                ) : (
-                  <button className="nx-btn nx-btn--primary" onClick={() => fileRef.current?.click()}>
-                    <IconPlus size={16} /> Birinchi kitobni qo'shish
-                  </button>
-                )
+                <div className="nx-row nx-library__empty-actions">
+                  {q || filter !== 'all' ? (
+                    <>
+                      <button
+                        type="button"
+                        className="nx-btn nx-btn--ghost"
+                        onClick={() => {
+                          setQuery('')
+                          setFilter('all')
+                        }}
+                      >
+                        Filterni tozalash
+                      </button>
+                      <button type="button" className="nx-btn nx-btn--soft" onClick={openPicker}>
+                        <IconPlus size={16} /> Kitob qo'shish
+                      </button>
+                    </>
+                  ) : (
+                    <button type="button" className="nx-btn nx-btn--primary" onClick={openPicker}>
+                      <IconPlus size={16} /> Birinchi kitobni qo'shish
+                    </button>
+                  )}
+                </div>
               }
             />
           </div>
@@ -295,26 +342,26 @@ export default function Library() {
                   }}
                 >
                   <div className="nx-book-cover" style={{ background: `linear-gradient(150deg, ${c1}, ${c2})` }}>
-                    <span className="nx-book-cover__line" />
                     <span className="nx-book-cover__title">{b.meta.title}</span>
                     <span className="nx-book-cover__author">{b.meta.author ?? 'Study Notes'}</span>
                     <span className="nx-book-cover__mark">SN</span>
                     <button
+                      type="button"
                       className="nx-book-cover__del"
-                      aria-label="Kitobni o'chirish"
+                      aria-label={`«${b.meta.title}» kitobini o'chirish`}
                       title="O'chirish"
                       onClick={(e) => {
                         e.stopPropagation()
                         setRemoveSlug(b.meta.slug)
                       }}
                     >
-                      <IconTrash size={15} />
+                      <IconTrash size={16} />
                     </button>
                   </div>
                   <div className="nx-book-card__body">
                     <div className="nx-book-card__meta">
                       <span className={`nx-chip ${b.analysis ? 'nx-chip--success' : b.meta.status === 'partial' ? 'nx-chip--warn' : 'nx-chip--accent'}`}>
-                        {b.analysis ? <><IconCircleCheck size={11} /> tahlil tayyor</> : b.meta.status === 'partial' ? 'qisman tahlil' : 'tahlil kutilmoqda'}
+                        {b.analysis ? <><IconCircleCheck size={14} /> tahlil tayyor</> : b.meta.status === 'partial' ? 'qisman tahlil' : 'tahlil kutilmoqda'}
                       </span>
                       <span className="nx-chip nx-chip--outline">{b.meta.chapters} bob</span>
                     </div>
@@ -328,7 +375,7 @@ export default function Library() {
                 </article>
               )
             })}
-            <button className="nx-book-add" onClick={() => fileRef.current?.click()}>
+            <button type="button" className="nx-book-add" onClick={openPicker}>
               <span className="nx-book-add__icon"><IconPlus size={24} /></span>
               <b>Yana kitob qo'shish</b>
               <small>.md yoki .txt faylni tanlang</small>

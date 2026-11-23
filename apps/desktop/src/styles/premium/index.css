@@ -1,0 +1,37 @@
+/* Premium qatlam — oxirida import qilinadi, eski qatlamlarni ustiga yozadi.
+   Tartib muhim: tokenlar → umumiy elementlar → sahifalar → holatlar. */
+@import './00-tokens.css';
+@import './02-topbar.css';
+@import './03-nav.css';
+@import './04-brand.css';
+@import './05-profile-popup.css';
+@import './06-window-controls.css';
+@import './07-page-header.css';
+@import './08-buttons.css';
+@import './09-chips.css';
+@import './10-surfaces.css';
+@import './11-forms.css';
+@import './12-dashboard-hero.css';
+@import './13-dashboard-loop.css';
+@import './14-dashboard-actions.css';
+@import './15-dashboard-stats.css';
+@import './16-dashboard-secondary.css';
+@import './17-library-head.css';
+@import './18-library-dropzone.css';
+@import './19-library-filters.css';
+@import './20-library-books.css';
+@import './21-book-hero.css';
+@import './22-book-tabs.css';
+@import './23-book-toolbar.css';
+@import './24-book-reader.css';
+@import './25-book-side.css';
+@import './26-book-cards.css';
+@import './27-quiz.css';
+@import './28-repeat.css';
+@import './29-stats.css';
+@import './30-settings.css';
+@import './31-onboarding.css';
+@import './32-feedback.css';
+@import './33-dark-mode.css';
+@import './34-responsive.css';
+@import './35-motion.css';

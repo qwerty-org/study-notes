@@ -18,13 +18,14 @@
   --border-strong: #cdc4b1;
   --text: #26231e;
   --muted: #6b6457;
-  --faint: #9a9182;
+  --faint: #746d62;
 
   /* --- Asosiy: terrakota (olov/kitob muqovasi) --- */
-  --primary: #b4542d;
+  /* AA: #b4542d fon va elevated ustida 4.5:1 ga yetmadi — minimal quyuqlashtirildi */
+  --primary: #a94f2a;
   --primary-hover: #9c4623;
   --primary-dark: #82391d;
-  --primary-soft: rgba(180, 84, 45, 0.11);
+  --primary-soft: rgba(169, 79, 42, 0.11);
 
   /* --- Ikkilamchi: ko'k-yashil (bilim/tinchlik) --- */
   --blue: #3d6d61;
@@ -48,8 +49,7 @@
   --accent: var(--primary);
   --amber: var(--yellow);
   --amber-soft: var(--yellow-soft);
-  --green: var(--primary);
-  --green-soft: var(--primary-soft);
+  /* --green/--green-soft yuqoridagi muvaffaqiyat rangi bo'lib qoladi (QuizRunner to'g'ri javob) */
   --ring-track: var(--elevated);
 
   --btn2-face: #ece6d8;
@@ -64,6 +64,42 @@
   --r: 12px;
   --r-lg: 18px;
   --r-pill: 999px;
+
+  /* --- 4px panjara: bo'shliq shkalasi ---
+     --sp-N = N × 4px. Barcha ichki/panjar bo'shliqlari shu shkaladan olinadi. */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 28px;
+  --sp-8: 32px;
+  --sp-9: 36px;
+  --sp-10: 40px;
+  --sp-11: 44px;
+  --sp-12: 48px;
+  --sp-13: 52px;
+  --sp-14: 56px;
+  --sp-15: 60px;
+  --sp-16: 64px;
+
+  /* --- Boshqaruv elementlari balandligi: sm / md / lg --- */
+  --h-sm: 32px;
+  --h-md: 40px;
+  --h-lg: 48px;
+
+  /* --- Tipografik shkala (px): body ≥13, hint ≥11 --- */
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-18: 18px;
+  --fs-20: 20px;
+  --fs-24: 24px;
+  --fs-30: 30px;
+  --fs-36: 36px;
 
   --topbar-h: 64px;
   /* Sahifalar to'liq kenglikda — faqat o'qish matni 72ch bilan cheklanadi */
@@ -87,7 +123,7 @@
   --border-strong: #4a4235;
   --text: #f3ecdd;
   --muted: #a99f8c;
-  --faint: #776e5e;
+  --faint: #8b8476;
 
   --primary: #e08b5c;
   --primary-hover: #eb9c70;
@@ -111,6 +147,7 @@
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-pop: 0 20px 60px rgba(0, 0, 0, 0.55);
+  --shadow-seg: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 /* ---------- Umumiy tipografiya yangilanishi ---------- */
@@ -135,6 +172,16 @@ a {
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+/* Faqat skript orqali fokuslangan (tabindex="-1") sarlavha/regionlarda
+   fokus halqasini yashiramiz: ular Tab klavishi bilan yetib borilmaydi.
+   Haqiqiy klaviatura navigatsiyasi (:focus-visible) va uning kontrastli
+   halqasi, shuningdek ARIA/fokus boshqaruvlari o'zgarishsiz qoladi. */
+h1[tabindex='-1']:focus,
+h2[tabindex='-1']:focus,
+main[tabindex='-1']:focus {
+  outline: none;
 }
 
 /* ---------- Shell: yuqori panel (barcha sahifalar uchun) ---------- */

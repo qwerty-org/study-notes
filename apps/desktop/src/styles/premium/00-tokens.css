@@ -1,0 +1,178 @@
+/* Premium Design System — yagona token manbasi (Wave 4 — MONO / INDIGO)
+   Rang qarori: docs/superpowers/specs/design/color-round2/06-jury-decision.md
+   Barcha premium element fayllari FAQAT shu tokenlardan foydalanadi. */
+
+:root {
+  /* Yuzalar — sovuq neytral (sariq/isssiq tus yo'q) */
+  --pm-bg: #f7f8fa;
+  --pm-surface: #ffffff;
+  --pm-surface-2: #f0f2f6;
+  --pm-surface-3: #e6e9ef;
+
+  /* Matn */
+  --pm-ink: #171a21;
+  --pm-ink-2: #4a505e;
+  --pm-ink-3: #646d7e;
+
+  /* Chiziqlar */
+  --pm-line: #e2e6ed;
+  --pm-line-strong: #c7cdd9;
+
+  /* Yagona rangli aksent — chuqur indigo */
+  --pm-accent: #2e3a8c;
+  --pm-accent-soft: #eaecf7;
+  --pm-accent-hover: #232e73;
+  --pm-on-accent: #ffffff;
+  --pm-hero-gold: #b9c4f0;
+  --pm-hero-ink: #f7f8fa;
+
+  /* Sage va brass endi aksentning o'zi / neytral — yangi rang yo'q */
+  --pm-sage: #2e3a8c;
+  --pm-sage-soft: #eaecf7;
+  --pm-brass: #646d7e;
+  --pm-brass-soft: #f0f2f6;
+
+  /* Soya — sovuq */
+  --pm-shadow-1: 0 1px 2px rgba(23, 26, 33, 0.05), 0 8px 24px rgba(23, 26, 33, 0.06);
+  --pm-shadow-2: 0 2px 8px rgba(23, 26, 33, 0.06), 0 24px 60px rgba(23, 26, 33, 0.08);
+  --pm-shadow-focus: 0 0 0 3px var(--pm-accent-soft);
+
+  /* Radius */
+  --pm-r-sm: 10px;
+  --pm-r: 16px;
+  --pm-r-lg: 24px;
+  --pm-r-pill: 999px;
+  --pm-r-control: 12px;
+
+  /* Qo'shimcha yuzalar va holatlar */
+  --pm-transparent: transparent;
+  --pm-danger: #b14856;
+  --pm-danger-soft: #f9edf0;
+  --pm-reader-paper: #fbfcfe;
+  --pm-control-border: #c7cdd9;
+
+  /* Harakat (D04) */
+  --pm-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --pm-ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+  --pm-d-hover: 160ms;
+  --pm-d-enter: 320ms;
+
+  /* Type scale */
+  --pm-fs-12: 12px;
+  --pm-fs-13: 13px;
+  --pm-fs-14: 14px;
+  --pm-fs-16: 16px;
+  --pm-fs-18: 18px;
+  --pm-fs-20: 20px;
+  --pm-fs-24: 24px;
+  --pm-fs-30: 30px;
+  --pm-fs-40: 40px;
+  --pm-fs-54: 54px;
+
+  --pm-font: 'Manrope Variable', 'Segoe UI', system-ui, sans-serif;
+  --pm-font-display: 'Fraunces Variable', Georgia, serif;
+
+  /* Bo'shliq (8px grid) */
+  --pm-s-1: 8px;
+  --pm-s-2: 12px;
+  --pm-s-3: 16px;
+  --pm-s-4: 24px;
+  --pm-s-5: 32px;
+  --pm-s-6: 48px;
+  --pm-s-7: 64px;
+  --pm-s-8: 80px;
+}
+
+[data-theme='dark'] {
+  --pm-bg: #101218;
+  --pm-surface: #171a22;
+  --pm-surface-2: #1e222d;
+  --pm-surface-3: #272c39;
+
+  --pm-ink: #eff1f6;
+  --pm-ink-2: #b7becd;
+  --pm-ink-3: #8b93a5;
+
+  --pm-line: #2b3140;
+  --pm-line-strong: #495165;
+
+  --pm-accent: #8c97e8;
+  --pm-accent-soft: #232a48;
+  --pm-accent-hover: #a0aaf0;
+  --pm-on-accent: #101218;
+  --pm-hero-gold: #c3cbf5;
+  --pm-hero-ink: #eff1f6;
+
+  --pm-sage: #8c97e8;
+  --pm-sage-soft: #232a48;
+  --pm-brass: #8b93a5;
+  --pm-brass-soft: #1e222d;
+
+  --pm-danger: #e88894;
+  --pm-danger-soft: #3a2029;
+  --pm-reader-paper: #191c25;
+  --pm-control-border: #495165;
+
+  --pm-shadow-1: inset 0 1px 0 rgba(230, 236, 255, 0.06), 0 10px 28px rgba(0, 0, 0, 0.45);
+  --pm-shadow-2: inset 0 1px 0 rgba(230, 236, 255, 0.08), 0 28px 64px rgba(0, 0, 0, 0.55);
+}
+
+/* ============================================================
+   Legacy token aliaslari — eski qatlamlar (theme.css, global.css, nx/*)
+   hali ham --primary, --text, --nx-* nomlarini ishlatadi. Ularni yangi
+   sovuq indigo palitrasiga bog'laymiz. :root da bir marta aniqlangan
+   var() qiymatlar har bir temada mos --pm-* ga qarab hal qilinadi.
+   ============================================================ */
+:root {
+  --primary: var(--pm-accent);
+  --primary-hover: var(--pm-accent-hover);
+  --primary-dark: var(--pm-accent);
+  --primary-soft: var(--pm-accent-soft);
+  --accent: var(--pm-accent);
+  --amber: var(--pm-brass);
+  --yellow: var(--pm-brass);
+  --yellow-dark: var(--pm-brass);
+  --yellow-soft: var(--pm-brass-soft);
+  --green: var(--pm-sage);
+  --green-dark: var(--pm-sage);
+  --green-soft: var(--pm-sage-soft);
+  --blue: var(--pm-sage);
+  --blue-dark: var(--pm-sage);
+  --blue-soft: var(--pm-sage-soft);
+  --red: var(--pm-danger);
+  --red-dark: var(--pm-danger);
+  --red-soft: var(--pm-danger-soft);
+  --purple: var(--pm-brass);
+  --purple-dark: var(--pm-brass);
+  --purple-soft: var(--pm-brass-soft);
+  --text: var(--pm-ink);
+  --muted: var(--pm-ink-2);
+  --faint: var(--pm-ink-3);
+  --border: var(--pm-line);
+  --border-strong: var(--pm-line-strong);
+  --card: var(--pm-surface);
+  --bg: var(--pm-bg);
+  --sidebar: var(--pm-surface);
+  --elevated: var(--pm-surface-2);
+  --input-bg: var(--pm-surface);
+  --ring-track: var(--pm-line);
+
+  /* nx-* qatlami uchun aliaslar */
+  --nx-accent: var(--pm-accent);
+  --nx-accent-soft: var(--pm-accent-soft);
+  --nx-ink: var(--pm-ink);
+  --nx-line: var(--pm-line);
+  --nx-muted: var(--pm-ink-2);
+  --nx-surface: var(--pm-surface);
+  --nx-surface-2: var(--pm-surface-2);
+  --nx-success: var(--pm-sage);
+  --nx-success-soft: var(--pm-sage-soft);
+  --nx-warn: var(--pm-brass);
+  --nx-warn-soft: var(--pm-brass-soft);
+}
+
+/* Premium asos: eski qatlamlarning bezovta qiluvchi detallarini sokinlashtirish. */
+.pm-scope {
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+}

@@ -1,0 +1,543 @@
+/* Premium Book — kontent kartalari: g'oyalar / terminlar / vaziyatlar / marginalia — Wave 3 / P26.
+   Owns: .nx-idea-card (+ __top, __row, __foot),
+         .nx-term-card (+ __term, __def, __metaphor),
+         .nx-scenario (+ __head, __side, __reveal-btn),
+         .nx-marginalia (+ __no, p), .nx-quote-bar.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/04-book.md §D5
+          docs/superpowers/specs/design/05-signature.md §2–3.4
+   Faqat --pm-* tokenlari; ustunlik qo'shimchasi yo'q; index.css da 26-o'rinda yuklanadi
+   (eski nx/book.css qatlamidan keyin) — qo'shimcha ustunlik kerak emas.
+
+   Eslatma: ustun soni/shlablon konteynerlari (.nx-idea-grid / .nx-terms-grid / .nx-apply-grid)
+   boshqa element agentiga tegishli; bu fayl kartalar hamda ularning mikro-elementlari
+   (.nx-chapter-badge, .nx-marginalia-label) ranglariga ta'sir qiladi (M02 #9/#12).
+   L04 D5 dagi 3/2/1 · 4/2/1 · 2/1 qatorlari o'sha konteyner qatlamida amalga oshiriladi.
+   Kartalar istalgan ustun kengligiga mos (min-width:0).
+
+   Fokus halqalari (2px --pm-accent, offset 3px), aria-expanded va reduced-motion saqlanadi. */
+
+/* ================================================================== *
+ * 1. Umumiy karta mezoni (D5)
+ *    --pm-surface / radius 16 / padding 24 (≤620: 20) / border yo'q.
+ *    Soya FAQAT marginalia — "yagona focal karta" (D5.4 + D05 imzosi).
+ *    Qolgan uch karta tekis qog'oz yuzi: "kartalar to'lgan" effekti yo'q.
+ * ================================================================== */
+
+/* ------------------------------------------------------------------ *
+ * 1.1 G'oyalar — title 18 Fraunces, matn 14 --pm-ink-2
+ * ------------------------------------------------------------------ */
+.nx-idea-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-3);
+  min-width: 0;
+  padding: var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: none;
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  transition: transform var(--pm-d-hover) var(--pm-ease-std),
+              background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* eski -2px ko'tarilish o'rniga 1px (spec §6: faqat background/transform 1px) */
+.nx-idea-card:hover {
+  transform: translateY(-1px);
+  background-color: var(--pm-surface);
+}
+
+.nx-idea-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pm-s-2);
+}
+
+/* folio raqami hech qachon accent bilan emas — --pm-brass (D05 §2.2) */
+.nx-idea-card__top .nx-idea-card__no {
+  flex: 0 0 auto;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-18);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--pm-brass);
+}
+
+.nx-idea-card h4 {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-18);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--pm-ink);
+}
+
+/* ichki 2px chiziq — karta borderi emas, editorial kanal (L04 D5.1) */
+.nx-idea-card__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+  padding-left: var(--pm-s-3);
+  border-left: 2px solid var(--pm-line);
+}
+
+.nx-idea-card .nx-idea-card__row--apply {
+  border-left-color: var(--pm-line); /* eski yashil chiziq olinadi */
+}
+
+/* 10px ALL CAPS + kvadrat nuqta o'rniga 12px sentence-case */
+.nx-idea-card .nx-idea-card__label {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-3);
+}
+
+.nx-idea-card .nx-idea-card__label::before,
+.nx-idea-card .nx-idea-card__row--apply .nx-idea-card__label::before {
+  display: none;
+}
+
+.nx-idea-card .nx-idea-card__row--apply .nx-idea-card__label {
+  color: var(--pm-ink-3);
+}
+
+.nx-idea-card__row p {
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--pm-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.nx-idea-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--pm-s-2);
+  margin-top: auto;
+  padding-top: var(--pm-s-3);
+  border-top: 1px solid var(--pm-line);
+}
+
+/* ------------------------------------------------------------------ *
+ * 1.2 Terminlar — 20/14/13px, klik → is-open = --pm-accent-soft
+ * ------------------------------------------------------------------ */
+.nx-term-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pm-s-2);
+  width: 100%;
+  min-width: 0;
+  min-height: 152px;
+  padding: var(--pm-s-4);
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: none;
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std),
+              transform var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-term-card:hover {
+  transform: translateY(-1px);
+  background-color: var(--pm-surface);
+}
+
+/* gradient o'rniga bitta tekis faol fon; border/soya yo'q */
+.nx-term-card.is-open,
+.nx-term-card[aria-expanded='true'] {
+  background: var(--pm-accent-soft);
+  box-shadow: none;
+}
+
+.nx-term-card:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+.nx-term-card .nx-term-card__from {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-3);
+}
+
+.nx-term-card .nx-term-card__from::before {
+  display: none;
+}
+
+.nx-term-card__term {
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--pm-ink);
+}
+
+.nx-term-card__def {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--pm-ink-2);
+}
+
+/* karta-ichida-karta o'rniga tekis izoh qatori */
+.nx-term-card__metaphor {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pm-s-1);
+  margin-top: auto;
+  padding: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--pm-ink-3);
+}
+
+.nx-term-card__metaphor svg {
+  flex: 0 0 auto;
+  color: var(--pm-brass);
+}
+
+/* "Izohni ko'rish" — to'ldirilmaydigan matnli havola */
+.nx-term-card .nx-term-card__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  margin-top: auto;
+  padding: 0;
+  background: var(--pm-transparent);
+  color: var(--pm-accent);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ------------------------------------------------------------------ *
+ * 1.3 Vaziyatlar — reveal harakati matnli havola (ghost, to'ldirilmagan)
+ * ------------------------------------------------------------------ */
+.nx-scenario {
+  min-width: 0;
+  padding: var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: none;
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+}
+
+.nx-scenario__head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pm-s-1);
+  margin-bottom: var(--pm-s-2);
+}
+
+.nx-scenario .nx-scenario__no {
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-18);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--pm-brass);
+}
+
+.nx-scenario .nx-scenario__text {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-16);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--pm-ink);
+}
+
+.nx-scenario .nx-scenario__reveal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pm-s-3);
+  margin-top: var(--pm-s-3);
+  animation: none; /* D05 §6 — bitta ham choreografiya bu yerda emas */
+}
+
+.nx-scenario__reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  min-height: 44px;
+  margin-top: var(--pm-s-2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-accent);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-scenario__reveal-btn:hover {
+  background: var(--pm-transparent);
+  color: var(--pm-accent-hover);
+}
+
+.nx-scenario__reveal-btn:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* ochilgan javob panellari — faqat ma'noli holat, kichik maydon */
+.nx-scenario__side {
+  min-width: 0;
+  padding: var(--pm-s-3);
+  border-radius: var(--pm-r-sm);
+}
+
+.nx-scenario .nx-scenario__side--right {
+  background: var(--pm-sage-soft);
+  color: var(--pm-sage);
+}
+
+.nx-scenario .nx-scenario__side--wrong {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+.nx-scenario__side b {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.nx-scenario__side p {
+  margin: var(--pm-s-1) 0 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--pm-ink-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 1.4 Marginalia — imzo: 2px accent chiziq + 14px Fraunces folio (brass).
+ *     Yagona focal karta → --pm-shadow-1 (L04 D5.4 / D05 §3.4).
+ * ------------------------------------------------------------------ */
+.nx-marginalia {
+  position: relative;
+  min-width: 0;
+  padding: var(--pm-s-3);
+  border: 0;
+  border-left: 2px solid var(--pm-accent);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+}
+
+/* eski yashil/sariq chap chiziqlar olinadi — bitta accent */
+.nx-marginalia.nx-marginalia--apply,
+.nx-marginalia.nx-marginalia--quote {
+  border-left-color: var(--pm-accent);
+}
+
+.nx-marginalia__no {
+  display: block;
+  margin: 0 0 var(--pm-s-1);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--pm-brass);
+}
+
+.nx-marginalia p {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-13);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--pm-ink-2);
+}
+
+.nx-marginalia small {
+  display: block;
+  margin-top: var(--pm-s-1);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  line-height: 1.5;
+  color: var(--pm-ink-3);
+}
+
+.nx-marginalia.nx-marginalia--quote > svg {
+  flex: 0 0 auto;
+  color: var(--pm-brass);
+}
+
+/* ------------------------------------------------------------------ *
+ * 1.5 Iqtibos tanlash paneli — sokin chiziq + surface-2, ranglar 2 taga
+ * ------------------------------------------------------------------ */
+.nx-quote-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  min-width: 0;
+  margin-bottom: var(--pm-s-2);
+  padding: var(--pm-s-2) var(--pm-s-3);
+  border: 0;
+  border-left: 2px solid var(--pm-accent);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  box-shadow: none;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  line-height: 1.4;
+  animation: none;
+}
+
+.nx-quote-bar > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-13);
+  color: var(--pm-ink);
+}
+
+.nx-quote-bar > svg {
+  flex: 0 0 auto;
+  color: var(--pm-brass);
+}
+
+/* ------------------------------------------------------------------ *
+ * 1.6 Egalik qilinmagan mikro-elementlar — rang moslamasi (M02 #9/#12)
+ *     Eski nx/book.css dagi qattiq oq matn, --nx-accent, --nx-muted va
+ *     --nx-success o'rniga faqat --pm-* tokenlari: ikki temada kontrast xavfsiz.
+ *     Ustunlik qo'shimchasi yo'q — premium qatlam keyin yuklanadi.
+ * ------------------------------------------------------------------ */
+.nx-chapter-badge {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+/* legacy: uppercase + --nx-muted → sentence-case + --pm-ink-3 */
+.nx-marginalia-label {
+  color: var(--pm-ink-3);
+  text-transform: none;
+}
+
+/* legacy: :has(--apply) > label → --nx-success; endi --pm-sage */
+.nx-marginalia-group:has(.nx-marginalia--apply) > .nx-marginalia-label {
+  color: var(--pm-sage);
+}
+
+/* ================================================================== *
+ * 2. Responsiv — 1440 / 900 / 620 / 375
+ *    1440: karta 24px, barcha ustunlar mos. 900: geometry o'zgarmaydi,
+ *    faqat ochilgan vaziyat panellari stack bo'ladi.
+ *    620 / 375: karta 20px, reveal tugmasi to'liq kenglik. Gorizontal oqish yo'q.
+ * ================================================================== */
+@media (max-width: 900px) {
+  .nx-scenario .nx-scenario__reveal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-idea-card,
+  .nx-term-card,
+  .nx-scenario {
+    padding: 20px;
+  }
+
+  .nx-term-card {
+    min-height: 0; /* 1 ustunda majburiy balandlik kerak emas */
+  }
+
+  .nx-scenario__reveal-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .nx-idea-card__foot {
+    align-items: flex-start;
+  }
+
+  .nx-scenario .nx-scenario__reveal {
+    gap: var(--pm-s-2);
+  }
+}
+
+/* ================================================================== *
+ * 3. Reduced motion — barcha harakat o'chadi (spec §6).
+ *    Qo'shimcha ustunlik yo'q: selektorlar asosiy qoida bilan bir xil o'ziga xoslikda.
+ * ================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .nx-idea-card,
+  .nx-term-card,
+  .nx-scenario,
+  .nx-scenario .nx-scenario__reveal,
+  .nx-scenario__reveal-btn,
+  .nx-quote-bar {
+    transition: none;
+    animation: none;
+  }
+
+  .nx-idea-card:hover,
+  .nx-term-card:hover {
+    transform: none;
+  }
+
+  .nx-scenario__reveal-btn:hover {
+    color: var(--pm-accent);
+  }
+}

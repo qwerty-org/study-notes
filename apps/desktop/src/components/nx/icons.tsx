@@ -12,7 +12,10 @@ const base = ({ size = 20, strokeWidth = 1.8, ...rest }: P) => ({
   strokeWidth,
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
-  'aria-hidden': true,
+  // Dekorativ ikonkalar uchun xavfsiz standart; faqat matnsiz tugmada
+  // chaqiruvchi aria-label berishi shart (bu yerda nomlarni o'zgartirmaymiz).
+  'aria-hidden': 'true' as const,
+  focusable: 'false' as const,
   ...rest,
 })
 
@@ -161,7 +164,7 @@ export const IconFeather = (p: P) => (
 
 export const IconCard = (p: P) => (
   <svg {...base(p)}>
-    <rect x="3.5" y="5" width="17" height="14" rx="2.5" />
+    <rect x="3.5" y="5" width="17" height="14" rx="2" />
     <path d="M7 9.5h6M7 13h10M7 16h4" />
   </svg>
 )

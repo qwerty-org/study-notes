@@ -1,0 +1,281 @@
+/* Premium profile avatar + popup menu — Wave 3 / P05.
+   Faqat .avatar-wrap / .avatar-btn / .popmenu va uning ichidagi elementlarga tegishli.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+   Faqat --pm-* tokenlari; yangi token yo'q, majburiy qoidalar yo'q. */
+
+/* ---------- Avatar tugmasi: 40px, sokin yuz, faqat ochilganda halqa ---------- */
+
+.avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface);
+  background-image: none;
+  box-shadow: none;
+
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-20);
+  line-height: 1;
+
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.avatar-btn:hover {
+  background: var(--pm-surface-2);
+  border-color: var(--pm-line-strong);
+}
+
+/* Eski qatlamning ko'k border/soyasini sokin halqa bilan almashtiradi. */
+.avatar-btn.on,
+.avatar-btn:active {
+  border-color: var(--pm-line);
+  box-shadow: 0 0 0 3px var(--pm-accent-soft);
+}
+
+.avatar-btn:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Popup: 288px, qattiq yuz, yumshoq chuqurlik, gradient yo'q ---------- */
+
+.popmenu {
+  position: absolute;
+  top: calc(100% + var(--pm-s-2));
+  right: 0;
+  width: 288px;
+  box-sizing: border-box;
+
+  background: var(--pm-surface);
+  background-image: none;
+  border: 1px solid var(--pm-line);
+  border-radius: 20px;
+  box-shadow: var(--pm-shadow-2);
+  padding: var(--pm-s-3);
+
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  z-index: 95;
+  transform-origin: top right;
+}
+
+/* Avatar tomon kichik ko'rsatgich — yuz va chiziq popup bilan bir xil. */
+.popmenu::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background: var(--pm-surface);
+  border-left: 1px solid var(--pm-line);
+  border-top: 1px solid var(--pm-line);
+  border-radius: 3px 0 0 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- Head: 44px avatar, 16px ism / 12px ma'lumot ---------- */
+
+.popmenu-head {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-2);
+  padding: var(--pm-s-1) var(--pm-s-1) var(--pm-s-3);
+  border-bottom: 1px solid var(--pm-line);
+  margin-bottom: var(--pm-s-1);
+}
+
+.popmenu-avatar {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  background-image: none;
+  box-shadow: none;
+
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-20);
+  line-height: 1;
+}
+
+.popmenu-head b {
+  display: block;
+  color: var(--pm-ink);
+  font-size: var(--pm-fs-16);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popmenu-head small {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  color: var(--pm-ink-3);
+  font-size: var(--pm-fs-12);
+}
+
+/* ---------- Menyu bandlari: 44px qator, 8px ikonka oralig'i ---------- */
+
+.popmenu-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+}
+
+.popmenu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  min-height: 44px;
+  padding: 0 var(--pm-s-2);
+  border-radius: var(--pm-r-sm);
+
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.popmenu-item:hover {
+  background: var(--pm-surface-2);
+  text-decoration: none;
+}
+
+.popmenu-item svg {
+  color: var(--pm-ink-2);
+  flex-shrink: 0;
+}
+
+/* ---------- Mavzu: 8px ichki, 4px oralik', faol yuz + --pm-shadow-1 ---------- */
+
+.popmenu-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-2);
+  padding: var(--pm-s-2) 0 0;
+  border-top: 1px solid var(--pm-line);
+  margin-top: var(--pm-s-2);
+}
+
+.popmenu-theme > span {
+  color: var(--pm-ink-2);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+}
+
+.mini-seg {
+  display: flex;
+  gap: 4px;
+  padding: var(--pm-s-1);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+}
+
+.mini-seg button {
+  border: 0;
+  background: transparent;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 600;
+  padding: 0 var(--pm-s-2);
+  min-height: 32px;
+  border-radius: var(--pm-r-sm);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.mini-seg button.on {
+  background: var(--pm-surface);
+  color: var(--pm-ink);
+  box-shadow: var(--pm-shadow-1);
+}
+
+/* ---------- Footer: 12px / --pm-ink-3, 1px chiziq bilan ajratilgan ---------- */
+
+.popmenu-foot {
+  margin-top: var(--pm-s-2);
+  padding-top: var(--pm-s-2);
+  border-top: 1px solid var(--pm-line);
+  color: var(--pm-ink-3);
+  font-size: var(--pm-fs-12);
+  text-align: center;
+}
+
+/* ---------- Streak chip: 32px, --pm-surface-2, chegara yo'q ----------
+   display o'zgartirilmaydi: eski qatlamning ≤660px yashirish qoidasi saqlanadi. */
+.streak-chip {
+  min-height: 32px;
+  padding: 0 var(--pm-s-2);
+  border: 0;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font-size: var(--pm-fs-12);
+}
+
+[data-theme='dark'] .streak-chip {
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+}
+
+/* ---------- Fokus halqalari: 2px --pm-accent, 3px offset ---------- */
+
+.avatar-btn:focus-visible,
+.popmenu-item:focus-visible,
+.mini-seg button:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- 620px: popup o'ng tomonga tekislanadi, ekrandan chiqmaydi ---------- */
+
+@media (max-width: 620px) {
+  .popmenu {
+    position: fixed;
+    top: 80px;
+    right: var(--pm-s-1);
+    left: auto;
+    width: min(288px, calc(100vw - 2 * var(--pm-s-1)));
+  }
+}
+
+/* ---------- Harakat: reduced-motion da o'chadi ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-btn,
+  .popmenu,
+  .popmenu-item,
+  .mini-seg button {
+    animation: none;
+    transition: none;
+  }
+}

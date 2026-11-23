@@ -1,0 +1,211 @@
+/* Premium Daily Loop — Wave 3 / P13.
+   Owns: .todo, .todo-row (+ .done), .todo-row .t-icon, .todo-row .t-body
+         (.t-body b, .t-body small), .todo-row .t-check,
+         .section-head of THIS block only (scoped via the .todo sibling).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/design/07-critique.md (D5)
+   Faqat --pm-* tokenlari. premium/index.css da 13-o'rinda yuklanadi
+   (eski global.css va 07-page-header.css dan keyin) — ustunlik qo'shimchasi yo'q.
+   ARIA (role="img") va focus ring saqlanadi; motion faqat background/boundary. */
+
+/* ------------------------------------------------------------------ *
+ * 0. Bo'lim sarlavhasi — FAQAT shu blokka tegishli qismi.
+ *    Markaziy .section-head P07 ga tegishli; shuning uchun faqat
+ *    .todo bilan bir xil kartada joylashganini :has() orqali ajratamiz.
+ *    Boshqa bloklarning .section-head ga ta'sir qilmaydi.
+ * ------------------------------------------------------------------ */
+.card:has(> .todo) > .section-head {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * 1. Konteyner — divider'lar orasidagi bo'shliq yo'q.
+ * ------------------------------------------------------------------ */
+.todo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;                                   /* eski 8px gap olinadi */
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Qator — border yo'q, faqat pastki 1px --pm-line ajratgich.
+ * ------------------------------------------------------------------ */
+.todo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);                       /* 16px ikonka–matn */
+  width: 100%;
+  min-height: 56px;                         /* bitta qator uchun ritm */
+  margin: 0;
+  padding: var(--pm-s-2) 0;                 /* 12px 0 */
+  box-sizing: border-box;
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);  /* yagona divider */
+  border-radius: 0;
+  background: var(--pm-transparent);
+  color: var(--pm-ink);
+  text-decoration: none;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    border-color var(--pm-d-hover) var(--pm-ease-std);
+}
+.todo-row:hover {
+  background: var(--pm-surface-2);
+  border-bottom-color: var(--pm-line-strong);
+  text-decoration: none;
+  transform: none;                          /* eski translateY(-1px) olinadi */
+}
+.todo-row:last-child {
+  border-bottom: 0;                         /* oxirgi qatordan keyin chiziq yo'q */
+}
+
+/* Klaviatura fokusi: 2px --pm-accent, offset 3px (spec §2). Eski --primary
+   halqasini o'z kontekstimizda almashtiramiz, ARIA o'zgarishsiz. */
+.todo-row:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  border-radius: var(--pm-r-sm);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Ikonka — 40px --pm-accent-soft doira, --pm-accent glif.
+ *    Eski blue/green/yellow (va dark) variantlari neytrallanadi:
+ *    barcha tone'lar bitta retseptga keltiriladi (D4/D5, 2-rang qoidasi).
+ * ------------------------------------------------------------------ */
+.todo-row .t-icon,
+.todo-row .t-icon.green,
+.todo-row .t-icon.yellow,
+.todo-row .t-icon.blue,
+.todo-row .t-icon.purple,
+[data-theme='dark'] .todo-row .t-icon,
+[data-theme='dark'] .todo-row .t-icon.green,
+[data-theme='dark'] .todo-row .t-icon.yellow {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+.todo-row .t-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Matn — sarlavha 14/600 --pm-ink, meta 13px --pm-ink-2.
+ *    Ellipsis olinadi: meta ikki satrgacha erkin o'raladi.
+ * ------------------------------------------------------------------ */
+.todo-row .t-body {
+  flex: 1;
+  min-width: 0;
+}
+.todo-row .t-body b {
+  display: block;
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink);
+}
+.todo-row .t-body small {
+  display: block;
+  margin: 2px 0 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-2);
+  white-space: normal;                      /* nowrap olinadi */
+  overflow: visible;                        /* hidden olinadi */
+  text-overflow: clip;                      /* ellipsis olinadi */
+  max-width: 72ch;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Tekshirish doirasi — 24px kontur, bajarilganda --pm-sage + oq glif.
+ * ------------------------------------------------------------------ */
+.todo-row .t-check {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border: 1px solid var(--pm-line-strong);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-transparent);
+  color: var(--pm-transparent);             /* glif yashirin, ARIA saqlanadi */
+  box-shadow: none;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    border-color var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+.todo-row .t-check svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
+.todo-row:not(.done):hover .t-check {
+  border-color: var(--pm-accent);
+  color: var(--pm-accent);
+}
+.todo-row.done .t-check {
+  border-color: var(--pm-sage);
+  background: var(--pm-sage);
+  color: var(--pm-on-accent);               /* oq glif */
+  box-shadow: none;                         /* eski 2px pastki soya olinadi */
+}
+.todo-row.done {
+  border-bottom-color: var(--pm-line);      /* eski rangli border olinadi */
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Responsiv — 1440 / 900 / 620 / 375
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .todo-row {
+    gap: var(--pm-s-2);                     /* 12px — tor ekranda */
+  }
+  .todo-row .t-body small {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 480px) {
+  .todo-row {
+    width: 100%;
+    gap: var(--pm-s-2);
+    padding: var(--pm-s-2) 0;
+  }
+  .todo-row .t-body {
+    min-width: 0;                           /* meta to'kilmasdan o'raladi */
+  }
+  .todo-row .t-body small {
+    white-space: normal;                    /* 375px da meta bir necha satr */
+    line-height: 1.4;
+    max-width: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Reduced motion — barcha o'tishlar o'chadi (harakat xavfsizligi).
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .todo-row,
+  .todo-row .t-check {
+    transition: none;
+  }
+}

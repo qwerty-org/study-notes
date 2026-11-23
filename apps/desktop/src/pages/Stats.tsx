@@ -1,19 +1,18 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { store } from '@study-notes/core'
+import { addLocalDays, store } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
 import { Ring, useToast } from '../components/nx/NxUI'
 import { localDay, niceDate } from '../lib/nxDate'
 import {
   IconBookOpen,
-  IconChart,
   IconCheck,
   IconDownload,
   IconFlame,
   IconGlobe,
   IconTarget,
 } from '../components/icons'
-import { IconCalendar, IconFeather, IconInfo } from '../components/nx/icons'
+import { IconFeather, IconInfo } from '../components/nx/icons'
 
 const CONTEXTS = ['Barchasi', 'ish', 'oila', "do'stlik", "o'qish", 'shaxsiy'] as const
 
@@ -46,7 +45,7 @@ export default function Stats() {
     const days: { label: string; date: string; count: number }[] = []
     const names = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan']
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000)
+      const d = addLocalDays(-i)
       const date = localDay(d)
       days.push({
         label: names[d.getDay()],
@@ -78,7 +77,7 @@ export default function Stats() {
     a.download = `study-notes-${localDay()}.json`
     a.click()
     URL.revokeObjectURL(url)
-    show('Ma\'lumotlar eksport qilindi')
+    show('Ma\'lumotlar JSON fayli sifatida yuklab olindi')
   }
 
   return (
@@ -90,7 +89,12 @@ export default function Stats() {
           <p className="nx-subtitle">O'sishingizni bir joyda ko'ring — o'qiganingiz emas, qo'llaganingiz.</p>
         </div>
         <div className="nx-head__actions">
-          <button className="nx-btn nx-btn--ghost" onClick={exportData}>
+          <button
+            className="nx-btn nx-btn--ghost"
+            type="button"
+            onClick={exportData}
+            aria-label="Ma'lumotlarni eksport qilish"
+          >
             <IconDownload size={16} /> Eksport
           </button>
         </div>
@@ -107,29 +111,29 @@ export default function Stats() {
           </div>
         </div>
         <div className="nx-stats-hero__ring">
-          <Ring value={avgProgress} size={76} />
+          <Ring value={avgProgress} size={64} />
           <span>o'rtacha progress</span>
         </div>
       </section>
 
-      <section className="nx-stats-grid nx-grid nx-grid--4">
+      <section className="nx-stats-grid nx-grid nx-grid--4" aria-label="Asosiy ko'rsatkichlar">
         <div className="nx-stat nx-stat--accent">
-          <div className="nx-stat__top"><span className="nx-stat__label">Qo'llangan qoida</span><IconGlobe size={17} /></div>
+          <div className="nx-stat__top"><span className="nx-stat__label">Qo'llangan qoida</span><IconGlobe size={16} /></div>
           <div className="nx-stat__value nx-mono-num">{applyLog.length}</div>
           <div className="nx-stat__hint">kunlik maqsad: 1 ta</div>
         </div>
         <div className="nx-stat nx-stat--success">
-          <div className="nx-stat__top"><span className="nx-stat__label">To'g'ri javob</span><IconTarget size={17} /></div>
+          <div className="nx-stat__top"><span className="nx-stat__label">To'g'ri javob</span><IconTarget size={16} /></div>
           <div className="nx-stat__value nx-mono-num">{accuracy}%</div>
           <div className="nx-stat__hint">{quizCorrect}/{quizTotal} savol</div>
         </div>
-        <div className="nx-stat nx-stat--warn">
-          <div className="nx-stat__top"><span className="nx-stat__label">Uzluksiz kun</span><IconFlame size={17} /></div>
+        <div className="nx-stat nx-stat--warn" role="group" aria-label={`Uzluksiz kunlar: ${profile.streak} kun`}>
+          <div className="nx-stat__top"><span className="nx-stat__label">Uzluksiz kun</span><IconFlame size={16} /></div>
           <div className="nx-stat__value nx-mono-num">{profile.streak}</div>
           <div className="nx-stat__hint">kunlik iz</div>
         </div>
         <div className="nx-stat">
-          <div className="nx-stat__top"><span className="nx-stat__label">O'qilgan bob</span><IconBookOpen size={17} /></div>
+          <div className="nx-stat__top"><span className="nx-stat__label">O'qilgan bob</span><IconBookOpen size={16} /></div>
           <div className="nx-stat__value nx-mono-num">
             {library.reduce((s, b) => s + b.progress.readChapters.length, 0)}
           </div>
@@ -137,21 +141,24 @@ export default function Stats() {
         </div>
       </section>
 
-      <section className="nx-stats-activity nx-card nx-card--pad">
+      <section className="nx-stats-activity nx-card nx-card--pad" aria-labelledby="nx-activity-title">
         <div className="nx-section-head">
           <div>
-            <h2 className="nx-h2">So'nggi 7 kun</h2>
+            <h2 className="nx-h2" id="nx-activity-title">So'nggi 7 kun</h2>
             <p className="nx-hint">Har kuni kamida bitta qoidani qo'llashga harakat qiling.</p>
           </div>
-          <div className="nx-row nx-badges">
+          <ul className="nx-row nx-badges" aria-label="Yutuqlar">
             {badges.map((b) => (
-              <span key={b.label} className={`nx-badge${b.ok ? ' is-earned' : ''}`} title={b.label}>
-                <span>{b.icon}</span><small>{b.label}</small>
-              </span>
+              <li key={b.label} className={`nx-badge${b.ok ? ' is-earned' : ''}`}>
+                <span aria-hidden="true">{b.icon}</span><small>{b.label}</small>
+                <span className="nx-sr-only">
+                  {b.ok ? "— qo'lga kiritilgan" : "— hali qo'lga kiritilmagan"}
+                </span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
-        <div className="nx-activity-chart">
+        <div className="nx-activity-chart" aria-hidden="true">
           {activity.map((d) => (
             <div className="nx-activity-day" key={d.date}>
               <span className="nx-activity-bar-wrap">
@@ -165,11 +172,30 @@ export default function Stats() {
             </div>
           ))}
         </div>
+        <table className="nx-sr-only nx-stats-activity-table">
+          <caption>So'nggi 7 kundagi faollik — har kungi qo'llashlar soni</caption>
+          <thead>
+            <tr>
+              <th scope="col">Kun</th>
+              <th scope="col">Sana</th>
+              <th scope="col">Qo'llashlar soni</th>
+            </tr>
+          </thead>
+          <tbody>
+            {activity.map((d) => (
+              <tr key={d.date}>
+                <th scope="row">{d.label}</th>
+                <td>{niceDate(d.date)}</td>
+                <td>{d.count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
 
       <section className="nx-journal nx-panel">
         <div className="nx-panel__head">
-          <div className="nx-row" style={{ gap: 9 }}>
+          <div className="nx-row nx-journal__title">
             <IconFeather size={18} />
             <div>
               <h2 className="nx-h2">"Men qo'lladim" jurnali</h2>
@@ -189,10 +215,9 @@ export default function Stats() {
             <div className="nx-timeline">
               {journal.map((e) => (
                 <div className="nx-timeline__item" key={e.id}>
-                  <span className="nx-timeline__dot" />
                   <div className="nx-timeline__body">
                     <b>{ideaText(e.ideaId)}</b>
-                    <div className="nx-row" style={{ gap: 7, flexWrap: 'wrap' }}>
+                    <div className="nx-row nx-journal__meta">
                       {e.context && <span className="nx-chip nx-chip--outline">{e.context}</span>}
                       <span className="nx-chip">{niceDate(e.date)}</span>
                       {e.note && <span className="nx-hint">{e.note}</span>}
@@ -202,7 +227,7 @@ export default function Stats() {
               ))}
             </div>
           ) : (
-            <div className="nx-empty" style={{ padding: '36px 20px' }}>
+            <div className="nx-empty">
               <div className="nx-empty__icon"><IconFeather size={24} /></div>
               <div className="nx-empty__title">Hali yozuv yo'q</div>
               <p className="nx-empty__text">
@@ -216,8 +241,8 @@ export default function Stats() {
 
       <section className="nx-stats-bottom nx-grid nx-grid--2">
         <div className="nx-panel">
-          <div className="nx-panel__head"><b className="nx-h3">Kitoblar progressi</b><IconBookOpen size={17} /></div>
-          <div className="nx-panel__body nx-stack" style={{ gap: 10 }}>
+          <div className="nx-panel__head"><b className="nx-h3">Kitoblar progressi</b></div>
+          <div className="nx-panel__body nx-stack nx-stats-progress">
             {library.length ? library.map((b) => (
               <Link to={`/kitob/${b.meta.slug}`} className="nx-progress-row" key={b.meta.slug}>
                 <span>{b.meta.title}</span>
@@ -228,7 +253,7 @@ export default function Stats() {
           </div>
         </div>
         <div className="nx-panel nx-next-step">
-          <div className="nx-panel__head"><b className="nx-h3">Keyingi qadam</b><IconChart size={17} /></div>
+          <div className="nx-panel__head"><b className="nx-h3">Keyingi qadam</b></div>
           <div className="nx-panel__body nx-stack">
             <div className="nx-next-step__row">
               <IconFlame size={18} />

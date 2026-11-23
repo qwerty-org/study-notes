@@ -6,7 +6,7 @@ import type { SVGProps } from 'react'
 
 type IconProps = SVGProps<SVGSVGElement> & { size?: number }
 
-function base({ size = 22, strokeWidth = 1.75, ...rest }: IconProps) {
+function base({ size = 22, strokeWidth = 1.8, ...rest }: IconProps) {
   return {
     width: size,
     height: size,
@@ -16,7 +16,10 @@ function base({ size = 22, strokeWidth = 1.75, ...rest }: IconProps) {
     strokeWidth,
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
-    'aria-hidden': true,
+    // Dekorativ ikonkalar uchun xavfsiz standart; faqat matnsiz tugmada
+    // chaqiruvchi aria-label berishi shart (bu yerda nomlarni o'zgartirmaymiz).
+    'aria-hidden': 'true' as const,
+    focusable: 'false' as const,
     ...rest,
   }
 }
@@ -47,10 +50,10 @@ export const IconRepeat = (p: IconProps) => (
 
 export const IconChart = (p: IconProps) => (
   <svg {...base(p)}>
-    <path d="M6 20v-5.5" />
-    <path d="M12 20V8" />
-    <path d="M18 20v-9" />
-    <path d="M3.5 20.5h17" />
+    <path d="M6 18v-5.5" />
+    <path d="M12 18V6" />
+    <path d="M18 18v-9" />
+    <path d="M3.5 18.5h17" />
   </svg>
 )
 
@@ -70,13 +73,13 @@ export const IconSliders = (p: IconProps) => (
 
 export const IconChevronRight = (p: IconProps) => (
   <svg {...base(p)}>
-    <path d="m9 5 7 7-7 7" />
+    <path d="m8.5 5 7 7-7 7" />
   </svg>
 )
 
 export const IconChevronLeft = (p: IconProps) => (
   <svg {...base(p)}>
-    <path d="m15 5-7 7 7 7" />
+    <path d="m15.5 5-7 7 7 7" />
   </svg>
 )
 
@@ -212,7 +215,7 @@ export const IconClock = (p: IconProps) => (
 
 export const IconMinus = (p: IconProps) => (
   <svg {...base(p)}>
-    <path d="M4.5 16.5h15" />
+    <path d="M4.5 12h15" />
   </svg>
 )
 
@@ -231,7 +234,7 @@ export const IconUser = (p: IconProps) => (
 
 export const IconSearch = (p: IconProps) => (
   <svg {...base(p)}>
-    <circle cx="11" cy="11" r="6.5" />
-    <path d="m16 16 4.5 4.5" />
+    <circle cx="10.5" cy="10.5" r="6.5" />
+    <path d="m15.5 15.5 4.5 4.5" />
   </svg>
 )

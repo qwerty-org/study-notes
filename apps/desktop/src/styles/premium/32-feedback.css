@@ -1,0 +1,377 @@
+/* Premium Feedback — Wave 3 / P32 (PREMIUM).
+   Owns: .nx-overlay, .nx-modal, .nx-modal__close, .nx-toast,
+         .nx-empty (+ __icon / __title / __text), .nx-skeleton,
+         .nx-error-card, .nx-analyze-card, .nx-analyze-pulse.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md §4/§5/§6
+          va docs/superpowers/specs/layout/07-quiz-feedback.md D6.
+   Faqat --pm-* tokenlari. Yangi token yo'q, majburiy ustunlik ham ishlatilmaydi.
+   ARIA (role="alertdialog"/"status", aria-modal, focus trap) TSX da — buzilmaydi.
+   1440 / 900 / 620 / 375 ko'rib chiqilgan. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Overlay — sahifa foni 80%, blur yo'q. Modal ustida, toast undan usta.
+ * ------------------------------------------------------------------ */
+.nx-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  place-items: safe center;
+  box-sizing: border-box;
+  padding: var(--pm-s-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: color-mix(in srgb, var(--pm-bg) 80%, var(--pm-transparent));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  animation: pm-fade-in var(--pm-d-hover) var(--pm-ease-std) both;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Modal — 400 / 32 / 24, surface + shadow-2, chegara yo'q.
+ *    Yuqori o'ngda yopish; pastki harakatlar o'ngga tekislangan.
+ * ------------------------------------------------------------------ */
+.nx-modal {
+  position: relative;
+  box-sizing: border-box;
+  width: 400px;
+  max-width: 100%;
+  max-height: calc(100vh - var(--pm-s-6));
+  max-height: calc(100dvh - var(--pm-s-6));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--pm-s-5);
+  border: 0;
+  border-radius: var(--pm-r-lg);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-2);
+  animation: pm-modal-in var(--pm-d-enter) var(--pm-ease-out) both;
+}
+
+.nx-modal .nx-title {
+  margin: 0;
+  padding-right: var(--pm-s-5); /* yopish tugmasi bilan to'qnashmasin */
+  color: var(--pm-ink);
+  font: 600 var(--pm-fs-24) / 1.25 var(--pm-font-display);
+  letter-spacing: -0.035em;
+}
+
+.nx-modal .nx-subtitle {
+  margin-top: var(--pm-s-2);
+  color: var(--pm-ink-2);
+  font: var(--pm-fs-14) / 1.6 var(--pm-font);
+}
+
+.nx-modal .nx-row {
+  justify-content: flex-end;
+  gap: var(--pm-s-2);
+  margin-top: var(--pm-s-5); /* TSX dagi inline marginTop:24 ustunlik qiladi — fallback */
+}
+
+/* Modalning asosiy harakati 48px, ikkilamchi (ghost) 44px. */
+.nx-modal .nx-row .nx-btn--primary,
+.nx-modal .nx-row .nx-btn--danger {
+  min-height: 48px;
+}
+
+.nx-modal .nx-row .nx-btn--ghost {
+  min-height: 44px;
+}
+
+.nx-modal__close {
+  position: absolute;
+  top: var(--pm-s-4);
+  right: var(--pm-s-4);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-3);
+  cursor: pointer;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-modal__close:hover {
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+}
+
+/* Fokus halqasi saqlanadi: 2px --pm-accent, offset 3px. */
+.nx-modal__close:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+@media (forced-colors: active) {
+  .nx-modal__close:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Toast — past o'rtada, 420px gacha, 48px pill, teskari kontrast.
+ *    Kelish harakati 240ms; role="status" / aria-live TSX dan keladi.
+ * ------------------------------------------------------------------ */
+.nx-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--pm-s-5);
+  z-index: 120; /* overlay (100) ustida */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-2);
+  box-sizing: border-box;
+  max-width: 420px;
+  min-height: 48px;
+  padding: var(--pm-s-2) var(--pm-s-4);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-ink);
+  color: var(--pm-surface);
+  box-shadow: var(--pm-shadow-2);
+  font: 600 var(--pm-fs-12) / 1.4 var(--pm-font);
+  text-align: center;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: pm-toast-in 240ms var(--pm-ease-out) both;
+}
+
+.nx-toast .nx-dot {
+  flex: 0 0 var(--pm-s-1);
+  width: var(--pm-s-1);
+  height: var(--pm-s-1);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent);
+}
+
+/* Legacy qoida dark mode'da ranglarni almashtirar edi — teskari kontrastni saqlaymiz. */
+[data-theme='dark'] .nx-toast {
+  background: var(--pm-ink);
+  color: var(--pm-surface);
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Empty state — chapga tekislangan editorial ritm, neytral ikonka.
+ * ------------------------------------------------------------------ */
+.nx-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--pm-s-3);
+  padding: var(--pm-s-6) var(--pm-s-4);
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+.nx-empty__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--pm-s-6);
+  width: var(--pm-s-6);
+  height: var(--pm-s-6);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+}
+
+.nx-empty__title {
+  margin: 0;
+  color: var(--pm-ink);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.nx-empty__text {
+  max-width: 56ch;
+  margin: 0;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  line-height: 1.6;
+}
+
+/* <Empty> dagi yagona harakat tugmasi o'rami (TSX 8px inline margin qo'yadi). */
+.nx-empty > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pm-s-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Skeleton — surface-2, shimmer yo'q, faqat yumshoq opacity o'zgarishi.
+ * ------------------------------------------------------------------ */
+.nx-skeleton {
+  display: block;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  animation: pm-skeleton-breathe 1600ms var(--pm-ease-std) infinite;
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Error — 3px danger chap chiziq, oddiy matn, qayta urinish harakati.
+ * ------------------------------------------------------------------ */
+.nx-error-card {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);
+  margin-top: var(--pm-s-4);
+  padding: var(--pm-s-3) var(--pm-s-4);
+  border: 0;
+  border-left: 3px solid var(--pm-danger);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+  color: var(--pm-ink);
+}
+
+.nx-error-card p {
+  margin-top: var(--pm-s-1);
+  color: var(--pm-ink-2);
+  font: var(--pm-fs-14) / 1.5 var(--pm-font);
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Analyze (loading) — sokin karta, nurli halqa o'rniga opacity pulsi.
+ * ------------------------------------------------------------------ */
+.nx-analyze-card {
+  margin-top: var(--pm-s-4);
+  padding: var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+}
+
+.nx-analyze-pulse {
+  width: var(--pm-s-1);
+  height: var(--pm-s-1);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent);
+  box-shadow: none; /* eski ko'payib boruvchi rangli halqa o'chirildi */
+  animation: pm-pulse-soft 1600ms var(--pm-ease-std) infinite;
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Animatsiyalar
+ * ------------------------------------------------------------------ */
+@keyframes pm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pm-modal-in {
+  from { opacity: 0; transform: translateY(var(--pm-s-1)); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pm-toast-in {
+  from { opacity: 0; transform: translate(-50%, var(--pm-s-1)); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes pm-skeleton-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes pm-pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. 1440 / 900 — asosiy qoida kuchli (900 gacha o'zgartirish yo'q).
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .nx-overlay {
+    padding: var(--pm-s-3);
+  }
+
+  .nx-modal {
+    padding: var(--pm-s-4);
+  }
+
+  .nx-modal .nx-title {
+    padding-right: var(--pm-s-4);
+  }
+
+  .nx-modal__close {
+    top: var(--pm-s-3);
+    right: var(--pm-s-3);
+  }
+
+  /* TSX inline justify-content:flex-end saqlanadi; ustun yo'nalish qo'shamiz. */
+  .nx-modal .nx-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--pm-s-1);
+  }
+
+  .nx-modal .nx-row .nx-btn {
+    width: 100%;
+  }
+
+  .nx-empty {
+    padding: var(--pm-s-5) var(--pm-s-3);
+  }
+
+  .nx-analyze-card,
+  .nx-error-card {
+    padding: var(--pm-s-3);
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-toast {
+    max-width: none;
+    width: calc(100vw - var(--pm-s-5));
+    bottom: var(--pm-s-3);
+    padding-inline: var(--pm-s-3);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. Harakatni kamaytirish — faqat yakuniy holat ko'rinadi.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-overlay,
+  .nx-modal,
+  .nx-toast,
+  .nx-modal__close,
+  .nx-skeleton,
+  .nx-analyze-pulse {
+    animation: none;
+    transition: none;
+  }
+
+  .nx-overlay,
+  .nx-modal,
+  .nx-toast,
+  .nx-skeleton,
+  .nx-analyze-pulse {
+    opacity: 1;
+  }
+
+  .nx-toast {
+    transform: translateX(-50%);
+  }
+
+  .nx-modal {
+    transform: none;
+  }
+}

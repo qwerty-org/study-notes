@@ -1,0 +1,214 @@
+/* Premium Cross-cutting Responsive Safety Net — Wave 3 / P34.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md §8
+   Qaror: docs/superpowers/specs/layout/08-mobile.md §1, §3, §7, §8
+
+   Bu fayl premium element fayllari ichida OXIRIDA (35-motion dan oldin)
+   yuklanadi. Shuning uchun u alohida komponentlarni QAYTA uslublamaydi —
+   P02–P33 o'z elementlariga egalik qiladi. Faqat strukturaviy, kesib o'tuvchi
+   tuzatishlar: flex/grid farzandlarining min-width:0, gorizontal to'lib
+   ketishning oldini olish, jadval/pre va scroll qutilari, NX sahifa shelli.
+
+   Faqat --pm-* tokenlari. Yangi token/hex/rgb yo'q. !important faqat
+   prefers-reduced-motion ichida. Fokus halqasi (2px --pm-accent, offset 3px)
+   va ARIA bog'langan selektorlar o'zgarishsiz qoladi. */
+
+/* ------------------------------------------------------------------ *
+ * 1440 (referens): strukturaviy asos — hech qanday rang/o'lcham o'zgarishi
+ * yo'q, faqat kengayishga qarshi minimal himoya.
+ * ------------------------------------------------------------------ */
+html,
+body {
+  min-width: 0;
+}
+
+.app,
+.main,
+.page,
+.nx-page {
+  min-width: 0;
+}
+
+.row,
+.stack,
+.nx-row,
+.nx-stack,
+.nx-grid,
+.nx-grid--2,
+.nx-grid--3,
+.nx-grid--4 {
+  min-width: 0;
+}
+
+/* Flex/grid farzandlari o'z kontentining minimal kengligini majora qiladi —
+   L08 §7 "no horizontal overflow" uchun asosiy mexanizm. */
+.row > *,
+.stack > *,
+.nx-row > *,
+.nx-stack > *,
+.nx-grid > *,
+.nx-grid--2 > *,
+.nx-grid--3 > *,
+.nx-grid--4 > * {
+  min-width: 0;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ------------------------------------------------------------------ *
+ * 900 — ustunlar soni qisqaradi (L08 §1): 3/4 → 2. minmax(0, 1fr)
+ * allaqachon foundationda bor; faqat strukturani mustahkamlaymiz.
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .app,
+  .main,
+  .page,
+  .nx-page,
+  .topbar,
+  .row,
+  .stack,
+  .nx-row,
+  .nx-stack,
+  .nx-grid,
+  .nx-grid--2,
+  .nx-grid--3,
+  .nx-grid--4 {
+    min-width: 0;
+  }
+
+  .nx-grid--3,
+  .nx-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Jadval o'z scroll qutisi ichida harakatlanadi — sahifani kengaytirmaydi. */
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 620 — yagona ustun, ixcham topbar bilan mos shell.
+ * Eslatma: .main padding-top va .page padding qiymatlari P10 (10-surfaces)
+ * ga tegishli; ularni o'zgartirmaymiz. NX sahifalarda `.main > .page:has(...)`
+ * yuqori specificity bilan padding:0 qoldiradi — shuning uchun ichki
+ * bo'shliq .nx-page da beriladi (P10 ning 24/24/64 qiymati bilan bir xil).
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .topbar {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .nx-page {
+    padding: var(--pm-s-4) var(--pm-s-4) var(--pm-s-7); /* 24 / 24 / 64 */
+  }
+
+  /* L08 §0: faqat boshqa agentlar boshqaradigan juft 2-up gridlar bundan
+     mustasno. .nx-grid* oilasi esa to'liq bitta ustunga tushadi. */
+  .nx-grid,
+  .nx-grid--2,
+  .nx-grid--3,
+  .nx-grid--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Gorizontal yordamchi qatorlar ko'tariladi — DOM tartibi saqlanadi
+     (hech qanday order o'zgarishi yo'q). .stack/.nx-stack allaqachon column. */
+  .row,
+  .nx-row {
+    flex-wrap: wrap;
+  }
+
+  /* Scroll qutilari: faqat xavfsizlik xususiyatlari. P22/P23 o'zlarining
+     balandligi, snap va ikki qatorli tartibini boshqarishda davom etadi. */
+  .nx-book-tabs,
+  .nx-reader-toolbar {
+    min-width: 0;
+    max-width: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .nx-book-tabs::-webkit-scrollbar,
+  .nx-reader-toolbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 375 — L08 §1/§3: sahifa ichki bo'shlig'i 24 / 16 / 64, bitta ustun.
+ * ------------------------------------------------------------------ */
+@media (max-width: 375px) {
+  /* Oxirgi chora: FAQAT ildizda (ichki konteynerlarda fokus halqasi qirqilar
+     edi). Eski dvigatellar uchun hidden, zamonaviylar uchun clip — clip
+     scroll container yaratmaydi, P30 ning sticky settings nav saqlanadi. */
+  html {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
+  .main,
+  .page {
+    min-width: 0;
+  }
+
+  .page,
+  .nx-page {
+    padding: var(--pm-s-4) var(--pm-s-3) var(--pm-s-7); /* 24 / 16 / 64 */
+  }
+
+  .nx-grid,
+  .nx-grid--2,
+  .nx-grid--3,
+  .nx-grid--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nx-book-tabs,
+  .nx-reader-toolbar {
+    max-width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Harakatni kamaytirish — mavjud halqalar kuchaytiriladi, zaiflashtirilmaydi.
+ * !important faqat shu blokda ruxsat etilgan (spec §8.3).
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .app,
+  .main,
+  .page,
+  .nx-page,
+  .nx-grid,
+  .nx-grid--2,
+  .nx-grid--3,
+  .nx-grid--4,
+  .row,
+  .stack,
+  .nx-row,
+  .nx-stack,
+  .nx-book-tabs,
+  .nx-reader-toolbar {
+    animation: none !important;
+    transition: none !important;
+  }
+}

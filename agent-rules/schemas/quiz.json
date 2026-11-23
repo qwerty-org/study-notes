@@ -1,54 +1,111 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "quiz",
+  "title": "Quiz",
+  "description": "quiz-master agenti yaratgan savollar to'plami. AI javobi { items } shaklida bo'ladi; 'book' slug'i saqlash bosqichida ilova tomonidan qo'shiladi.",
   "type": "object",
   "required": ["items"],
+  "additionalProperties": false,
   "properties": {
+    "book": {
+      "type": "string",
+      "description": "Kitob slug'i (saqlash bosqichida ilova qo'shadi; AI javobida bo'lishi shart emas)."
+    },
     "items": {
       "type": "array",
+      "description": "Bob uchun yaratilgan savollar: 3–8 ta, kamida 60% i vaziyatli (scenario).",
       "minItems": 3,
       "maxItems": 8,
       "items": {
         "type": "object",
         "required": ["id", "chapter", "type", "question", "options", "answer", "explain"],
+        "additionalProperties": false,
         "properties": {
-          "id": { "type": "string" },
-          "chapter": { "type": "integer" },
-          "type": { "enum": ["scenario", "theory"] },
-          "question": { "type": "string" },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Noyob savol id si: ch{bob}-q{tartib}, masalan ch1-q1."
+          },
+          "chapter": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Bob indeksi (0 dan boshlanadi)."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["scenario", "theory"],
+            "description": "scenario — vaziyatli qaror savoli; theory — mohiyatni tushunish savoli."
+          },
+          "question": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Oddiy o'zbek tilida, iqtibossiz savol matni."
+          },
           "options": {
             "type": "array",
+            "description": "To'rtta variant: bittasi to'g'ri, uchtasi ishonarli xato.",
             "minItems": 4,
             "maxItems": 4,
             "items": {
               "type": "object",
               "required": ["key", "text"],
+              "additionalProperties": false,
               "properties": {
-                "key": { "enum": ["A", "B", "C", "D"] },
-                "text": { "type": "string" }
-              },
-              "additionalProperties": false
+                "key": {
+                  "type": "string",
+                  "enum": ["A", "B", "C", "D"],
+                  "description": "Variant belgisi."
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Variant matni; barchasi bir xil grammatika va taxminan bir xil uzunlikda."
+                }
+              }
             }
           },
-          "answer": { "enum": ["A", "B", "C", "D"] },
+          "answer": {
+            "type": "string",
+            "enum": ["A", "B", "C", "D"],
+            "description": "To'g'ri variant kaliti (options[].key lardan biri)."
+          },
           "explain": {
             "type": "object",
-            "required": ["correct"],
+            "description": "To'g'ri javob va har bir xato variant uchun izoh.",
+            "required": ["correct", "wrong"],
+            "additionalProperties": false,
             "properties": {
-              "correct": { "type": "string" },
+              "correct": {
+                "type": "string",
+                "minLength": 10,
+                "description": "Nima uchun bu javob to'g'ri va qaysi g'oyaga asoslangan."
+              },
               "wrong": {
                 "type": "object",
-                "additionalProperties": { "type": "string" }
+                "description": "To'g'ri javob kalitidan tashqari barcha 3 variant uchun alohida izoh.",
+                "minProperties": 3,
+                "maxProperties": 3,
+                "additionalProperties": false,
+                "properties": {
+                  "A": { "type": "string", "minLength": 1 },
+                  "B": { "type": "string", "minLength": 1 },
+                  "C": { "type": "string", "minLength": 1 },
+                  "D": { "type": "string", "minLength": 1 }
+                }
               }
-            },
-            "additionalProperties": false
+            }
           },
-          "difficulty": { "enum": ["easy", "medium", "hard"] },
-          "concepts": { "type": "array", "items": { "type": "string" } }
-        },
-        "additionalProperties": false
+          "difficulty": {
+            "type": "string",
+            "enum": ["easy", "medium", "hard"],
+            "description": "Savol qiyinligi."
+          },
+          "concepts": {
+            "type": "array",
+            "description": "Savol bog'langan g'oya id lari (masalan, ch1-i1).",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
       }
     }
-  },
-  "additionalProperties": false
+  }
 }

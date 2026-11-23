@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { splitChapters, type ApplyLogEntry, type BookRecord } from '@study-notes/core'
+import { localDay, splitChapters, type ApplyLogEntry, type BookRecord } from '@study-notes/core'
 import { useApp } from '../store/AppStore'
 import { renderMD } from '../lib/md'
 import { EmptyState, Ring } from './ui'
@@ -13,7 +13,7 @@ import {
 } from './icons'
 
 function today(): string {
-  return new Date().toISOString().slice(0, 10)
+  return localDay()
 }
 
 const WORDS_PER_PAGE = 420
@@ -64,7 +64,7 @@ export function ReadTab({ book }: { book: BookRecord }) {
   const [toast, setToast] = useState('')
 
   const ch = chapters[current]
-  if (!ch) return <EmptyState icon={<IconList size={26} />} title="Matn topilmadi" />
+  if (!ch) return <EmptyState icon={<IconList size={24} />} title="Matn topilmadi" />
 
   const pages = splitIntoPages(ch.content)
   const pageIndex = Math.min(Math.max(page, 0), pages.length - 1)
@@ -109,7 +109,7 @@ export function ReadTab({ book }: { book: BookRecord }) {
       {/* ============ Chap panel: progress + amallar + boblar ============ */}
       <aside className="reader-side">
         <div className="reader-side-progress">
-          <Ring value={book.progress.percent} size={62} stroke={7} />
+          <Ring value={book.progress.percent} size={64} stroke={7} />
           <div>
             <b>
               {readCount}/{chapters.length}
@@ -134,7 +134,7 @@ export function ReadTab({ book }: { book: BookRecord }) {
         </button>
 
         <div className="reader-side-label">Boblar</div>
-        <div className="chapter-list">
+        <div className="chapter-list" role="navigation" aria-label="Boblar">
           {chapters.map((c) => {
             const done = book.progress.readChapters.includes(c.index)
             return (
@@ -142,8 +142,9 @@ export function ReadTab({ book }: { book: BookRecord }) {
                 key={c.index}
                 className={`chapter-item${c.index === current ? ' active' : ''}`}
                 onClick={() => goChapter(c.index)}
+                aria-current={c.index === current ? 'step' : undefined}
               >
-                <span className="ch-num">{done ? <IconCheck size={13} strokeWidth={2.6} /> : c.index + 1}</span>
+                <span className="ch-num">{done ? <IconCheck size={14} strokeWidth={2.6} /> : c.index + 1}</span>
                 <span className="ch-title">{c.title || `${c.index + 1}-bob`}</span>
               </button>
             )
@@ -159,7 +160,7 @@ export function ReadTab({ book }: { book: BookRecord }) {
             {ch.title && <span className="ch-name"> · {ch.title}</span>}
           </div>
           <span className="chip">
-            Sahifa <b style={{ marginLeft: 3 }}>{pageIndex + 1}</b>/{pages.length}
+            Sahifa <b style={{ marginLeft: 4 }}>{pageIndex + 1}</b>/{pages.length}
           </span>
         </div>
 
@@ -176,7 +177,7 @@ export function ReadTab({ book }: { book: BookRecord }) {
               else goChapter(current - 1)
             }}
           >
-            <IconChevronLeft size={17} /> Oldingi
+            <IconChevronLeft size={16} /> Oldingi
           </button>
           <button
             className="reader-btn reader-btn-primary"
@@ -187,7 +188,7 @@ export function ReadTab({ book }: { book: BookRecord }) {
           >
             {pageIndex < pages.length - 1 ? (
               <>
-                Keyingi <IconArrowRight size={17} />
+                Keyingi <IconArrowRight size={16} />
               </>
             ) : current === chapters.length - 1 ? (
               <>
@@ -195,14 +196,14 @@ export function ReadTab({ book }: { book: BookRecord }) {
               </>
             ) : (
               <>
-                Keyingi bob <IconArrowRight size={17} />
+                Keyingi bob <IconArrowRight size={16} />
               </>
             )}
           </button>
         </div>
       </div>
 
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast" role="status">{toast}</div>}
     </div>
   )
 }
@@ -255,7 +256,7 @@ export function IdeasTab({ book }: { book: BookRecord }) {
                   </div>
                 </div>
                 <div className="idea-foot">
-                  <div className="row wrap" style={{ gap: 6 }}>
+                  <div className="row wrap" style={{ gap: 8 }}>
                     {idea.applyTags?.map((t) => (
                       <span key={t} className="chip">
                         {t}
@@ -281,7 +282,7 @@ export function IdeasTab({ book }: { book: BookRecord }) {
           </div>
         </div>
       ))}
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast" role="status">{toast}</div>}
     </div>
   )
 }
@@ -297,7 +298,7 @@ export function TermsTab({ book }: { book: BookRecord }) {
   if (!terms?.length)
     return (
       <EmptyState
-        icon={<IconList size={26} />}
+        icon={<IconList size={24} />}
         title="Termin topilmadi"
         text="Tahlildan keyin shu yerda paydo bo'ladi."
       />
@@ -322,15 +323,22 @@ export function TermsTab({ book }: { book: BookRecord }) {
             onClick={() => toggle(i)}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && toggle(i)}
+            aria-label={t.term}
+            aria-expanded={flipped.has(i)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                toggle(i)
+              }
+            }}
           >
             <div className="term-inner">
-              <div className="term-face front">
+              <div className="term-face front" aria-hidden={flipped.has(i)}>
                 <small>{t.from}</small>
                 <h3>{t.term}</h3>
-                <small style={{ color: 'var(--muted)' }}>bosib oching</small>
+                <small style={{ color: 'var(--pm-ink-2)' }}>bosib oching</small>
               </div>
-              <div className="term-face back">
+              <div className="term-face back" aria-hidden={!flipped.has(i)}>
                 <p>{t.definitionSimple}</p>
                 {t.metaphor && <span className="term-metaphor">💭 {t.metaphor}</span>}
               </div>
@@ -353,7 +361,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
   if (!scenarios.length)
     return (
       <EmptyState
-        icon={<IconGlobe size={26} />}
+        icon={<IconGlobe size={24} />}
         title="Senariylar yo'q"
         text="AI tahlili «hayotda qanday qo'llash» vaziyatlarini shu yerga yaratadi."
       />
@@ -401,7 +409,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
                     <>
                       <br />
                       <br />
-                      <b style={{ color: 'var(--muted)', fontSize: 11 }}>Sabab</b>
+                      <b style={{ color: 'var(--pm-ink-2)', fontSize: 11 }}>Sabab</b>
                       {s.whyWrong}
                     </>
                   )}
@@ -428,7 +436,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
           </div>
         )
       })}
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast" role="status">{toast}</div>}
     </div>
   )
 }
@@ -438,7 +446,7 @@ export function ApplyTab({ book }: { book: BookRecord }) {
 export function TutorTab({ book }: { book: BookRecord }) {
   return (
     <EmptyState
-      icon={<IconChat size={26} />}
+      icon={<IconChat size={24} />}
       title="AI ustoz — keyingi bosqichda"
       text={`«${book.meta.title}» bo'yicha savol-javob tez orada qo'shiladi. Hozircha Xulosalar va Hayotda qo'llash tablaridan foydalaning.`}
       action={<span className="chip chip-amber">tez orada</span>}

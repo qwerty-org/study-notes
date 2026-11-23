@@ -1,0 +1,260 @@
+/* Premium Library — qidiruv / ko'rinish tugmasi / filtr qatori — Wave 3 / P19.
+   Owns: .nx-library__tools, .nx-search-wrap (+ input, ikon),
+         .nx-library__view (+ button), .nx-filter-row (+ button),
+         .nx-library .nx-segmented (faqat eski pill ramkasini yechish uchun).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/03-library.md §4
+   Faqat --pm-* tokenlari; ustunlik qo'shimchasi yo'q; index.css da 19-o'rinda
+   yuklanadi (eski nx/ qatlamidan keyin) — ustunlik qo'shimchasi kerak emas.
+   Ikkita sokin qator: Row A = sarlavha + qidiruv + view toggle,
+   Row B = grid ustidagi yagona hairline'li matn tablari. Pill/background yo'q.
+   aria-pressed bog'lanishlari, :focus-visible halqalari va reduced-motion saqlanadi. */
+
+/* ------------------------------------------------------------------ *
+ * 0. Umumiy segmented ramkasi — ikkala element ham .nx-segmented oladi.
+ *    Eski 4px padding + 1px border + 12px radius + surface-2 fonini
+ *    olamiz; keyingi bloklar faqat o'ziga xos geometry qo'yadi.
+ * ------------------------------------------------------------------ */
+.nx-library .nx-segmented {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 1. Tools qatori (kelajakdagi wrapper hook). Hozirgi TSX da action ichi
+ *    .nx-row bo'lib, unga inline gap:8 berilgan — stylesheet bilan
+ *    yengib bo'lmaydi (usta qo'shimchasi taqiqlangan). Shuning uchun kerakli
+ *    16px vizual oraliq view tugmasidagi margin-left bilan to'ldiriladi.
+ * ------------------------------------------------------------------ */
+.nx-library .nx-library__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Qidiruv — 248 × 44, neytral 1px --pm-line, soya yo'q.
+ *    Fokusda border faqat --pm-line-strong'ga qorong'ilashadi, klaviatura
+ *    fokusida esa 2px --pm-accent halqa (offset 3px) qo'shiladi.
+ * ------------------------------------------------------------------ */
+.nx-search-wrap {
+  flex: 0 0 248px;
+  width: 248px;
+  min-width: 0;
+}
+
+.nx-search-wrap input {
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 var(--pm-s-3) 0 40px;
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface);
+  box-shadow: none;
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 500;
+  line-height: 1.3;
+  transition: border-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-search-wrap input::placeholder {
+  color: var(--pm-ink-3);
+  opacity: 1;
+}
+
+.nx-search-wrap > svg {
+  color: var(--pm-ink-3);
+}
+
+.nx-search-wrap input:focus {
+  border-color: var(--pm-line-strong);
+  outline: none;
+  box-shadow: none;
+}
+
+.nx-search-wrap input:focus-visible {
+  border-color: var(--pm-line-strong);
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Ko'rinish tugmasi — 2 × 36px, butunlay yalang'och ikon tugmalar.
+ *    Faol holat: --pm-ink ikon + 2px --pm-accent pastki chiziq.
+ *    Eski accent-soft kvadrat / pill / box-shadow olinadi.
+ * ------------------------------------------------------------------ */
+.nx-library .nx-library__view {
+  flex: 0 0 auto;
+  gap: var(--pm-s-1);
+  margin-left: var(--pm-s-1); /* inline 8px + 8px = 16px (L03 qator oraliqi) */
+}
+
+.nx-library .nx-library__view button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink-3);
+  cursor: pointer;
+  transition: color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-library .nx-library__view button svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.nx-library .nx-library__view button:hover {
+  background: var(--pm-transparent);
+  color: var(--pm-ink-2);
+}
+
+.nx-library .nx-library__view button[aria-pressed='true'] {
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink);
+}
+
+.nx-library .nx-library__view button[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  left: var(--pm-s-1);
+  right: var(--pm-s-1);
+  bottom: 0;
+  height: 2px;
+  background: var(--pm-accent);
+}
+
+.nx-library .nx-library__view button:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  border-radius: var(--pm-r-sm);
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Filtr qatori — grid ustidagi yagona 1px hairline. Matn tablari,
+ *    13px --pm-ink-3; faoli --pm-ink + 2px --pm-accent chiziq.
+ *    Konteyner to'liq kenglikda, hech qanday fon/pill/soya yo'q.
+ * ------------------------------------------------------------------ */
+.nx-library .nx-filter-row.nx-segmented {
+  display: flex;
+  align-items: stretch;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  height: 40px;
+  gap: var(--pm-s-4);
+  padding: 0;
+  margin: 0 0 var(--pm-s-4);
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pm-line-strong) var(--pm-transparent);
+  -webkit-overflow-scrolling: touch;
+}
+
+.nx-library .nx-filter-row button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 0 var(--pm-s-2);
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-library .nx-filter-row button:hover {
+  background: var(--pm-transparent);
+  color: var(--pm-ink-2);
+}
+
+.nx-library .nx-filter-row button[aria-pressed='true'] {
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink);
+}
+
+.nx-library .nx-filter-row button[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--pm-accent);
+}
+
+.nx-library .nx-filter-row button:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  border-radius: var(--pm-r-sm);
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Responsiv — 1440 / 900 / 620 / 375.
+ *    1440: search 248, toggle 80, filtr 24 gap — asosiy qoida o'zgarmaydi.
+ *    900 (content 860): o'lchamlar o'zgarmaydi, uchinchi qator yo'q.
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .nx-search-wrap {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* 375 (content 351) ham shu qatlamga kiradi: inline 8px oraliq yetarli,
+   shuning uchun view'dagi qo'shimcha margin olinadi. */
+@media (max-width: 420px) {
+  .nx-library .nx-library__view {
+    margin-left: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Reduced motion — barcha o'tishlar o'chadi (spec §6).
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-search-wrap input,
+  .nx-library .nx-library__view button,
+  .nx-library .nx-filter-row button {
+    transition: none;
+  }
+}

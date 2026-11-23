@@ -17,7 +17,6 @@ import {
   IconSparkles,
   IconTarget,
 } from '../components/icons'
-import { IconInfo } from '../components/nx/icons'
 
 type TabKey = 'read' | 'ideas' | 'terms' | 'quiz' | 'apply' | 'tutor'
 
@@ -39,8 +38,8 @@ function friendlyError(msg: string): string {
 }
 
 const COVERS = [
-  ['#8d3f24', '#d98a4e'], ['#2f5d55', '#7fae9a'], ['#4b4260', '#9788ae'],
-  ['#7a5220', '#c9a25e'], ['#6b2f3a', '#b97277'], ['#34506b', '#7d9cbd'],
+  ['#2e3a8c', '#3b489e'], ['#3b5170', '#496184'], ['#46586e', '#566b84'],
+  ['#2c5c5c', '#3a7070'], ['#4a5598', '#5a66ac'], ['#3a4252', '#4a5468'],
 ]
 function coverColors(title: string) {
   let h = 0
@@ -69,7 +68,7 @@ export default function Book() {
     return (
       <div className="nx-page nx-page--narrow">
         <Empty
-          icon={<IconBookOpen size={27} />}
+          icon={<IconBookOpen size={24} />}
           title="Kitob topilmadi"
           text="Bu kitob kutubxonangizda yo'q yoki o'chirilgan."
           action={
@@ -94,7 +93,8 @@ export default function Book() {
     if (scroll && tabRef.current) {
       const top = tabRef.current.getBoundingClientRect().top
       if (top < 70 || top > window.innerHeight - 120) {
-        tabRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        tabRef.current.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
       }
     }
   }, [sp, setSp])
@@ -110,7 +110,7 @@ export default function Book() {
     e.preventDefault()
     setTab(enabled[nextIndex].key, true)
     window.setTimeout(() => {
-      tabRef.current?.querySelectorAll<HTMLButtonElement>('.nx-book-tab')[nextIndex]?.focus()
+      tabRef.current?.querySelectorAll<HTMLButtonElement>('.nx-book-tab:not(:disabled)')[nextIndex]?.focus()
     }, 0)
   }
 
@@ -187,15 +187,27 @@ export default function Book() {
         <IconChevronLeft size={16} /> Kutubxonaga qaytish
       </Link>
 
+      {/* O'qish jarayoni yorilmada ham, tor ekranlarda ham ko'rinib turadi */}
+      <div
+        className="nx-book-progress"
+        role="progressbar"
+        aria-label="Kitobni o'qish jarayoni"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={book.progress.percent}
+      >
+        <span className="nx-book-progress__fill" style={{ width: `${book.progress.percent}%` }} />
+      </div>
+
       <header className="nx-book-hero nx-card">
         <div className="nx-book-hero__cover" style={{ background: `linear-gradient(150deg, ${c1}, ${c2})` }}>
           <span>{coverTitle(book.meta.title)}</span>
           <small>{book.meta.author ?? 'Study Notes'}</small>
         </div>
         <div className="nx-book-hero__info">
-          <div className="nx-row" style={{ gap: 7, flexWrap: 'wrap', marginBottom: 9 }}>
+          <div className="nx-row" style={{ gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
             <span className={`nx-chip ${analysis ? 'nx-chip--success' : book.meta.status === 'partial' ? 'nx-chip--warn' : 'nx-chip--accent'}`}>
-              <IconSparkles size={11} /> {statusLabel}
+              {statusLabel}
             </span>
             <span className="nx-chip nx-chip--outline">{book.meta.sourceFormat.toUpperCase()}</span>
             <span className="nx-chip nx-chip--outline">{book.meta.chapters} bob</span>
@@ -216,11 +228,11 @@ export default function Book() {
               {book.progress.percent > 0
                 ? `Bob ${book.progress.currentChapter + 1} dan davom etish`
                 : 'O‘qishni boshlash'}
-              <IconArrowRight size={17} />
+              <IconArrowRight size={16} />
             </button>
           ) : (
             <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={goToAnalyze} disabled={ana.running}>
-              <IconSparkles size={17} /> {ana.running ? 'Tahlil qilinmoqda…' : 'AI tahlil qilish'}
+              <IconSparkles size={16} /> {ana.running ? 'Tahlil qilinmoqda…' : 'AI tahlil qilish'}
             </button>
           )}
           {analysis && (
@@ -234,7 +246,6 @@ export default function Book() {
       {ana.running && ana.progress && (
         <div className="nx-analyze-card nx-card">
           <div className="nx-row" style={{ gap: 12 }}>
-            <span className="nx-analyze-pulse" />
             <div style={{ flex: 1 }}>
               <b>{ana.progress.done + 1}-bob: {ana.progress.title}</b>
               <p className="nx-hint">{PHASES[ana.progress.phase]} · {ana.progress.done}/{ana.progress.total} bob</p>
@@ -250,7 +261,6 @@ export default function Book() {
 
       {ana.error && !ana.running && (
         <div className="nx-error-card">
-          <IconInfo size={19} />
           <div style={{ flex: 1 }}>
             <b>Tahlil to'xtadi</b>
             <p>{friendlyError(ana.error)}</p>
@@ -284,28 +294,27 @@ export default function Book() {
         })}
       </div>
 
-      <div className="nx-book-panel" id="nx-book-panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
+      <div className="nx-book-panel" id="nx-book-panel" role="tabpanel" aria-labelledby={`tab-${tab}`} tabIndex={0}>
         {tab === 'read' && <ReadTab book={book} onOpenTab={(k) => setTab(k, true)} />}
 
         {tab === 'ideas' && (analysis ? <IdeasTab book={book} /> : (
-          <Empty icon={<IconLightbulb size={26} />} title="Xulosalar tahlildan keyin paydo bo'ladi"
+          <Empty icon={<IconLightbulb size={24} />} title="Xulosalar tahlildan keyin paydo bo'ladi"
             text="AI kitob boblaridan eng muhim g'oyalarni ajratib beradi."
             action={<button className="nx-btn nx-btn--primary" onClick={goToAnalyze}>AI tahlil qilish</button>} />
         ))}
 
         {tab === 'terms' && (analysis ? <TermsTab book={book} /> : (
-          <Empty icon={<IconList size={26} />} title="Terminlar tahlildan keyin paydo bo'ladi"
+          <Empty icon={<IconList size={24} />} title="Terminlar tahlildan keyin paydo bo'ladi"
             text="Murakkab atamalar oddiy tilda tushuntiriladi."
             action={<button className="nx-btn nx-btn--primary" onClick={goToAnalyze}>AI tahlil qilish</button>} />
         ))}
 
         {tab === 'quiz' && (!analysis ? (
-          <Empty icon={<IconTarget size={26} />} title="Quiz tahlildan keyin yaratiladi"
+          <Empty icon={<IconTarget size={24} />} title="Quiz tahlildan keyin yaratiladi"
             text="AI har bobga vaziyatli va nazariy savollar tuzadi."
             action={<button className="nx-btn nx-btn--primary" onClick={goToAnalyze}>AI tahlil qilish</button>} />
         ) : (
           <div className="nx-quiz-intro nx-card nx-card--pad">
-            <div className="nx-quiz-intro__icon"><IconTarget size={25} /></div>
             <div className="nx-quiz-intro__copy">
               <h2 className="nx-title nx-title--sm">Bilimingizni sinab ko'ring</h2>
               <p className="nx-subtitle">
@@ -314,13 +323,13 @@ export default function Book() {
               </p>
             </div>
             <button className="nx-btn nx-btn--primary nx-btn--lg" onClick={() => setQuizOn(true)}>
-              Boshlash <IconArrowRight size={17} />
+              Boshlash <IconArrowRight size={16} />
             </button>
           </div>
         ))}
 
         {tab === 'apply' && (analysis ? <ApplyTab book={book} /> : (
-          <Empty icon={<IconGlobe size={26} />} title="Vaziyatlar tahlildan keyin paydo bo'ladi"
+          <Empty icon={<IconGlobe size={24} />} title="Vaziyatlar tahlildan keyin paydo bo'ladi"
             text="Har bir qoida uchun real hayotiy vaziyat va to'g'ri harakat yaratiladi."
             action={<button className="nx-btn nx-btn--primary" onClick={goToAnalyze}>AI tahlil qilish</button>} />
         ))}

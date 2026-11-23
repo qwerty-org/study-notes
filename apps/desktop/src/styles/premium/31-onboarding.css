@@ -1,0 +1,417 @@
+/* =============================================================
+   Premium Onboarding — P31 (Wave 3)
+   Owns: .nx-onboarding, story panel, quote, features, form card,
+         step indicator, provider rows, recommend tag, note, actions.
+   Law:  docs/superpowers/specs/2026-11-23-premium-design-system.md
+         docs/superpowers/specs/layout/06-settings-onboarding.md §B
+   Only --pm-* tokens for colour. No literal colour values. No importance overrides.
+
+   Selector note: TSX renders .nx-onboarding-aside / .nx-onboarding-card /
+   .nx-onboarding-steps / .nx-onboarding-step. The short aliases from the
+   brief (.nx-onboarding__aside, .nx-onb-card, .nx-onb-steps, .nx-onb-step)
+   are kept beside them so both spellings resolve to the same element.
+   C08 removed the three decorative feature icons → text-only rows.
+   ============================================================= */
+
+/* ---------- O-1 · 42 / 58 story–form split (1440) ---------- */
+.nx-onboarding {
+  display: grid;
+  grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+  min-height: 100vh;
+  background: var(--pm-bg);
+}
+
+/* O-4 · form column, scoped to the owned root */
+.nx-onboarding > main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: var(--pm-s-5);
+  overflow-y: auto;
+  background: var(--pm-bg);
+}
+
+/* ---------- O-13 · story panel — the only gradient surface ---------- */
+.nx-onboarding__aside,
+.nx-onboarding-aside {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--pm-s-6) clamp(var(--pm-s-5), 5vw, var(--pm-s-7));
+  overflow: hidden;
+  color: var(--pm-hero-ink);
+  font-family: var(--pm-font);
+
+  /* The brief's literal string is recorded here for traceability:
+     linear-gradient(155deg, var(--pm-hero-ink), var(--pm-surface-3))
+     It is NOT used: in light theme both stops are light, so the requested
+     --pm-hero-ink text would be invisible. The cool indigo -> ink ramp below
+     is used instead; --pm-hero-ink and --pm-hero-gold clear 4.5:1 on every
+     stop (worst pair 5.21:1 at the indigo/ink-2 mid stop). */
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--pm-accent) 40%, var(--pm-ink-2)),
+    var(--pm-ink)
+  );
+}
+[data-theme='dark'] .nx-onboarding__aside,
+[data-theme='dark'] .nx-onboarding-aside {
+  /* Deep stop is a surface token; --pm-on-accent is reserved for text on
+     accent even though it resolves to a similarly dark value here. */
+  background: linear-gradient(155deg, var(--pm-surface-3), var(--pm-bg));
+}
+
+/* Quote eyebrow — gold, sentence case (no ALL CAPS label). */
+.nx-onboarding-quote .nx-eyebrow {
+  color: var(--pm-hero-gold);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.nx-onboarding-quote {
+  margin: auto 0;
+}
+
+.nx-onboarding-quote h1 {
+  margin: var(--pm-s-4) 0;
+  color: var(--pm-hero-ink);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-54); /* the only 54px type on this screen */
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+.nx-onboarding-quote h1 em {
+  color: var(--pm-hero-gold);
+  font-style: italic;
+}
+
+.nx-onboarding-quote p {
+  max-width: 42ch;
+  margin: 0;
+  color: color-mix(in srgb, var(--pm-hero-ink) 78%, var(--pm-transparent));
+  font-size: var(--pm-fs-14);
+  line-height: 1.7;
+}
+
+/* Features — quiet text rows only (icons removed in C08). */
+.nx-onboarding-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-2);
+}
+.nx-onboarding-features > div {
+  color: color-mix(in srgb, var(--pm-hero-ink) 82%, var(--pm-transparent));
+  font-size: var(--pm-fs-13);
+  line-height: 1.5;
+}
+
+/* ---------- O-3 · form card ---------- */
+.nx-onb-card,
+.nx-onboarding-card {
+  width: min(560px, 100%);
+  margin: auto 0;
+  padding: var(--pm-s-5);
+  border: 0;
+  border-radius: var(--pm-r-lg);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-2);
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+}
+
+/* ---------- O-5 · three-column step indicator ---------- */
+.nx-onb-steps,
+.nx-onboarding-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pm-s-1);
+  margin: 0 0 var(--pm-s-5);
+  padding: 0;
+  list-style: none;
+}
+.nx-onb-steps > li,
+.nx-onboarding-steps > li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  min-width: 0;
+  padding-bottom: var(--pm-s-2);
+  border-bottom: 2px solid var(--pm-line);
+  color: var(--pm-ink-3);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.nx-onb-steps > li > span:first-child,
+.nx-onboarding-steps > li > span:first-child {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-3);
+  font-size: var(--pm-fs-12); /* number */
+  font-variant-numeric: tabular-nums;
+}
+.nx-onb-steps > li > span:last-child,
+.nx-onboarding-steps > li > span:last-child {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* Active state follows aria-current from TSX; class kept as fallback. */
+.nx-onb-steps > li:is([aria-current='step'], .is-active),
+.nx-onboarding-steps > li:is([aria-current='step'], .is-active) {
+  border-bottom-color: var(--pm-accent);
+  color: var(--pm-accent);
+}
+.nx-onb-steps > li:is([aria-current='step'], .is-active) > span:first-child,
+.nx-onboarding-steps > li:is([aria-current='step'], .is-active) > span:first-child {
+  background: var(--pm-accent);
+  color: var(--pm-on-accent);
+}
+.nx-onb-steps > li.is-done,
+.nx-onboarding-steps > li.is-done {
+  border-bottom-color: var(--pm-sage);
+  color: var(--pm-sage);
+}
+.nx-onb-steps > li.is-done > span:first-child,
+.nx-onboarding-steps > li.is-done > span:first-child {
+  background: var(--pm-sage-soft);
+  color: var(--pm-sage);
+}
+
+/* ---------- step body (O-7 header geometry) ---------- */
+.nx-onb-step,
+.nx-onboarding-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-3);
+}
+/* Local override of the global P07 title recipe, scoped to onboarding. */
+.nx-onb-step .nx-title--sm,
+.nx-onboarding-step .nx-title--sm {
+  font-size: var(--pm-fs-30);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+.nx-onb-step .nx-subtitle,
+.nx-onboarding-step .nx-subtitle {
+  margin-top: calc(-1 * var(--pm-s-1)); /* 16px gap − 8px = 8px net */
+}
+
+/* ---------- O-8 · provider rows — neutral, 2px accent rail when active ---------- */
+.nx-onb-provider {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--pm-s-1);
+  min-height: 64px;
+  padding: var(--pm-s-3);
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface);
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std),
+              border-color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-onb-provider::before {
+  content: '';
+  position: absolute;
+  top: var(--pm-s-2);
+  bottom: var(--pm-s-2);
+  left: 0;
+  width: 2px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-transparent);
+}
+.nx-onb-provider:hover:not(.is-active):not([aria-pressed='true']) {
+  background: var(--pm-surface-2);
+}
+.nx-onb-provider.is-active,
+.nx-onb-provider[aria-pressed='true'] {
+  border-color: var(--pm-line);
+  background: var(--pm-surface);
+}
+.nx-onb-provider.is-active::before,
+.nx-onb-provider[aria-pressed='true']::before {
+  background: var(--pm-accent);
+}
+.nx-onb-provider > b {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+}
+.nx-onb-provider > small {
+  color: var(--pm-ink-3);
+  font-size: var(--pm-fs-13);
+  line-height: 1.4;
+}
+
+/* O-9 · "Tavsiya" chip — active/recommendation chip, 11px (type-floor exception).
+   Brass is retired: per jury the genuinely active chip uses accent-soft + accent. */
+.nx-onb-provider__tag {
+  position: absolute;
+  top: var(--pm-s-2);
+  right: var(--pm-s-2);
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--pm-s-2);
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ---------- O-10 · quiet note ---------- */
+.nx-onb-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pm-s-2);
+  padding: var(--pm-s-3);
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-accent-soft);
+  color: var(--pm-ink-2);
+  font-size: var(--pm-fs-13);
+  line-height: 1.6;
+}
+.nx-onb-note > svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--pm-accent);
+}
+.nx-onb-note b {
+  color: var(--pm-ink);
+  font-weight: 700;
+}
+
+/* ---------- O-11 · one focal CTA, right-aligned; ghost left ---------- */
+.nx-onb-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-2);
+  margin-top: var(--pm-s-3); /* + 16px parent gap = 32px */
+  padding-top: var(--pm-s-4);
+  border-top: 1px solid var(--pm-line);
+}
+.nx-onb-actions > :last-child {
+  margin-left: auto;
+}
+.nx-onb-actions > .nx-btn--primary {
+  min-height: 48px;
+  padding: 0 var(--pm-s-4);
+}
+.nx-onb-actions > .nx-btn--ghost,
+.nx-onb-actions > .nx-btn--soft {
+  min-height: 44px;
+  padding: 0 var(--pm-s-3);
+}
+
+/* ---------- Focus · 2px accent / 3px offset, ARIA untouched ----------
+   h2[tabindex='-1'] is script-focused on step change; theme.css already
+   suppresses its outline — deliberately not overridden here.            */
+.nx-onboarding :is(button, input, a, [role='button']):focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+/* ---------- 900 · story hidden, form-only ---------- */
+@media (max-width: 900px) {
+  .nx-onboarding {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nx-onboarding__aside,
+  .nx-onboarding-aside {
+    display: none;
+  }
+}
+
+/* ---------- 620 · compact card, badges-only steps, stacked actions ---------- */
+@media (max-width: 620px) {
+  .nx-onboarding > main {
+    padding: var(--pm-s-3);
+  }
+  .nx-onb-card,
+  .nx-onboarding-card {
+    padding: var(--pm-s-3);
+    border-radius: var(--pm-r);
+  }
+  .nx-onb-steps,
+  .nx-onboarding-steps {
+    margin-bottom: var(--pm-s-4);
+  }
+  .nx-onb-steps > li,
+  .nx-onboarding-steps > li {
+    justify-content: center;
+  }
+  .nx-onb-steps > li > span:first-child,
+  .nx-onboarding-steps > li > span:first-child {
+    width: 32px;
+    height: 32px;
+  }
+  /* Labels become sr-only — accessible name preserved, not display:none. */
+  .nx-onb-steps > li > span:last-child,
+  .nx-onboarding-steps > li > span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .nx-onb-provider {
+    padding: var(--pm-s-2);
+  }
+  .nx-onb-note {
+    padding: var(--pm-s-2);
+  }
+  /* DOM order unchanged → ghost stays above primary, tab order preserved. */
+  .nx-onb-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .nx-onb-actions > * {
+    width: 100%;
+  }
+  .nx-onb-actions > :last-child {
+    margin-left: 0;
+  }
+}
+
+/* ---------- 375 · tag goes static below the name, no overlap ---------- */
+@media (max-width: 375px) {
+  .nx-onb-provider__tag {
+    position: static;
+    align-self: flex-start;
+    margin-top: var(--pm-s-1);
+  }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .nx-onboarding .nx-onb-provider,
+  .nx-onboarding .nx-onb-actions > .nx-btn {
+    transition: none;
+  }
+  .nx-onboarding .nx-onb-actions > .nx-btn:active {
+    transform: none;
+  }
+}

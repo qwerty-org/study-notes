@@ -2,12 +2,12 @@ import type { CSSProperties, ReactNode } from 'react'
 
 /** Gradient plitka — kitob muqovasi (birinchi harf bilan) */
 const GRADIENTS = [
-  'linear-gradient(135deg, #6e63f5, #9b7bff)',
-  'linear-gradient(135deg, #0ea5e9, #6366f1)',
-  'linear-gradient(135deg, #f59e0b, #ef4444)',
-  'linear-gradient(135deg, #10b981, #0ea5e9)',
-  'linear-gradient(135deg, #ec4899, #8b5cf6)',
-  'linear-gradient(135deg, #14b8a6, #22c55e)',
+  'linear-gradient(135deg, var(--pm-accent), var(--pm-accent-hover))',
+  'linear-gradient(135deg, var(--pm-accent-soft), var(--pm-accent))',
+  'linear-gradient(135deg, var(--pm-ink-3), var(--pm-accent))',
+  'linear-gradient(135deg, var(--pm-ink-2), var(--pm-ink))',
+  'linear-gradient(135deg, var(--pm-line-strong), var(--pm-ink-3))',
+  'linear-gradient(135deg, var(--pm-sage), var(--pm-surface-3))',
 ]
 
 function hash(s: string): number {
@@ -43,7 +43,15 @@ export function Cover({
 export function ProgressBar({ value, style }: { value: number; style?: CSSProperties }) {
   const v = Math.max(0, Math.min(100, Math.round(value)))
   return (
-    <div className="progress" style={style} aria-label={`Progress ${v}%`}>
+    <div
+      className="progress"
+      style={style}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={v}
+      aria-label={`Progress ${v}%`}
+    >
       <div style={{ width: `${v}%` }} />
     </div>
   )
@@ -62,7 +70,7 @@ export function EmptyState({
 }) {
   return (
     <div className="empty">
-      <span className="icon">{icon}</span>
+      <span className="icon" aria-hidden="true">{icon}</span>
       <h3>{title}</h3>
       {text && <p>{text}</p>}
       {action}
@@ -115,7 +123,7 @@ export function PageHead({
 export function Ring({
   value,
   size = 84,
-  stroke = 9,
+  stroke = 8,
   color,
   label,
 }: {
@@ -129,14 +137,22 @@ export function Ring({
   const r = (size - stroke) / 2
   const c = 2 * Math.PI * r
   return (
-    <div className="ring" style={{ width: size, height: size }}>
+    <div
+      className="ring"
+      style={{ width: size, height: size }}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={v}
+      aria-label={typeof label === 'string' ? label : `${v}%`}
+    >
       <svg width={size} height={size} aria-hidden>
         <circle
           cx={size / 2}
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="var(--ring-track)"
+          stroke="var(--pm-line)"
           strokeWidth={stroke}
         />
         <circle
@@ -144,7 +160,7 @@ export function Ring({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke={color ?? 'var(--primary)'}
+          stroke={color ?? 'var(--pm-accent)'}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}

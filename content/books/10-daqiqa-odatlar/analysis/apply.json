@@ -4,7 +4,7 @@
     {
       "id": "ch1-a1",
       "ideaId": "ch1-i3",
-      "situation": "Siz bir hafta davomida har kuni o'qishga 2 soat va'ta qildingiz, lekin 3-kundan keyin charchab to'xtadingiz va endi umuman boshlamayapsiz.",
+      "situation": "Siz bir hafta davomida har kuni o'qishga 2 soat sarf qildingiz, lekin 3-kundan keyin charchab to'xtadingiz va endi umuman boshlamayapsiz.",
       "rightAction": "Bugun 10 daqiqagacha qisqartiring: \"Faqat ochib, bitta bob o'qiyman\" deydingiz va shu bilan boshlaysiz.",
       "wrongAction": "Kechikkaningizni yopish uchun bir kunda 3 soat o'qishga urinish.",
       "whyWrong": "Ortiqcha yuk charchatadi va keyingi to'xtashni kafolatlaydi — kichik qadam barqarorlikni saqlaydi.",
@@ -23,7 +23,7 @@
       "id": "ch2-a2",
       "ideaId": "ch2-i2",
       "situation": "Siz ertalab sport qilmoqchisiz, lekin har safar kechqurun o'ylab, ertalab unutasiz.",
-      "rightAction": "Kechqurun kiyimni ertalab ko'zga tashlanadigan joyga (stul boshiga) qo'yib, rejani aniq bog'laysiz: \"Choydamdan keyin kiyinib, 10 daqiqa yuguraman\".",
+      "rightAction": "Kechqurun kiyimni ertalab ko'zga tashlanadigan joyga (stul boshiga) qo'yib, rejani aniq bog'laysiz: \"Choy damlagach, kiyinib 10 daqiqa yuguraman\".",
       "wrongAction": "Telefonga 20 ta eslatma qo'yish va irodaga tayanolish.",
       "whyWrong": "Eslatma muhitni o'zgartirmaydi — qiyin boshlash joyida qoladi. Muhit esa 24 soat ishlaydi.",
       "context": "shaxsiy"
@@ -41,7 +41,7 @@
       "id": "ch3-a2",
       "ideaId": "ch3-i3",
       "situation": "Siz yana bir marta o'z odatingizni buzdingiz va o'zingizga jahl qilyapsiz: \"Menda iroda yo'q\".",
-      "rightAction": "O'zingizga tahliliy savol berasiz: \"Muhim nima meni chalg'itdi?\" — va o'sha muhitni o'zgartirasiz (masalan, telefoni boshqa xonaga).",
+      "rightAction": "O'zingizga tahliliy savol berasiz: \"Nima meni chalg'itdi?\" — va o'sha muhitni o'zgartirasiz (masalan, telefonni boshqa xonaga).",
       "wrongAction": "O'z-o'zini ayblash va shu his bilan davom etish.",
       "whyWrong": "Stress eski odatlarni jonlantiradi; ayb hissi odatni kuchaytiradi. Muammo odatda emas — muhit va rejada.",
       "context": "shaxsiy"
@@ -49,10 +49,10 @@
     {
       "id": "ch4-a1",
       "ideaId": "ch4-i2",
-      "situation": "Siz bir oy o'qish odatini davom ettirdingiz, lekin natijani sezmayapsiz va kuzatish jadvalini yig'ishga qiynalyapsiz.",
+      "situation": "Siz bir oy o'qish odatini davom ettirdingiz, lekin natijani sezmayapsiz va kuzatish jadvalini to'ldirishga qiynalyapsiz.",
       "rightAction": "Jadvalni ko'z oldingizga (muzlatgich yoki eshikka) qo'yib, har kuni bitta ✓ qo'yasiz — ko'rilgan harakatni buzish sekinlashadi.",
       "wrongAction": "Jadvalni tashlab, \"his qilib\" davom etish.",
-      "whyWrong": "Kuzatish odatni ko'rinadigan qiladi — ko'rilgan qatorni buzishga yana bir bor o'ylaysiz.",
+      "whyWrong": "Kuzatish odatni ko'rinadigan qiladi — belgilangan qatorni buzishga yana bir bor o'ylaysiz.",
       "context": "o'qish"
     }
   ]

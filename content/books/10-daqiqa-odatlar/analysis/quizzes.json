@@ -77,9 +77,9 @@
       "question": "2-daqiya qoidasining mohiyati nima?",
       "options": [
         { "key": "A", "text": "Har bir mashq 2 daqiqa bo'lishi kerak" },
-        { "key": "B", "text": "Boshlash shunchada osonki, boshlash oldidagi qarshilik paydo bo'lmasin" },
+        { "key": "B", "text": "Boshlash shunchalik osonki, boshlash oldidagi qarshilik paydo bo'lmasin" },
         { "key": "C", "text": "Odat kuniga 2 marta bajariladi" },
-        { "key": "D", "text": "Telefon ishlatishga 2 daqiya ruxsat" }
+        { "key": "D", "text": "Telefon ishlatishga 2 daqiqa ruxsat" }
       ],
       "answer": "B",
       "explain": {
@@ -123,7 +123,7 @@
       "question": "Yomon odatni buzishning to'g'ri yo'li nima?",
       "options": [
         { "key": "A", "text": "Uni o'chirish — shundan keyin bo'sh joy qoladi" },
-        { "key": "B", "text": "Uni yo'liga sun'iy to'siq qo'yish (friction) va o'rniga boshqa odat qo'yish" },
+        { "key": "B", "text": "Uni yo'lga sun'iy to'siq qo'yish (friction) va o'rniga boshqa odat qo'yish" },
         { "key": "C", "text": "O'z-o'zini ayblash — shunda yana takrorlamaydi" },
         { "key": "D", "text": "Odat haqida kitob o'qish" }
       ],
@@ -143,16 +143,16 @@
       "id": "ch4-q1",
       "chapter": 3,
       "type": "scenario",
-      "question": "Siz kasallikdan keyin o'qish odatga qaytdingiz. Qaysi reja eng to'g'ri?",
+      "question": "Siz kasallikdan keyin o'qish odatiga qaytdingiz. Qaysi reja eng to'g'ri?",
       "options": [
         { "key": "A", "text": "O'tkazib qo'ygan kunlarni yig'ish uchun kuniga 3 soat" },
         { "key": "B", "text": "Eski signalni (o'sha joy, o'sha vaqt) saqlab, 2 daqiqalik minimal shakldan boshlash" },
         { "key": "C", "text": "Odatni keyingi oyga surib, to'liq tiklashni kutish" },
-        { "key": "D", "text": "Kuzatish jadalini o'chirib, faqat his-qimmat bilan o'qish" }
+        { "key": "D", "text": "Kuzatish jadvalini o'chirib, faqat his-qimmat bilan o'qish" }
       ],
       "answer": "B",
       "explain": {
-        "correct": "3 bosqichli qaytish: minimal shakl → eski signal → jadvalni uzmaslik. Kichik qadam qaytishni ehtimolligini oshiradi.",
+        "correct": "3 bosqichli qaytish: minimal shakl → eski signal → jadvalni uzmaslik. Kichik qadam qaytish ehtimolini oshiradi.",
         "wrong": {
           "A": "Yig'ish — katta yuk. U ortiqcha bosim beradi va tez yana to'xtatadi.",
           "C": "Surish — odatni butunlay yo'qotish demak.",

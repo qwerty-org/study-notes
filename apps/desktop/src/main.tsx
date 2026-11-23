@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/manrope/wght.css'
 import '@fontsource-variable/fraunces/wght.css'
 import App from './App'
+import ErrorBoundary from './components/ErrorBoundary'
 /* Eski tuzilma (Dashboard uchun) — ustiga yangi dizayn tizimi yoziladi */
 import './styles/global.css'
 import './styles/theme.css'
@@ -14,9 +15,13 @@ import './styles/nx/stats.css'
 import './styles/nx/settings.css'
 import './styles/nx/onboarding.css'
 import './styles/nx/quiz.css'
+/* Premium qatlam (Wave 3) — oxirida, eski qatlamlardan keyin */
+import './styles/premium/index.css'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  <ErrorBoundary>
+    <StrictMode>
+      <App />
+    </StrictMode>
+  </ErrorBoundary>,
 )

@@ -12,9 +12,8 @@ import {
   IconClock,
   IconFlame,
   IconRepeat,
-  IconTarget,
 } from '../components/icons'
-import { IconCalendar, IconInfo } from '../components/nx/icons'
+import { IconCalendar, IconKeyboard } from '../components/nx/icons'
 
 interface DueEntry {
   item: QuizItem
@@ -55,7 +54,11 @@ export default function Repeat() {
     }
   }
 
-  const nextDue = reviews
+  // Faqat kutubxonadagi savollar bilan bog'langan yozuvlarni hisoblaymiz —
+  // aks holda "keyingi takrorlash" mavjud bo'lmagan savolga ishora qiladi.
+  const tracked = reviews.filter((r) => quizMap.has(r.reviewId))
+  const totalCount = tracked.length
+  const nextDue = tracked
     .filter((r) => r.dueDate > localDay())
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0]
 
@@ -80,7 +83,7 @@ export default function Repeat() {
     updateProfile(touchActiveDay(profile))
     setDone(r)
     setQuizOn(false)
-    show(`${r.correct}/${r.total} to'g'ri · keyingi takrorlash jadvali yangilandi`)
+    show(`${r.correct}/${r.total} to'g'ri · javoblar saqlandi`)
   }
 
   if (quizOn && dueItems.length) {
@@ -112,11 +115,14 @@ export default function Repeat() {
       </header>
 
       {done && (
-        <div className="nx-repeat-result">
+        <div className="nx-repeat-result" role="status">
           <span className="nx-repeat-result__icon"><IconCheck size={20} /></span>
-          <div style={{ flex: 1 }}>
+          <div className="nx-repeat-result__body">
             <b>Takrorlash tugadi</b>
-            <p>{done.correct}/{done.total} to'g'ri javob · jadval yangilandi</p>
+            <p>
+              {done.correct}/{done.total} to'g'ri javob · javoblaringiz saqlandi.
+              {nextDue ? ` Keyingi takrorlash: ${niceDate(nextDue.dueDate)}.` : ''}
+            </p>
           </div>
           <Link to="/natijalar" className="nx-btn nx-btn--ghost nx-btn--sm">Natijalarim</Link>
           <button className="nx-icon-btn" onClick={() => setDone(null)} aria-label="Xabarni yopish">×</button>
@@ -125,11 +131,11 @@ export default function Repeat() {
 
       {!dueItems.length ? (
         <Empty
-          icon={<IconRepeat size={28} />}
+          icon={<IconRepeat size={24} />}
           title="Bugun takrorlash yo'q"
           text={
             nextDue
-              ? `Keyingi takrorlash: ${niceDate(nextDue.dueDate)}. Xotirangiz joyida — keyinroq qayting.`
+              ? `Keyingi takrorlash: ${niceDate(nextDue.dueDate)}. Hozircha kutubxonadan yangi kitob tanlashingiz mumkin.`
               : "Tahlil qilingan kitoblar paydo bo'lgach, takrorlash jadvali avtomatik yaratiladi."
           }
           action={
@@ -143,7 +149,7 @@ export default function Repeat() {
           <section className="nx-repeat-main nx-grid nx-grid--2">
             <div className="nx-session-card nx-card">
               <div className="nx-session-card__ring">
-                <Ring value={Math.min(100, (dueItems.length / Math.max(1, reviews.length)) * 100)} size={92} label={String(dueItems.length)} />
+                <Ring value={Math.min(100, (dueItems.length / Math.max(1, totalCount)) * 100)} size={96} label={String(dueItems.length)} />
                 <span>savol kutmoqda</span>
               </div>
               <div className="nx-session-card__info">
@@ -154,21 +160,25 @@ export default function Repeat() {
                 <p className="nx-subtitle">
                   Taxminiy {minutes} daqiqa. Savolga javob berganingizdan keyin jadval sizga moslashadi.
                 </p>
-                <div className="nx-row" style={{ gap: 7, flexWrap: 'wrap', marginTop: 14 }}>
-                  <span className="nx-chip nx-chip--warn"><IconClock size={13} /> ~{minutes} daq</span>
-                  <span className="nx-chip nx-chip--warn"><IconFlame size={13} /> {profile.streak} kun</span>
-                  <span className="nx-chip nx-chip--outline"><IconCalendar size={13} /> {niceDate(localDay())}</span>
+                <div className="nx-session-card__chips">
+                  <span className="nx-chip nx-chip--warn"><IconClock size={14} /> ~{minutes} daq</span>
+                  <span className="nx-chip nx-chip--warn"><IconFlame size={14} /> {profile.streak} kun</span>
+                  <span className="nx-chip nx-chip--outline"><IconCalendar size={14} /> {niceDate(localDay())}</span>
                 </div>
                 <button className="nx-btn nx-btn--primary nx-btn--lg nx-session-card__cta" onClick={() => setQuizOn(true)}>
-                  Boshlash <IconArrowRight size={17} />
+                  Boshlash <IconArrowRight size={16} />
                 </button>
+                <p className="nx-session-card__keys">
+                  <IconKeyboard size={14} />
+                  Sessiyada: <span className="nx-kbd">1</span>–<span className="nx-kbd">4</span> javob ·{' '}
+                  <span className="nx-kbd">Enter</span> keyingi · <span className="nx-kbd">Esc</span> chiqish
+                </p>
               </div>
             </div>
 
             <div className="nx-panel nx-queue">
               <div className="nx-panel__head">
-                <div className="nx-row" style={{ gap: 9 }}>
-                  <IconTarget size={17} />
+                <div className="nx-queue__title">
                   <b>Navbatdagi savollar</b>
                 </div>
                 <span className="nx-chip nx-chip--accent">{dueItems.length} ta</span>
@@ -179,7 +189,7 @@ export default function Repeat() {
                     <span className={`nx-chip ${d.item.type === 'scenario' ? 'nx-chip--accent' : ''}`}>
                       {d.item.type === 'scenario' ? 'Vaziyat' : 'Nazariy'}
                     </span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="nx-queue__text">
                       <b>{d.item.question}</b>
                       <small>{d.bookTitle}</small>
                     </div>
@@ -187,7 +197,7 @@ export default function Repeat() {
                   </div>
                 ))}
                 {dueItems.length > 5 && (
-                  <button className="nx-btn nx-btn--ghost nx-btn--sm nx-queue__more" onClick={() => setShowAll((v) => !v)}>
+                  <button className="nx-btn nx-btn--ghost nx-btn--sm nx-queue__more" onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
                     {showAll ? 'Qisqartirish' : `Yana ${dueItems.length - 5} ta savol`}
                   </button>
                 )}
@@ -196,13 +206,15 @@ export default function Repeat() {
           </section>
 
           <section className="nx-schedule-info nx-card nx-card--pad">
-            <div className="nx-row" style={{ gap: 10, marginBottom: 12 }}>
-              <IconInfo size={17} />
-              <b className="nx-h3">Qanday ishlaydi?</b>
+            <div className="nx-schedule-info__head">
+              <b className="nx-h3">Takrorlash qanday ishlaydi?</b>
             </div>
-            <p className="nx-subtitle" style={{ marginBottom: 16 }}>
-              To'g'ri javob — keyingi takrorlash uzoqlashadi, noto'g'ri javob — savol tezroq qaytadi.
+            <p className="nx-subtitle nx-schedule-info__intro">
+              To'g'ri javob berganda savol keyinroq qaytadi: avval ertaga, so'ngra taxminan 3, 7, 14 va 30 kundan.
+              Javoblar sizga qanchalik oson berilganiga qarab bu kunlar uzayadi yoki qisqaradi.
+              Noto'g'ri javob berganda esa ertaga yana so'raladi — g'oyani qayta o'qib chiqishga vaqt bo'ladi.
             </p>
+            <p className="nx-hint nx-intervals__lead">To'g'ri javoblar ko'paygan sari oraliq uzayadi:</p>
             <div className="nx-intervals">
               {[1, 3, 7, 14, 30].map((n, i) => (
                 <div className="nx-intervals__step" key={n}>
@@ -212,14 +224,14 @@ export default function Repeat() {
               ))}
             </div>
             <div className="nx-intervals__caption">
-              <span>Bugun bajarilishi kerak</span>
-              <b className="nx-mono-num">{dueItems.length} / {reviews.length}</b>
+              <span>Bugun javob berish kerak</span>
+              <b className="nx-mono-num">{dueItems.length} / {totalCount}</b>
             </div>
-            <Bar value={Math.min(100, (dueItems.length / Math.max(1, reviews.length)) * 100)} className="nx-intervals__bar" />
-            <p className="nx-hint">
+            <Bar value={Math.min(100, (dueItems.length / Math.max(1, totalCount)) * 100)} className="nx-intervals__bar" />
+            <p className="nx-hint nx-schedule-info__foot">
               {nextDue
                 ? `Keyingi takrorlash: ${niceDate(nextDue.dueDate)}.`
-                : 'Jadval javob sifatiga qarab avtomatik rejalashtiriladi.'}
+                : 'Javob sifatiga qarab keyingi kunlar avtomatik belgilanadi.'}
             </p>
           </section>
         </>

@@ -1,0 +1,188 @@
+/* Premium Dashboard Actions & Library Rows — Wave 3 / P14.
+   Owns: .qactions, .qaction (+ :hover/:focus-visible, .qicon, b, small),
+         .book-row (+ :hover/:focus-visible, .cover, .meta, .journal variant).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/design/07-critique.md (D2, D4)
+   Premisa (D4): to'rtta pastel ikonka (mint/salmon/amber/lavender) arzon
+   ko'rinadi. Barchasi BITTA neytral retseptga keltiriladi: chegarasiz,
+   --pm-surface-2 ustida, 12px radius, 20px padding, 40px --pm-accent-soft
+   doira ichida --pm-accent ikonka. Rang variantlari (.blue/.yellow/.purple)
+   o'chiriladi. Faqat --pm-* tokenlari; premium qatlami oxirida yuklanadi. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Tezkor amallar grid — 2x2 barcha kengliklarda (1440/900/620/375)
+ * ------------------------------------------------------------------ */
+.qactions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pm-s-2);                       /* 12px */
+  align-items: stretch;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. .qaction — bitta neytral plitka
+ * ------------------------------------------------------------------ */
+.qaction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pm-s-1);                       /* 8px ikonka–matn */
+  padding: calc(var(--pm-s-2) + var(--pm-s-1)); /* 12 + 8 = 20px */
+  border: 0;                                /* eski 1.5px wireframe olinadi */
+  border-radius: var(--pm-r-control);       /* 12px */
+  background: var(--pm-surface-2);
+  box-shadow: none;                         /* eski rangli soya yo'q */
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  text-decoration: none;
+  min-width: 0;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    transform var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* Hover: faqat fon + 1px ko'tarilish, 160ms. Eski -2px va rangli soya yo'q. */
+.qaction:hover {
+  background: var(--pm-surface-3);
+  border: 0;
+  box-shadow: none;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* Klaviatura fokusi saqlanadi: 2px --pm-accent, offset 3px (spec §5). */
+.qaction:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* 40px ikonka doirasi — BARCHA plitkalar uchun bitta retsept.
+   .blue/.yellow/.purple va ularning dark variantlari ustiga yoziladi:
+   ular aynan shu .qaction .qicon elementining rang variantlari, shuning
+   uchun o'z elementimiz doirasida neytrallashtiriladi. */
+.qaction .qicon,
+.qaction .qicon.blue,
+.qaction .qicon.yellow,
+.qaction .qicon.purple,
+[data-theme='dark'] .qaction .qicon.blue,
+[data-theme='dark'] .qaction .qicon.yellow,
+[data-theme='dark'] .qaction .qicon.purple {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--pm-r-pill);          /* doira */
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+  margin-bottom: 0;                         /* eski --sp-2, endi flex gap */
+}
+
+.qaction b {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--pm-ink);
+}
+
+.qaction small {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--pm-ink-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Kutubxona qatorlari — faqat ajratgich, karta ramkasi yo'q
+ * ------------------------------------------------------------------ */
+.book-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);                       /* 16px */
+  padding: var(--pm-s-3) 0;                 /* 16px vertikal, yonlar ochiq */
+  border: 0;                                /* eski 1.5px karta ramkasi */
+  border-bottom: 1px solid var(--pm-line);  /* yagona divider */
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  text-decoration: none;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.book-row:hover {
+  background: var(--pm-surface-2);
+  border-color: var(--pm-line);             /* divider neytral qoladi */
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.book-row:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* Jurnal varianti ham shu element: chap rangli chiziq va ko'k hover olinadi. */
+.book-row.journal {
+  border-left: 0;
+}
+.book-row.journal:hover {
+  background: transparent;
+  border-left-color: transparent;
+}
+
+/* Neytral muqova: ramka/soya yo'q, pastel gradient grayscale bilan
+   neytrallashtiriladi (inline gradient CSS bilan o'chirilmaydi —
+   qarang: Risks / TSX-ESCALATE). */
+.book-row .cover {
+  border: 0;
+  box-shadow: none;
+  border-radius: var(--pm-r-sm);
+  color: var(--pm-ink-2);
+  text-shadow: none;
+  filter: grayscale(1);
+}
+
+.book-row .meta {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--pm-ink-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Responsiv — 1440 / 900 / 620 / 375
+ *    Grid 2x2 bo'lib qoladi; minmax(0,1fr) tor ekranda to'kilishni oldini oladi.
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .qaction {
+    gap: var(--pm-s-1);
+  }
+  .book-row {
+    gap: var(--pm-s-2);                     /* 12px — tor ekranda */
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Harakat — spec §6: reduced-motion barcha harakatni o'chiradi
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .qaction,
+  .book-row {
+    transition: none;
+  }
+  .qaction:hover {
+    transform: none;
+  }
+}
+
+/* "Davom ettirish" muqovasi: inline gradientni sokinlashtirish */
+.card .cover-sm,
+.card .cover-inline {
+  filter: saturate(0.15) grayscale(0.7);
+  color: var(--pm-ink-2);
+}

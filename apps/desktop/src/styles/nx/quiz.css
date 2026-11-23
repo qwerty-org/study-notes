@@ -8,19 +8,28 @@
 }
 
 .nx-quiz-session {
-  padding-top: 26px;
+  padding-top: 24px;
 }
 
 .nx-session-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+/* Chiqish havolasidagi ikonka-label bo'shlig'ini 8px grid'ga keltiramiz */
+.nx-quiz-session .nx-back {
+  gap: 8px;
+}
+
+.nx-quiz-session .nx-back:hover {
+  gap: 12px;
 }
 
 .nx-session-count {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--nx-accent);
 }
@@ -33,12 +42,12 @@
 }
 
 .nx-session-bar {
-  height: 4px;
-  margin-bottom: 22px;
+  height: 6px;
+  margin-bottom: 24px;
 }
 
 .nx-question-card {
-  padding: 30px 32px 26px;
+  padding: 24px;
   border-radius: var(--nx-r-lg);
   position: relative;
   overflow: hidden;
@@ -48,7 +57,7 @@
   content: '';
   position: absolute;
   inset: 0 0 auto;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, var(--nx-accent), color-mix(in srgb, var(--nx-accent) 20%, transparent));
 }
 
@@ -56,31 +65,31 @@
   font-family: var(--font-display);
   font-size: clamp(20px, 2vw, 26px);
   font-weight: 500;
-  line-height: 1.38;
+  line-height: 1.4;
   letter-spacing: -0.02em;
-  margin-bottom: 26px;
-  max-width: 62ch;
+  margin-bottom: 24px;
+  max-width: 68ch; /* o'qish measure: 80ch dan kichik */
 }
 
 .nx-options {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 12px;
 }
 
 .nx-option {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   width: 100%;
-  min-height: 56px;
-  padding: 10px 15px;
+  min-height: 56px; /* vaziyat matni bir necha qatorga chiqsa ham qulay */
+  padding: 12px 16px;
   border: 1.5px solid var(--nx-line);
   border-radius: 12px;
   background: var(--nx-surface);
   color: var(--nx-ink);
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
@@ -94,26 +103,27 @@
 .nx-option:hover:not(:disabled) {
   border-color: var(--nx-accent);
   background: var(--nx-accent-soft);
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
+/* A/B/C/D — 32px doira marker (radius 999 = to'liq aylana) */
 .nx-option__key {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--nx-surface-2);
   color: var(--nx-muted);
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .nx-option__text {
   flex: 1;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .nx-option.picked .nx-option__key {
@@ -148,8 +158,8 @@
 }
 
 .nx-explain {
-  margin-top: 22px;
-  padding: 18px 20px;
+  margin-top: 24px;
+  padding: 20px;
   border-radius: 12px;
   border: 1px solid var(--nx-line);
   animation: nx-rise 0.3s ease both;
@@ -168,8 +178,8 @@
 .nx-explain__head {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 9px;
+  gap: 8px;
+  margin-bottom: 12px;
   font-size: 14px;
 }
 
@@ -202,18 +212,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  margin-top: 18px;
+  gap: 8px;
+  margin-top: 20px;
   color: var(--nx-muted);
-  font-size: 11.5px;
+  font-size: 12px;
 }
 
 /* ---------- Natija ekrani ---------- */
 .nx-result-hero {
   display: flex;
   align-items: center;
-  gap: 26px;
-  padding: 30px 34px;
+  gap: 24px;
+  padding: 24px;
   margin-bottom: 20px;
   border-radius: var(--nx-r-lg);
   position: relative;
@@ -223,10 +233,10 @@
 .nx-result-hero::after {
   content: '';
   position: absolute;
-  right: -60px;
+  right: -64px;
   top: -80px;
-  width: 260px;
-  height: 260px;
+  width: 256px;
+  height: 256px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--nx-accent-soft), transparent 70%);
   pointer-events: none;
@@ -236,11 +246,11 @@
 .nx-detail-row {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 10px 12px;
-  border-radius: 9px;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--nx-surface-2) 55%, transparent);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -252,8 +262,8 @@
 .nx-detail-row > span:first-child {
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   border-radius: 50%;
 }
@@ -271,4 +281,173 @@
 .nx-detail-row > span:nth-child(2) {
   color: var(--faint);
   font-size: 11px;
+}
+
+/* ============================================================
+   Fokusli to'liq ekran sessiyasi: fokus, e'lon va kichik ekranlar
+   ============================================================ */
+
+/* Book sahifasida ota-container ham to'liq ekran; Repeat'da QuizRunner o'zi egallaydi */
+.nx-quiz-session,
+.nx-quiz-result {
+  box-sizing: border-box;
+  min-height: calc(100vh - var(--topbar-h));
+}
+
+/* Bar'ning pastki bo'shlig'i o'zaro yopishib qolmasligi uchun mustaqil kontekst */
+.nx-quiz-progress {
+  display: flow-root;
+}
+
+/* Faqat ekran o'quvchiga ko'rinadi — vizual tartibni buzmaydi */
+.nx-quiz-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Variant tugmalari ham ko'rinadigan klaviatura fokusiga ega bo'lishi kerak */
+.nx-option:focus-visible {
+  outline: 2px solid var(--nx-accent);
+  outline-offset: 2px;
+  border-color: var(--nx-accent);
+  box-shadow: 0 0 0 4px var(--nx-accent-soft);
+}
+
+@media (forced-colors: active) {
+  .nx-option:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+.nx-weak-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+}
+
+.nx-weak-head > div:first-child {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.nx-weak-retry {
+  flex-shrink: 0;
+}
+
+/* ConfirmModal umumiy komponent; faqat quiz ichida 4px grid'ga keltiramiz */
+.nx-quiz-session .nx-modal,
+.nx-quiz-result .nx-modal {
+  padding: 24px;
+}
+
+@media (max-width: 640px) {
+  .nx-question-card {
+    padding: 20px;
+  }
+
+  .nx-result-hero {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .nx-explain {
+    padding: 16px;
+  }
+
+  .nx-quiz-help {
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .nx-weak-retry,
+  .nx-explain__next {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nx-option {
+    min-height: 52px;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 620px) {
+  /* natija bo'limlari umumiy .nx-card--pad (18px) o'rniga grid'ga tushadi */
+  .nx-quiz-result .nx-card--pad {
+    padding: 16px;
+  }
+
+  .nx-quiz-session .nx-modal,
+  .nx-quiz-result .nx-modal {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nx-session-count {
+    font-size: 20px;
+  }
+
+  .nx-question-text {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .nx-option {
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  .nx-result-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-question-card,
+  .nx-result-hero,
+  .nx-explain {
+    padding: 16px;
+  }
+
+  .nx-option {
+    min-height: 52px;
+    padding: 12px;
+  }
+
+  .nx-weak-row,
+  .nx-detail-row {
+    padding: 12px 8px;
+    gap: 8px;
+  }
+
+  .nx-quiz-help {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-explain {
+    animation: none;
+  }
+
+  .nx-option {
+    transition: none;
+  }
+
+  .nx-option:hover:not(:disabled) {
+    transform: none;
+  }
 }

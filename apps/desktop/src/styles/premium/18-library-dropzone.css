@@ -1,0 +1,183 @@
+/* Premium Library Dropzone — Wave 3 / P18.
+   Faqat: .nx-dropzone-wrapper, .nx-dropzone, .nx-dropzone__copy,
+   .nx-dropzone__copy b, .nx-dropzone__note, .nx-dropzone__progress,
+   .nx-dropzone__pick (va ularning bevosita ichidagi elementlar).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/03-library.md §3
+   Dashed box va ikki gradient o'rniga — bitta sokin oq lenta:
+   --pm-surface, --pm-r, --pm-shadow-1, chegara yo'q.
+   Barcha ranglar FAQAT --pm-* tokenlaridan; yangi token / hex / rgb yo'q. */
+
+/* ---------- Wrapper: stats → dropzone → section ritmi (32px) ---------- */
+.nx-dropzone-wrapper {
+  margin-bottom: var(--pm-s-5);
+}
+
+/* ---------- Lenta: 96px, oq yuz, yumshoq soya, border/dashed yo'q ---------- */
+.nx-dropzone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-4);
+  min-height: 96px;
+  padding: 0 var(--pm-s-5);
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+  cursor: pointer;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    box-shadow var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* Drag-active: accent-soft fon + 2px ichki accent halqa, scale yo'q */
+.nx-dropzone.is-over {
+  background: var(--pm-accent-soft);
+  box-shadow: inset 0 0 0 2px var(--pm-accent);
+  transform: none;
+}
+
+/* Band holat: ikkilamchi yuz. ARIA holati ham kuzatiladi. */
+.nx-dropzone.is-busy,
+.nx-dropzone[aria-busy='true'] {
+  background: var(--pm-surface-2);
+}
+
+/* Focus halqasi — role="button" orqali klaviatura bilan ham ko'rinadi */
+.nx-dropzone:focus-visible,
+.nx-dropzone[role='button']:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: var(--pm-shadow-focus);
+}
+
+/* ---------- Matn bloki: chapda, ikki qator, vertikal markazda ---------- */
+.nx-dropzone__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nx-dropzone__copy b {
+  font: 600 var(--pm-fs-16)/1.3 var(--pm-font-display);
+  color: var(--pm-ink);
+}
+
+/* Meta qator: 13px / --pm-ink-2, o'qish uzunligi ≤72ch */
+.nx-dropzone__copy > span {
+  max-width: 72ch;
+  font-size: var(--pm-fs-13);
+  line-height: 1.4;
+  color: var(--pm-ink-2);
+}
+
+/* ---------- Ikkilamchi tugma: o'ngda, vertikal markazda ---------- */
+.nx-dropzone__pick {
+  flex: 0 0 auto;
+  align-self: center;
+  min-height: 44px;
+  height: 44px;
+  padding: 0 var(--pm-s-4);
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-2);
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-dropzone__pick:hover {
+  background: var(--pm-surface-2);
+}
+
+/* ---------- Progress: pastki chiziq, to'ldirish --pm-accent ---------- */
+.nx-dropzone__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 0 0 var(--pm-r) var(--pm-r);
+  background: var(--pm-accent-soft);
+}
+
+.nx-dropzone__progress > span {
+  display: block;
+  height: 100%;
+  background: var(--pm-accent);
+  transition: width var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* ---------- Izoh: 12px / --pm-ink-3, 14px ikonka, 8px gap ---------- */
+.nx-dropzone__note {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  margin-top: var(--pm-s-2);
+  padding-left: var(--pm-s-5);
+  font-size: var(--pm-fs-12);
+  line-height: 1.4;
+  color: var(--pm-ink-3);
+}
+
+.nx-dropzone__note > svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+/* ---------- 900: ichki bo'shliq 24, oraliq 16 ---------- */
+@media (max-width: 900px) {
+  .nx-dropzone {
+    padding: 0 var(--pm-s-4);
+    gap: var(--pm-s-3);
+  }
+  .nx-dropzone__note {
+    padding-left: var(--pm-s-4);
+  }
+}
+
+/* ---------- 620: 96px lenta va qatorli tartib saqlanadi (900 qoidalari) ---------- */
+
+/* ---------- 375: 172px, ikki qator — matn ustida, tugma pastda, to'liq keng ---------- */
+@media (max-width: 420px) {
+  .nx-dropzone {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--pm-s-3);
+    min-height: 172px;
+    padding: var(--pm-s-4) var(--pm-s-3);
+  }
+  .nx-dropzone__copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .nx-dropzone__pick {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+  }
+  .nx-dropzone__note {
+    padding-left: 0;
+  }
+}
+
+/* ---------- Harakatni kamaytirish: transform va o'tishlar o'chadi ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .nx-dropzone,
+  .nx-dropzone.is-over,
+  .nx-dropzone__pick,
+  .nx-dropzone__progress > span {
+    transform: none;
+    transition: none;
+  }
+}

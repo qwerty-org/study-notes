@@ -1,0 +1,477 @@
+/* 25 — Book sidebar / chapter TOC / progress (P25 / PREMIUM Wave 3)
+   Owned selectors:
+   .nx-reader-side, .nx-reader-side.is-collapsed, .nx-toc, .nx-toc__item,
+   .nx-toc__num, .nx-toc__label, .nx-reader-progress, .nx-book-progress,
+   .nx-book-side-card, .nx-book-side-card .nx-btn
+   (descendants scoping inside those blocks — ring, readout, rows, label — are
+   part of the same element and are always scoped to an owned ancestor.)
+
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/04-book.md (D3, D6)
+          docs/superpowers/specs/design/07-critique.md (D9)
+
+   Faqat --pm-* rang tokenlari (lit hex/rgb yo'q). Yangi token yo'q. Mujbirlanish belgisi yo'q.
+   --topbar-h — mavjud layout tokeni (rang emas, L04 sticky ofseti uchun).
+   premium/index.css da 25-o'rinda yuklanadi — eski nx/book.css ustiga yozadi.
+   ARIA (aria-current / aria-expanded holati), focus halqalari, reduced-motion saqlanadi.
+   1440 / 900 / 620 / 375. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Sidebar — 240px, 32px grid gap (grid .nx-reader da, P24),
+ *    karta ramkasi/soyasi yo'q, shaffof, radius 12px.
+ * ------------------------------------------------------------------ */
+.nx-reader-side {
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--pm-s-3)); /* topbar + 24px (L04) */
+  box-sizing: border-box;
+  width: 240px;
+  max-width: 100%;
+  max-height: calc(100vh - var(--topbar-h) - var(--pm-s-6));
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-3); /* 16px ichki guruhlar orasi */
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: var(--pm-r-control); /* 12px */
+  background: var(--pm-transparent);
+  box-shadow: none;
+
+  min-width: 0;
+  font-family: var(--pm-font);
+  color: var(--pm-ink-2);
+
+  transition:
+    opacity var(--pm-d-hover) var(--pm-ease-std),
+    transform var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* Yig'ilgan holat: aria-expanded=false bilan bir xil manba (tocOpen). */
+.nx-reader-side.is-collapsed {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(calc(var(--pm-s-2) * -1));
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Progress — bitta tinch o'qish ko'rsatkichi.
+ *    Ringning qo'shimcha qismlari --pm-ink-3 ga neytrallashadi;
+ *    faqat faol qiymat (value yoyi / bar to'ldiruvi) --pm-accent.
+ * ------------------------------------------------------------------ */
+.nx-reader-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 var(--pm-s-3);
+  border: 0;
+  border-bottom: 1px solid var(--pm-line); /* divider-only */
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+.nx-reader-progress > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 20px Fraunces tabular — L04 D6. */
+.nx-reader-progress b {
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--pm-ink);
+}
+
+.nx-reader-progress span {
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-3);
+}
+
+/* Ring duplikatsiyasi: ramka/chet neytral, faqat faol yoy accent. */
+.nx-reader-progress .nx-ring {
+  overflow: visible;
+}
+
+.nx-reader-progress .nx-ring circle {
+  stroke-width: 4;
+}
+
+.nx-reader-progress .nx-ring .track {
+  stroke: var(--pm-ink-3);
+  opacity: 0.18;
+}
+
+.nx-reader-progress .nx-ring .value {
+  stroke: var(--pm-accent);
+  opacity: 1;
+}
+
+.nx-reader-progress .nx-ring-label {
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--pm-ink-3);
+}
+
+/* Sticky yuqori chiziq: 2px, neytral track, faqat fill accent (D6). */
+.nx-book-progress {
+  position: sticky;
+  top: var(--topbar-h);
+  z-index: 20;
+  height: 2px;
+  margin: 0 0 var(--pm-s-2);
+  border: 0;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.nx-book-progress__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pm-accent);
+  transition: width 0.5s var(--pm-ease-out);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. "Bobni tugattim" — GHOST (secondary), ikkinchi to'ldirilgan
+ *    primary emas (D9). .nx-book-side-card ichiga scope qilingan;
+ *    hozirgi TSX da tugma bevosita sidebar ichida bo'lgani uchun
+ *    uni ham xuddi shunday sokinlashtiramiz (faqat o'z elementimiz ichida).
+ * ------------------------------------------------------------------ */
+.nx-book-side-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+.nx-book-side-card .nx-btn,
+.nx-reader-side > .nx-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-1);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--pm-s-3);
+
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background-color: var(--pm-transparent);
+  background-image: none;
+  box-shadow: none;
+
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-2);
+
+  cursor: pointer;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-book-side-card .nx-btn:hover:not(:disabled),
+.nx-reader-side > .nx-btn:hover:not(:disabled) {
+  background-color: var(--pm-surface-2);
+  color: var(--pm-ink);
+  box-shadow: none;
+}
+
+.nx-book-side-card .nx-btn:disabled,
+.nx-reader-side > .nx-btn:disabled {
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
+}
+
+.nx-book-side-card .nx-btn svg,
+.nx-reader-side > .nx-btn svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: currentColor;
+  filter: none;
+}
+
+.nx-book-side-card .nx-btn:focus-visible,
+.nx-reader-side > .nx-btn:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  /* To'liq kenglikli tugma: halqa scrol konteynerida qirqilmasligi uchun ichida. */
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Boblar labeli — 12px, sentence-case, ajratgichli (ALL CAPS yo'q).
+ *    Ikkala nom ham qo'llab-quvvatlanadi: eski TSX __label,
+ *    yangi TOC konteksti .nx-toc__label.
+ * ------------------------------------------------------------------ */
+.nx-reader-side > .nx-reader-side__label,
+.nx-toc__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 var(--pm-s-1);
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  background: var(--pm-transparent);
+  box-shadow: none;
+
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. TOC — faqat ajratgichli qatorlar, 44px balandlik.
+ * ------------------------------------------------------------------ */
+.nx-toc {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.nx-toc__item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: var(--pm-s-1) calc(var(--pm-s-2) - 2px);
+
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-left: 2px solid var(--pm-transparent); /* faol rayka uchun joy ajratadi */
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  color: var(--pm-ink-2);
+
+  cursor: pointer;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-toc__item:last-child {
+  border-bottom: 0;
+}
+
+.nx-toc__item:hover {
+  background-color: var(--pm-surface-2);
+  color: var(--pm-ink);
+}
+
+/* Faol qator: --pm-accent-soft fon + 2px chap --pm-accent rayka.
+   Klass va ARIA ikkalasi ham qo'llab-quvvatlanadi (TSX aria-current="step"). */
+.nx-toc__item.is-active,
+.nx-toc__item[aria-current]:not([aria-current='false']) {
+  background-color: var(--pm-accent-soft);
+  color: var(--pm-ink);
+  border-left-color: var(--pm-accent);
+}
+
+.nx-toc__item:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: -2px; /* to'liq kenglikli qator: ichida qoladi */
+  border-radius: var(--pm-r-sm);
+  box-shadow: none;
+}
+
+/* Bob raqami — Fraunces, brass, 14px tabular (folio motifi). */
+.nx-toc__num {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  min-width: 0;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  box-shadow: none;
+
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--pm-brass);
+}
+
+/* O'qilgan bob: yashil karta/chip emas, neytral belgi. */
+.nx-toc__num.is-done {
+  background: var(--pm-transparent);
+  color: var(--pm-ink-3);
+}
+
+.nx-toc__item.is-active .nx-toc__num,
+.nx-toc__item[aria-current]:not([aria-current='false']) .nx-toc__num {
+  background: var(--pm-transparent);
+  color: var(--pm-brass);
+}
+
+/* Sarlavha: 13px --pm-ink-2. Eski TSX da oddiy <span>, yangi kontekstda
+   .nx-toc__label bo'lishi mumkin — ikkalasini ham qamrab oladi. */
+.nx-toc__item > span:not(.nx-toc__num),
+.nx-toc__item .nx-toc__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-2);
+}
+
+.nx-toc__item:hover > span:not(.nx-toc__num) {
+  color: var(--pm-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Responsiv — 1440 (asosiy) / 900 / 620 / 375
+ *    ≤900: toggle orqali erishiladi (aria-expanded / .is-collapsed),
+ *          sidebar qator bo'lib maqola ustida turadi.
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .nx-reader-side {
+    position: relative;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 320px;
+    padding: var(--pm-s-3) 0;
+    gap: var(--pm-s-2);
+    border-top: 1px solid var(--pm-line);
+    border-bottom: 1px solid var(--pm-line);
+    border-radius: 0;
+  }
+
+  .nx-reader-side.is-collapsed {
+    display: none; /* toggle yopganda butunlay chiqadi (aria-expanded=false) */
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-reader-side {
+    max-height: none;
+    padding: var(--pm-s-2) 0;
+  }
+
+  .nx-reader-progress {
+    gap: var(--pm-s-1);
+  }
+
+  .nx-reader-progress b {
+    font-size: var(--pm-fs-18);
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-reader-side {
+    padding: var(--pm-s-1) 0;
+    gap: var(--pm-s-1);
+  }
+
+  .nx-toc__item {
+    gap: var(--pm-s-1);
+    padding-inline: var(--pm-s-1);
+  }
+
+  .nx-book-side-card .nx-btn,
+  .nx-reader-side > .nx-btn {
+    padding: 0 var(--pm-s-2);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Harakatni kamaytirish — barcha o'tishlar o'chadi (spec §6).
+ *    .is-collapsed yashirinish xususiyati (opacity/visibility) saqlanadi.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-reader-side,
+  .nx-reader-side.is-collapsed,
+  .nx-reader-progress,
+  .nx-reader-progress .nx-ring .value,
+  .nx-book-progress__fill,
+  .nx-book-side-card,
+  .nx-book-side-card .nx-btn,
+  .nx-reader-side > .nx-btn,
+  .nx-toc,
+  .nx-toc__item,
+  .nx-toc__num {
+    animation: none;
+    transition: none;
+  }
+
+  .nx-book-side-card .nx-btn:active,
+  .nx-reader-side > .nx-btn:active {
+    transform: none;
+  }
+}

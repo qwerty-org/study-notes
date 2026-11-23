@@ -1,0 +1,270 @@
+/* Premium Design System — Forms & controls (P11)
+   Spec: docs/superpowers/specs/2026-11-23-premium-design-system.md
+   Faqat --pm-* tokenlari: hex/rgb yo'q, yangi token yo'q, !important yo'q.
+   Eski .nx-* klass nomlari o'zgarishsiz saqlanadi (TSX ularga tayanadi). */
+
+/* ---------- Field: label / control / hint ---------- */
+.nx-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+}
+
+.nx-label {
+  display: block;
+  margin: 0;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.nx-hint {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ---------- Control base (44px, 12px radius, 1px --pm-line) ---------- */
+input:not([hidden]):not([type='hidden']):not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not([type='submit']):not([type='button']):not([type='image']),
+textarea,
+select,
+.input,
+.select,
+.textarea,
+.nx-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--pm-s-2);
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface);
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 500;
+  line-height: 1.4;
+  transition:
+    border-color var(--pm-d-hover) var(--pm-ease-std),
+    box-shadow var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* Placeholder — yordamchi matn rangi, ≥12px */
+input:not([hidden])::placeholder,
+textarea::placeholder,
+.input::placeholder,
+.textarea::placeholder,
+.nx-input::placeholder {
+  color: var(--pm-ink-3);
+  opacity: 1;
+}
+
+/* Textarea: ikki qatorli minimal balandlik, tik chiziq bo'ylab kattalashtirish */
+textarea,
+.textarea {
+  min-height: 96px;
+  padding: var(--pm-s-2);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Select: native o'q uchun o'ng bo'shliq (appearanceni o'zgartirmaymiz) */
+select,
+.select {
+  padding-right: var(--pm-s-5);
+  cursor: pointer;
+}
+
+/* Ikonkali input: eski modifier ishlashini saqlaydi */
+.nx-input--with-icon {
+  padding-left: 40px;
+}
+
+.nx-input-wrap {
+  position: relative;
+}
+
+.nx-input-wrap > svg {
+  position: absolute;
+  left: var(--pm-s-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--pm-ink-3);
+  pointer-events: none;
+}
+
+/* ---------- Focus: accent border + 3px accent-soft ring, ko'k glow yo'q ---------- */
+/* Eski base'dagi outline:none bu yerda bekor qilinadi — fokus har doim ko'rinadi. */
+.nx-input:focus,
+.nx-input:focus-visible,
+input:not([hidden]):focus,
+input:not([hidden]):focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+.input:focus,
+.input:focus-visible,
+.select:focus,
+.select:focus-visible,
+.textarea:focus,
+.textarea:focus-visible {
+  border-color: var(--pm-accent);
+  box-shadow: var(--pm-shadow-focus);
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Switch: 44x24, yoqilganda --pm-accent ---------- */
+.nx-switch {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 44px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-3);
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    box-shadow var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-on-accent);
+  box-shadow: var(--pm-shadow-1);
+  transition: transform var(--pm-d-hover) var(--pm-ease-out);
+}
+
+.nx-switch[aria-checked='true'] {
+  background: var(--pm-accent);
+}
+
+.nx-switch[aria-checked='true']::after {
+  transform: translateX(20px);
+}
+
+/* ---------- Segmented: 4px track/gap, 12px radius, faol --pm-surface ---------- */
+.nx-segmented {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface-2);
+}
+
+.nx-segmented button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-1);
+  min-height: 32px;
+  padding: 0 var(--pm-s-2);
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std),
+    box-shadow var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-segmented button:hover {
+  color: var(--pm-ink);
+}
+
+.nx-segmented button[aria-pressed='true'] {
+  background: var(--pm-surface);
+  color: var(--pm-accent);
+  box-shadow: var(--pm-shadow-1);
+}
+
+/* Klaviatura fokusi: switch va segment tugmalari (ARIA holati o'zgarmaydi) */
+.nx-switch:focus-visible,
+.nx-segmented button:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: var(--pm-shadow-focus);
+}
+
+/* ---------- Responsive: 1440 / 900 / 620 / 375 ---------- */
+/* 1440 va 900: inputlar to'liq kenglikda, qo'shimcha qoida talab qilinmaydi. */
+@media (max-width: 620px) {
+  /* 16px — iOS Safari focusda avtomatik zoom qilmaydi; type scale ichida. */
+  input:not([hidden]):not([type='checkbox']):not([type='radio']),
+  textarea,
+  select,
+  .input,
+  .select,
+  .textarea,
+  .nx-input {
+    font-size: var(--pm-fs-16);
+  }
+
+  .nx-segmented {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .nx-segmented button {
+    padding: 0 var(--pm-s-1);
+  }
+}
+
+/* ---------- Harakat: reduced-motion (oldingi o'tishlarni o'chiradi) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  input:not([hidden]),
+  textarea,
+  select,
+  .input,
+  .select,
+  .textarea,
+  .nx-input,
+  .nx-switch,
+  .nx-switch::after,
+  .nx-segmented button {
+    transition: none;
+  }
+}
+
+/* Forced-colors: tizim rangi bilan fokus halqasi ko'rinib qolishi shart. */
+@media (forced-colors: active) {
+  .nx-input:focus,
+  .nx-input:focus-visible,
+  input:not([hidden]):focus,
+  textarea:focus,
+  select:focus,
+  .input:focus,
+  .select:focus,
+  .textarea:focus,
+  .nx-switch:focus-visible,
+  .nx-segmented button:focus-visible {
+    outline-color: Highlight;
+  }
+}

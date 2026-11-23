@@ -1,0 +1,171 @@
+/* 33 — Dark mode finishing layer (P33 / PREMIUM Wave 3)
+   ------------------------------------------------------------------
+   Vazifa: token almashinuvi HAL QILMAYDIGAN eski (legacy) qattiq
+   qiymatlarni faqat [data-theme='dark'] compound selektorlari bilan
+   neytrallash. Qonun:
+     docs/superpowers/specs/2026-11-23-premium-design-system.md §8
+     docs/superpowers/specs/design/06-dark-mode.md §0, §3.2, §4, §5.1, §6
+
+   Faqat --pm-* tokenlari. Lit rang qiymati yo'q, yangi token yo'q,
+   ustunlik qo'shimchasi ishlatilmadi. ARIA/focus/reduced-motion o'zgarishsiz.
+
+   Egalik (ownership): boshqa premium agentlarga tegishli elementlarning
+   (topbar, nav, brand, popmenu, qaction, cover, book-card, hero,
+   reader paper, modal, onboarding panel ...) ko'rinishiga tegmaymiz —
+   ular o'z fayllarida allaqachon neytrallagan. Bu yerda faqat:
+     • global/shell qoidalari (:focus-visible, ::selection, autofill,
+       .main) va
+     • hech bir premium agent egalik qilmagan legacy selektorlar
+   qayta yoziladi. 24-book-reader / 10-surfaces bilan bir xil qoidalar
+   ataylab takrorlanadi (zarari yo'q, oxirgi import ustun turadi).
+
+   Kengliklar 1440 / 900 / 620 / 375: barcha qoidalar rang/fokus/
+   fonxossa bilan cheklangan — hech qanday o'lcham, padding yoki
+   layout o'zgartirilmaydi, shuning uchun alohida media sozlash kerak emas.
+   ------------------------------------------------------------------ */
+
+/* ================================================================== *
+ * 1. Fokus halqasi — legacy --primary → --pm-accent (D06 §3.2 / §6)
+ *    theme.css L172–175: outline: 2px solid var(--primary), offset 2px.
+ *    :where() bo'yicha past specificity (0,1,0): premium agentlarning
+ *    o'z :focus-visible qoidalari (0,2,0+) ustun turadi — ularning
+ *    box-shadow / outline tanlovi buzilmaydi, faqat egalik qilinmagan
+ *    elementlarning eski halqasi tuzatiladi.
+ *    h1/h2/main[tabindex='-1']:focus { outline: none } (script-focus)
+ *    yuqori specificity tufayli saqlanib qoladi.
+ * ================================================================== */
+[data-theme='dark'] :where(:focus-visible) {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: var(--pm-shadow-focus);
+}
+
+/* ================================================================== *
+ * 2. Autofill — brauzer majburan oq fon/qora matn qo'yadi (D06 §5.5/§6)
+ *    11-forms.css da autofill override yo'q; bu global tuzatish.
+ *    -webkit-box-shadow dagi 1000px faqat "ichga to'ldirish" usuli,
+ *    rang FAQAT --pm-surface-2 tokenidan.
+ * ================================================================== */
+[data-theme='dark'] input:-webkit-autofill,
+[data-theme='dark'] textarea:-webkit-autofill,
+[data-theme='dark'] select:-webkit-autofill,
+[data-theme='dark'] input:-webkit-autofill:hover,
+[data-theme='dark'] input:-webkit-autofill:focus,
+[data-theme='dark'] textarea:-webkit-autofill:focus,
+[data-theme='dark'] select:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--pm-ink);
+  -webkit-box-shadow: 0 0 0 1000px var(--pm-surface-2) inset;
+  caret-color: var(--pm-accent);
+}
+
+/* ================================================================== *
+ * 3. Tanlash (selection) — global.css L198–201 eski --primary-soft/
+ *    --text juftligi → D06 §3.3: --pm-accent-soft fon, --pm-ink matn.
+ *    24-book-reader o'z ichki selection qoidasiga ega (yuqori
+ *    specificity) — u ustun turadi, bu faqat global fallback.
+ * ================================================================== */
+[data-theme='dark'] ::selection {
+  background: var(--pm-accent-soft);
+  color: var(--pm-ink);
+}
+
+/* ================================================================== *
+ * 4. Canvas — eski radial glow + --paper-grain (D06 §5.1/§6)
+ *    10-surfaces.css [data-theme='dark'] .main bilan bir xil; u faylda
+ *    "P33 ham shuni qo'llashi mumkin" deb ochiqcha ruxsat berilgan.
+ * ================================================================== */
+[data-theme='dark'] .main {
+  background-image: none;
+}
+
+/* ================================================================== *
+ * 5. O'qish qog'ozi — nx/book.css L502, L516–524 dagi eski lit fon/matn
+ *    qiymatlari → --pm-reader-paper / --pm-ink. Grain (--paper-grain)
+ *    dark da o'chiriladi.
+ * ================================================================== */
+[data-theme='dark'] .nx-reader-paper,
+[data-theme='dark'] .nx-reader-paper--paper,
+[data-theme='dark'] .nx-reader-paper--sepia {
+  background-color: var(--pm-reader-paper);
+  background-image: none;
+  background-blend-mode: normal;
+  color: var(--pm-ink);
+}
+
+/* ================================================================== *
+ * 6. Eski rangli radial glow — faqat egalik qilinmagan legacy
+ *    .onboarding (global.css L1872–1874). .hero / .book-hero / .page /
+ *    .nx-onboarding-aside allaqachon o'z agentlarida tozalangan.
+ * ================================================================== */
+[data-theme='dark'] .onboarding {
+  background-image: none;
+}
+
+/* ================================================================== *
+ * 7. Eski accent yuzlari — legacy qatlamdagi qattiq oq matn qiymatlari
+ *    token almashinuvi bilan tuzatilmaydi; faqat [data-theme='dark'] da
+ *    --pm-on-accent bilan neytrallanadi (har temada token o'zi hal qiladi).
+ *    Faqat rang/fon/soyani almashtiramiz — o'lcham va hover/ARIA
+ *    holatlari o'zgarishsiz.
+ *    Egalik qilingan .nav-badge/.brand .mark/.win-close/.t-check/.ch-num
+ *    BU YERDA YO'Q — ular o'z agentlariga topshirildi (hisobotda qayd etildi).
+ * ================================================================== */
+
+/* Onboarding logotipi: tekis accent yuzi + --pm-on-accent ikonka */
+[data-theme='dark'] .onboarding-logo .mark {
+  background-color: var(--pm-accent);
+  background-image: none;
+  color: var(--pm-on-accent);
+  box-shadow: var(--pm-shadow-1);
+}
+
+/* Term kartasining orqa yuzi (accent foni) va undagi matn: --pm-on-accent */
+[data-theme='dark'] .term-face.back,
+[data-theme='dark'] .term-face.back h3 {
+  background-color: var(--pm-accent);
+  color: var(--pm-on-accent);
+}
+
+[data-theme='dark'] .term-face.back small,
+[data-theme='dark'] .term-face.back p,
+[data-theme='dark'] .term-metaphor {
+  color: var(--pm-on-accent);
+}
+
+/* Quiz tugmalari: to'g'ri = accent, noto'g'ri = danger; matn --pm-on-accent */
+[data-theme='dark'] .quiz-option.correct .key {
+  background-color: var(--pm-accent);
+  color: var(--pm-on-accent);
+}
+
+[data-theme='dark'] .quiz-option.wrong .key {
+  background-color: var(--pm-danger);
+  color: var(--pm-on-accent);
+}
+
+/* Reader / scenario asosiy harakatlari: --pm-on-accent */
+[data-theme='dark'] .reader-btn.reader-btn-primary,
+[data-theme='dark'] .scenario-btn,
+[data-theme='dark'] .scenario-btn.done {
+  background-color: var(--pm-accent);
+  color: var(--pm-on-accent);
+  box-shadow: var(--pm-shadow-1);
+}
+
+/* ================================================================== *
+ * 8. Reduced motion — bu fayl hech qanday harakat qo'shmaydi, lekin
+ *    yuqoridagi legacy yuzlarning eski `filter: brightness()` / hover
+ *    o'tishlari ham harakat sanalmasligi uchun ularni o'chiramiz.
+ *    Fokus halqasi, ARIA atributlari va selection o'zgarishsiz.
+ * ================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='dark'] .onboarding-logo .mark,
+  [data-theme='dark'] .term-face.back,
+  [data-theme='dark'] .quiz-option.correct .key,
+  [data-theme='dark'] .quiz-option.wrong .key,
+  [data-theme='dark'] .reader-btn.reader-btn-primary,
+  [data-theme='dark'] .scenario-btn {
+    filter: none;
+    transition: none;
+  }
+}

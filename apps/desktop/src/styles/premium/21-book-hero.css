@@ -1,0 +1,350 @@
+/* Premium Book hero — Wave 3 / P21.
+   Owns: .nx-book-hero, .nx-book-hero__cover, .nx-book-hero__info,
+         .nx-book-hero__info h1, .nx-book-hero__info .nx-subtitle,
+         .nx-book-hero__info .nx-chip, .nx-book-hero__progress,
+         .nx-book-hero__actions, .nx-book-back.
+
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md §2–§7
+          docs/superpowers/specs/layout/04-book.md D1 / D6
+          docs/superpowers/specs/design/07-critique.md D8 / D9 / D15
+
+   Editorial, KARTA TO'PLAMI EMAS: ramka yo'q, soya yo'q, fon shaffof;
+   faqat pastki 1px --pm-line divider. Muqova — yagona "obyekt", unga
+   --pm-shadow-1 beriladi. Faqat bitta primary CTA (O'qishni boshlash),
+   quiz — ghost._progress hairline 4px, sarlavha kolonkasida.
+
+   Faqat --pm-* tokenlari; yangi token, hex/rgb, !important yo'q.
+   Premium qatlam oxirida import qilingani uchun ustunlik tartibi yetarli.
+
+   DOM eslatmasi: Book.tsx da harakat kolonkasi `.nx-book-hero__action`
+   (birlik) va orqaga havola `.nx-back` deb ataladi. Shuning uchun egalik
+   qilingan selektorlar `.nx-book` / `.nx-book-hero` ichida scope'lanib
+   qo'shildi — boshqa sahifalardagi `.nx-back` va sidebar ring'iga tegmaydi. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Orqaga havola — oddiy matn, chelka/piil yo'q (D3 / D15)
+ * ------------------------------------------------------------------ */
+.nx-book-back,
+.nx-book .nx-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  margin: 0 0 var(--pm-s-4);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-decoration: none;
+  text-transform: none;
+  transition: color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-book-back:hover,
+.nx-book .nx-back:hover {
+  color: var(--pm-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Hero konteyneri — 1440: 120px | 1fr | 256px
+ * ------------------------------------------------------------------ */
+.nx-book-hero {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) 256px;
+  gap: var(--pm-s-5);
+  align-items: center;
+  min-height: 224px;
+  margin: 0;
+  padding: var(--pm-s-5) 0;
+  position: relative;
+  overflow: visible;
+
+  /* .nx-card dan kelgan ramka/soya/to'ldirish olinadi. */
+  border: 0;
+  border-bottom: 1px solid var(--pm-line); /* intentional divider, ramka emas */
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+/* Eski radial-gradient wash — pass/fail #4: hero'da gradient yo'q. */
+.nx-book-hero::before,
+.nx-book-hero::after {
+  content: none;
+  display: none;
+  background: none;
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Muqova obyekti — yagona soya shu yerda
+ *    (inline linear-gradient — kontent, o'zgartirilmaydi)
+ * ------------------------------------------------------------------ */
+.nx-book-hero__cover {
+  width: 120px;
+  height: 160px;
+  min-width: 0;
+  padding: var(--pm-s-2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: var(--pm-shadow-1);
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Sarlavha kolonkasi
+ * ------------------------------------------------------------------ */
+.nx-book-hero__info {
+  min-width: 0;
+}
+
+.nx-book-hero__info h1 {
+  margin: var(--pm-s-3) 0 var(--pm-s-1);
+  max-width: 66ch;
+  color: var(--pm-ink);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-40);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  text-wrap: pretty;
+}
+
+.nx-book-hero__info .nx-subtitle {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-16);
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.nx-book-hero__info .nx-chip {
+  letter-spacing: normal;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 4.1 Progress — neytral 4px hairline, faqat shu kolonkada */
+.nx-book-hero__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);
+  margin-top: var(--pm-s-4);
+  max-width: 66ch;
+}
+
+.nx-book-hero__progress .nx-progress {
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.nx-book-hero__progress .nx-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pm-accent);
+  transition: none;
+}
+
+.nx-book-hero__progress > span {
+  flex: 0 0 auto;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Harakatlar — bitta primary, quiz ghost; ring butunlay o'chiriladi
+ * ------------------------------------------------------------------ */
+.nx-book-hero__actions,
+.nx-book-hero .nx-book-hero__action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--pm-s-3);
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* D6: progress bar bilan duplikatsiya bo'lgan bezak ring.
+   Faqat hero ichida — sidebar (.nx-reader-progress) ring'iga tegmaydi. */
+.nx-book-hero .nx-ring {
+  display: none;
+}
+
+/* Ring o'ramchisi inline display:inline-grid + 72px o'lchamga ega;
+   !important ishlatmasdan uni max-width/max-height bilan yig'amiz. */
+.nx-book-hero .nx-ring-wrap {
+  max-width: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nx-book-hero .nx-ring-label {
+  display: none;
+}
+
+.nx-book-hero__actions .nx-btn--primary,
+.nx-book-hero .nx-book-hero__action .nx-btn--primary {
+  min-height: 48px;
+  padding: 0 var(--pm-s-4);
+  border-radius: var(--pm-r-control);
+  background: var(--pm-accent);
+  color: var(--pm-on-accent);
+}
+
+.nx-book-hero__actions .nx-btn--ghost,
+.nx-book-hero .nx-book-hero__action .nx-btn--ghost {
+  min-height: 44px;
+  border: 1px solid var(--pm-line);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Focus halqasi — saqlanadi (2px --pm-accent, 3px offset)
+ * ------------------------------------------------------------------ */
+.nx-book-back:focus-visible,
+.nx-book .nx-back:focus-visible,
+.nx-book-hero__actions .nx-btn:focus-visible,
+.nx-book-hero .nx-book-hero__action .nx-btn:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+@media (forced-colors: active) {
+  .nx-book-back:focus-visible,
+  .nx-book .nx-back:focus-visible,
+  .nx-book-hero__actions .nx-btn:focus-visible,
+  .nx-book-hero .nx-book-hero__action .nx-btn:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Responsiv — 1440 / 900 / 620 / 375
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .nx-book-hero {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: var(--pm-s-4);
+    min-height: 0;
+    padding: var(--pm-s-5) 0 var(--pm-s-4);
+  }
+
+  .nx-book-hero__cover {
+    width: 96px;
+    height: 128px;
+  }
+
+  .nx-book-hero__info h1 {
+    font-size: var(--pm-fs-30);
+  }
+
+  .nx-book-hero__actions,
+  .nx-book-hero .nx-book-hero__action {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--pm-s-3);
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-book-hero {
+    grid-template-columns: minmax(0, 1fr); /* cover + info ustma-ust */
+    gap: var(--pm-s-3);
+    padding: var(--pm-s-4) 0;
+  }
+
+  .nx-book-hero__cover {
+    width: 72px;
+    height: 96px;
+    padding: var(--pm-s-1);
+  }
+
+  .nx-book-hero__info h1 {
+    font-size: var(--pm-fs-24);
+  }
+
+  .nx-book-hero__progress {
+    margin-top: var(--pm-s-3);
+  }
+
+  .nx-book-hero__actions,
+  .nx-book-hero .nx-book-hero__action {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    gap: var(--pm-s-2);
+  }
+
+  .nx-book-hero__actions .nx-btn,
+  .nx-book-hero .nx-book-hero__action .nx-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nx-book-back,
+  .nx-book .nx-back {
+    margin-bottom: var(--pm-s-3);
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-book-hero {
+    gap: var(--pm-s-2);
+  }
+
+  .nx-book-hero__cover {
+    width: 60px;
+    height: 80px;
+    padding: var(--pm-s-1);
+  }
+
+  .nx-book-hero__info h1 {
+    font-size: var(--pm-fs-24);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Harakatni kamaytirish — barcha o'tishlar o'chadi
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-book-back,
+  .nx-book .nx-back,
+  .nx-book-hero__progress .nx-progress,
+  .nx-book-hero__progress .nx-progress > span,
+  .nx-book-hero__actions .nx-btn,
+  .nx-book-hero .nx-book-hero__action .nx-btn {
+    transition: none;
+    animation: none;
+  }
+}

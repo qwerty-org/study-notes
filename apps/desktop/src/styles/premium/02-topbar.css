@@ -1,0 +1,70 @@
+/* Premium Topbar shell — Wave 3 / P02.
+   Faqat .topbar va .app > .topbar ga tegishli; qolgan qismlar boshqa agentlarda.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+   theme.css dagi yarim shaffof blur + box-shadow qatlamini sokinlashtiradi.
+   Eslatma: sahifa shell ofseti (.main padding-top / --topbar-h) AYNI qiymatlardan
+   foydalanishi shart: 64px (base) va 56px (<=620px). Koordinator moslashtiradi. */
+
+.topbar,
+.app > .topbar {
+  /* Toza joylashish va stacking: markaziy nav bilan o'ng klaster bir baseline'da. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  isolation: isolate;
+  z-index: 80;
+
+  height: 64px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--pm-s-4);
+  padding: 0 var(--pm-s-5);
+
+  /* Sokin, qattiq yuz: gradient / blur / soya / rasm yo'q. */
+  background: var(--pm-bg);
+  background-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  box-shadow: none;
+
+  /* Asosiy matn rangi — farzandlar o'z rangini o'zi belgilaydi. */
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+
+  /* Tauri derazasini sudrash: farzandlardagi no-drag qoidalari saqlanadi. */
+  -webkit-app-region: drag;
+}
+
+/* 900px: yon ustunlar torayadi, nav o'z o'qida markazda qoladi. */
+@media (max-width: 900px) {
+  .topbar,
+  .app > .topbar {
+    column-gap: var(--pm-s-3);
+    padding: 0 var(--pm-s-4);
+  }
+}
+
+/* 620px: balandlik 56px ga tushadi, nafas saqlanadi, ichki oraliq qisqaradi. */
+@media (max-width: 620px) {
+  .topbar,
+  .app > .topbar {
+    height: 56px;
+    column-gap: var(--pm-s-2);
+  }
+}
+
+/* 375px: global.css ning tor ekran qoidasi premium qatlamda ham kuchli bo'lsin. */
+@media (max-width: 480px) {
+  .topbar,
+  .app > .topbar {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: var(--pm-s-1);
+    padding: 0 var(--pm-s-1);
+  }
+}

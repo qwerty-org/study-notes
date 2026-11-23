@@ -1,24 +1,54 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "life-mentor",
+  "description": "Life mentor (hayotga tatbiq murabbiyi) javobi: har bir g'oya uchun 'qachon va qanday' qo'llash senariylari. Chiqqan obyekt ApplyScenario tipiga mos keladi.",
   "type": "object",
   "required": ["scenarios"],
   "properties": {
     "scenarios": {
       "type": "array",
+      "description": "G'oyalarga bog'langan qo'llash senariylari (1-3 tasi g'oya uchun).",
       "minItems": 1,
       "maxItems": 15,
       "items": {
         "type": "object",
+        "description": "Bitta qo'llash senariysi — ApplyScenario shartnomasi.",
         "required": ["id", "ideaId", "situation", "rightAction", "wrongAction"],
         "properties": {
-          "id": { "type": "string" },
-          "ideaId": { "type": "string", "description": "Bog'langan g'oya id si" },
-          "situation": { "type": "string", "description": "Real vaziyat — 2-3 gap" },
-          "rightAction": { "type": "string", "description": "Aniq gap yoki qadam" },
-          "wrongAction": { "type": "string", "description": "Ko'pchilik qiladigan xato" },
-          "whyWrong": { "type": "string", "description": "Xatoning oqibati" },
-          "context": { "enum": ["ish", "oila", "do'stlik", "o'qish", "shaxsiy"] }
+          "id": {
+            "type": "string",
+            "minLength": 3,
+            "description": "Barqaror identifikator, masalan ch4-a1"
+          },
+          "ideaId": {
+            "type": "string",
+            "minLength": 3,
+            "description": "Bog'langan g'oya id si (berilgan id aynan kopiyalanadi)"
+          },
+          "situation": {
+            "type": "string",
+            "minLength": 30,
+            "description": "Real vaziyat — 2-3 gap (qachon: vaqt, joy, shart)"
+          },
+          "rightAction": {
+            "type": "string",
+            "minLength": 15,
+            "description": "Aniq gap yoki kichik qadam (qanday: 'men ... deyman/deysiz')"
+          },
+          "wrongAction": {
+            "type": "string",
+            "minLength": 8,
+            "description": "Ko'pchilik qiladigan aniq xato harakat"
+          },
+          "whyWrong": {
+            "type": "string",
+            "minLength": 8,
+            "description": "Xatoning qisqa oqibati"
+          },
+          "context": {
+            "enum": ["ish", "oila", "do'stlik", "o'qish", "shaxsiy"],
+            "description": "Qo'llash sohasi (ApplyContext / StrictApplyScenario)"
+          }
         },
         "additionalProperties": false
       }

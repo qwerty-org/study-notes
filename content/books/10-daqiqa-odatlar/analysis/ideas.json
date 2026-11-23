@@ -10,7 +10,7 @@
         {
           "id": "ch1-i1",
           "idea": "Kunlik qarorlarning aksariyatini ong emas, odatlar qabul qiladi.",
-          "why": "Odat — miyaning ish yukiini kamaytiradigan rejasi; odatsiz har bir harakatni o'ylab chiqish kerak va miya charchaydi.",
+          "why": "Odat — miyaning ish yukini kamaytiradigan rejasi; odatsiz har bir harakatni o'ylab chiqish kerak va miya charchaydi.",
           "howToApply": "Bugun 5 daqiqa o'tirib, kunlik takrorlanuvchi 3 ta odatingizni yozib chiqing (ichish, telefon, boshlash).",
           "applyTags": ["shaxsiy"]
         },
@@ -62,8 +62,8 @@
         },
         {
           "id": "ch2-i3",
-          "idea": "2-daqiya qoidasi: boshlash shunchaki osonki, qarshilik paydo bo'lmasin — maqsad bajarish emas, boshlash.",
-          "why": "Eng qiyin qism boshlash oldidagi qarshilik; boshlangan ish davom etadi (Zygarneik effekti).",
+          "idea": "2-daqiya qoidasi: boshlash shunchalik osonki, qarshilik paydo bo'lmasin — maqsad bajarish emas, boshlash.",
+          "why": "Eng qiyin qism boshlash oldidagi qarshilik; boshlangan ish davom etadi (Zeygarnik effekti).",
           "howToApply": "Odatingizni 2 daqiqaga tushiring: \"faqat kitobni ochib, bitta sahifa o'qish\".",
           "applyTags": ["shaxsiy"]
         }
@@ -103,7 +103,7 @@
           "id": "ch3-i3",
           "idea": "O'z-o'zini ayblash ishlamaydi — stress eski odatlarni jonlantiradi; muammo odatda emas, muhit va rejada.",
           "why": "Ayb hissi stressni kuchaytiradi, stress esa odat tsiklini qayta yoqadi.",
-          "howToApply": "Odat buzilganda o'zingizga ayblovchi emas, tahliliy savol bering: \"Muhim nima meni chalg'itdi?\".",
+          "howToApply": "Odat buzilganda o'zingizga ayblovchi emas, tahliliy savol bering: \"Nima meni chalg'itdi?\".",
           "applyTags": ["shaxsiy", "oila"]
         }
       ],
@@ -133,7 +133,7 @@
         },
         {
           "id": "ch4-i2",
-          "idea": "Kuzatish (tracking) — eng oddiy va eng kuchli vosita: ko'rilgan xatti-haratni buzishga yana bir bor o'ylaysiz.",
+          "idea": "Kuzatish (tracking) — eng oddiy va eng kuchli vosita: belgilangan xatti-harakatni buzishga yana bir bor o'ylaysiz.",
           "why": "Kuzatish odatni ko'rinadigan qiladi va \"uzilishni\" sekinlashtiradi.",
           "howToApply": "Bugundan bitta jadvalga har kuni bitta ✓ qo'ying — joyi hamon ko'z oldingizda bo'lsin.",
           "applyTags": ["shaxsiy", "ish"]
@@ -141,7 +141,7 @@
         {
           "id": "ch4-i3",
           "idea": "Uzilganda (kasallik, ta'til) kichik shaklda qaytish kerak: 10 daqiqa emas, 2 daqiqa — signalni saqlab, intizorni pasaytiring.",
-          "why": "To'liq qaytish og'ir; kichik shakl qaytishni ehtimolligini oshiradi va odatni jonlantiradi.",
+          "why": "To'liq qaytish og'ir; kichik shakl qaytish ehtimolini oshiradi va odatni jonlantiradi.",
           "howToApply": "Uzilishdan keyingi birinchi kuni odatni minimal hajmda bajarib, jadvalni uzmasdan davom ettiring.",
           "applyTags": ["shaxsiy"]
         }

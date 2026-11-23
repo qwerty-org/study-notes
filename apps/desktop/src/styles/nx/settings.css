@@ -5,32 +5,32 @@
 .nx-settings-notice {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 20px;
-  padding: 13px 17px;
+  padding: 12px 16px;
   border: 1px solid color-mix(in srgb, var(--nx-warn) 35%, transparent);
-  border-radius: var(--nx-r);
+  border-radius: 12px;
   background: var(--nx-warn-soft);
   color: var(--nx-warn);
-  font-size: 12.5px;
+  font-size: 13px;
 }
 
 .nx-settings-layout {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
-  gap: 22px;
+  gap: 24px;
   align-items: start;
 }
 
 .nx-settings-nav {
   position: sticky;
-  top: calc(var(--topbar-h) + 18px);
+  top: calc(var(--topbar-h) + 20px);
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid var(--nx-line);
-  border-radius: var(--nx-r);
+  border-radius: 12px;
   background: var(--nx-surface);
   box-shadow: var(--nx-shadow);
 }
@@ -38,10 +38,10 @@
 .nx-settings-nav__item {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 11px 13px;
+  gap: 4px;
+  padding: 12px 16px;
   border: 0;
-  border-radius: 9px;
+  border-radius: 8px;
   background: none;
   color: var(--nx-muted);
   font-family: inherit;
@@ -61,44 +61,87 @@
 }
 
 .nx-settings-nav__item b {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 750;
 }
 
 .nx-settings-nav__item small {
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--nx-muted);
 }
 
 .nx-settings-nav__foot {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   margin-top: 8px;
-  padding: 12px 13px 4px;
+  padding: 12px 16px 4px;
   border-top: 1px solid var(--nx-line);
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--faint);
+}
+
+.nx-settings-content {
+  min-width: 0;
 }
 
 .nx-settings-content .nx-panel {
   border-radius: var(--nx-r-lg);
 }
 
+/* Karta ichidagi bo'shliqlar 20–24px (kichik ekranda 16px) */
+.nx-settings-content .nx-panel__head {
+  padding: 20px 24px;
+}
+
+.nx-settings-content .nx-panel__body {
+  padding: 24px;
+}
+
+/* Izoh matni: 11.5px → 12px (faqat sozlamalar doirasida) */
+.nx-settings-content .nx-hint {
+  font-size: 12px;
+}
+
 /* Formlar butun panelga cho'zilmasin — o'qish qulayligi uchun */
 .nx-settings-content .nx-input,
 .nx-settings-content .nx-key-wrap {
-  max-width: 520px;
+  max-width: 480px;
+}
+
+/* Chiplarda ikonka va matn orasi 8px */
+.nx-settings-content .nx-chip {
+  gap: 8px;
+  padding: 4px 12px;
+}
+
+/* Segmentli boshqaruv: 32px balandlik, 8px ikonka–matn orasi */
+.nx-settings-content .nx-segmented {
+  padding: 4px;
+  gap: 4px;
+  border-radius: 12px;
+}
+
+.nx-settings-content .nx-segmented button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 13px;
 }
 
 .nx-setting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
   border: 1px solid var(--nx-line);
-  border-radius: 11px;
+  border-radius: 12px;
   background: color-mix(in srgb, var(--nx-surface-2) 40%, transparent);
 }
 
@@ -117,12 +160,12 @@
 }
 
 .nx-avatar-pick {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border: 2px solid transparent;
-  border-radius: 13px;
+  border-radius: 12px;
   background: var(--nx-surface-2);
-  font-size: 22px;
+  font-size: 26px;
   cursor: pointer;
   transition: all 0.18s ease;
 }
@@ -142,16 +185,16 @@
 .nx-provider-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .nx-provider {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 15px;
+  gap: 8px;
+  padding: 20px;
   border: 1.5px solid var(--nx-line);
-  border-radius: 11px;
+  border-radius: 12px;
   background: var(--nx-surface);
   color: var(--nx-ink);
   font-family: inherit;
@@ -171,12 +214,12 @@
 }
 
 .nx-provider b {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 750;
 }
 
 .nx-provider small {
-  font-size: 10.5px;
+  font-size: 11px;
   line-height: 1.45;
   color: var(--nx-muted);
 }
@@ -184,20 +227,46 @@
 .nx-key-wrap {
   display: flex;
   gap: 8px;
+  min-width: 0;
 }
 
 .nx-key-wrap .nx-input {
   flex: 1;
+  min-width: 0;
+}
+
+.nx-key-wrap .nx-icon-btn {
+  flex-shrink: 0;
+}
+
+/* Ulanishni tekshirish xabarlari — o'qish uchun yetarli kontrast va bo'shliq */
+.nx-settings-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nx-settings-feedback:empty {
+  display: none;
 }
 
 .nx-inline-error,
-.nx-inline-ok {
+.nx-inline-ok,
+.nx-inline-info {
   display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 12px 15px;
-  border-radius: 10px;
-  font-size: 12.5px;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.nx-inline-error svg,
+.nx-inline-ok svg,
+.nx-inline-info svg {
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
 .nx-inline-error {
@@ -210,21 +279,32 @@
   color: var(--nx-success);
 }
 
+.nx-inline-info {
+  background: var(--nx-surface-2);
+  color: var(--nx-muted);
+}
+
 /* ---------- Ma'lumotlar ---------- */
 .nx-data-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
   border: 1px solid var(--nx-line);
-  border-radius: 11px;
+  border-radius: 12px;
+}
+
+.nx-data-row__body {
+  flex: 1;
+  min-width: 0;
 }
 
 .nx-data-row__icon {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   border-radius: 12px;
   background: var(--nx-accent-soft);
@@ -246,15 +326,15 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 16px 0 24px;
+  padding: 24px 0;
 }
 
 .nx-about__mark {
   display: grid;
   place-items: center;
-  width: 62px;
-  height: 62px;
-  margin-bottom: 14px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
   border-radius: 18px;
   background: var(--nx-accent);
   color: #fff;
@@ -263,21 +343,21 @@
 
 .nx-about-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .nx-about-grid > div {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 14px 16px;
-  border-radius: 11px;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 12px;
   background: color-mix(in srgb, var(--nx-surface-2) 50%, transparent);
 }
 
 .nx-about-grid small {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -285,7 +365,7 @@
 }
 
 .nx-about-grid b {
-  font-size: 12.5px;
+  font-size: 13px;
 }
 
 @media (max-width: 900px) {
@@ -301,7 +381,7 @@
   }
 
   .nx-settings-nav__item {
-    min-width: 150px;
+    min-width: 160px;
   }
 
   .nx-settings-nav__foot {
@@ -310,5 +390,122 @@
 
   .nx-provider-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Klaviatura fokusi — nx asoslarida qamrab olinmagan elementlar */
+.nx-settings-nav__item:focus-visible,
+.nx-avatar-pick:focus-visible,
+.nx-provider:focus-visible {
+  outline: 2px solid var(--nx-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--nx-accent-soft);
+}
+
+@media (forced-colors: active) {
+  .nx-settings-nav__item:focus-visible,
+  .nx-avatar-pick:focus-visible,
+  .nx-provider:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-panel__head,
+  .nx-settings-content .nx-panel__head {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .nx-settings-content .nx-panel__body {
+    padding: 16px;
+  }
+
+  .nx-setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .nx-segmented {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .nx-settings-nav {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .nx-settings-nav__item {
+    min-width: 0;
+    flex: 1 1 calc(50% - 2px);
+  }
+
+  .nx-data-row {
+    padding: 16px;
+  }
+
+  .nx-data-row__body {
+    flex: 1 1 100%;
+  }
+
+  .nx-data-row > .nx-btn {
+    margin-left: 56px;
+  }
+
+  .nx-provider {
+    padding: 16px;
+  }
+
+  .nx-about-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nx-settings-layout {
+    gap: 16px;
+  }
+
+  /* Qisqa maydonlar kichik ekranda to'liq kenglikka ega bo'ladi */
+  .nx-settings-content .nx-input,
+  .nx-settings-content .nx-key-wrap {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  .nx-settings-content .nx-segmented button {
+    padding: 0 12px;
+  }
+
+  /* Avatar plitkalari 48px dan kichraymaydi — ular qatorga o'tadi */
+  .nx-avatar-pick {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .nx-data-row {
+    gap: 12px;
+  }
+
+  .nx-data-row > .nx-btn {
+    margin-left: 52px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-settings-nav__item,
+  .nx-avatar-pick,
+  .nx-provider {
+    transition: none;
+  }
+
+  .nx-avatar-pick:hover,
+  .nx-provider:hover {
+    transform: none;
   }
 }

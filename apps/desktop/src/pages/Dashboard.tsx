@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { dueReviews } from '@study-notes/core'
+import { addLocalDays, dueReviews, localDay } from '@study-notes/core'
 import { PROVIDERS } from '@study-notes/ai'
 import { useApp } from '../store/AppStore'
 import { Cover, EmptyState, ProgressBar, Ring, Stat } from '../components/ui'
@@ -9,8 +9,6 @@ import {
   IconBookOpen,
   IconCheck,
   IconChevronRight,
-  IconClock,
-  IconFlame,
   IconLibrary,
   IconLightbulb,
   IconRepeat,
@@ -90,14 +88,14 @@ export default function Dashboard() {
   const actions = [
     {
       to: '/kutubxona',
-      icon: <IconUpload size={19} />,
+      icon: <IconUpload size={20} />,
       tone: 'blue',
       title: "Kitob qo'shish",
       sub: 'PDF, EPUB yoki matn',
     },
     {
       to: '/takrorlash',
-      icon: <IconRepeat size={19} />,
+      icon: <IconRepeat size={20} />,
       tone: '',
       title: 'Takrorlash',
       sub: due > 0 ? `${due} ta savol` : 'Barchasi bajarildi',
@@ -105,14 +103,14 @@ export default function Dashboard() {
     current
       ? {
           to: `/kitob/${current.meta.slug}?tab=quiz`,
-          icon: <IconTarget size={19} />,
+          icon: <IconTarget size={20} />,
           tone: 'yellow',
           title: 'Quiz ishlash',
           sub: quizPct !== null ? `O'rtacha ${quizPct}%` : 'Birinchi savolni boshlang',
         }
       : {
           to: '/kutubxona',
-          icon: <IconTarget size={19} />,
+          icon: <IconTarget size={20} />,
           tone: 'yellow',
           title: 'Quiz ishlash',
           sub: "Avval kitob qo'shing",
@@ -120,7 +118,7 @@ export default function Dashboard() {
     pending.length
       ? {
           to: `/kitob/${pending[0].meta.slug}`,
-          icon: <IconSparkles size={19} />,
+          icon: <IconSparkles size={20} />,
           tone: 'purple',
           title: 'AI tahlil',
           sub: `${pending.length} ta kitob kutyapti`,
@@ -128,14 +126,14 @@ export default function Dashboard() {
       : scenarioBook
         ? {
             to: `/kitob/${scenarioBook.meta.slug}?tab=apply`,
-            icon: <IconSparkles size={19} />,
+            icon: <IconSparkles size={20} />,
             tone: 'purple',
             title: 'Vaziyatni sinash',
             sub: 'Yangi senariy tayyor',
           }
         : {
             to: '/kutubxona',
-            icon: <IconSparkles size={19} />,
+            icon: <IconSparkles size={20} />,
             tone: 'purple',
             title: 'AI imkoniyatlari',
             sub: 'Tahlil, quiz, senariylar',
@@ -149,40 +147,48 @@ export default function Dashboard() {
     <>
       <div className="hero">
         <div className="profile-col">
-          <span className="big-avatar">{profile.avatar}</span>
+          <span className="big-avatar" aria-hidden>
+            {profile.avatar}
+          </span>
           <div className="info" style={{ minWidth: 0 }}>
             <h1>
-              Salom, {profile.name || "o'quvchi"} {profile.avatar}
+              Salom, {profile.name || "o'quvchi"}
             </h1>
-            <small style={{ display: 'block', marginTop: 2 }}>
+            <small style={{ display: 'block', marginTop: 4 }}>
               {due
                 ? `Bugun uchun ${due} ta takrorlash savoli tayyor — 2-5 daqiqa yetarli.`
                 : "Bugun takrorlash yo'q. Kitobni o'qishni davom ettiring yoki qoidani hayotda qo'llang."}
             </small>
+            <div className="row wrap" style={{ gap: 8 }}>
+              <span className="chip chip-amber">{profile.streak} kunlik streak</span>
+              <span className="chip chip-green">{chaptersRead} ta bob o'qildi</span>
+              <span className="chip chip-primary">
+                {quizPct !== null ? `Quiz ${quizPct}%` : 'Quiz boshlanmagan'}
+              </span>
+            </div>
           </div>
         </div>
-        <div className="row wrap mt" style={{ marginTop: 0 }}>
-          <span className="chip chip-amber">
-            <IconFlame size={14} /> {profile.streak} kunlik streak
-          </span>
-          <span className="chip chip-green">{chaptersRead} ta bob o'qildi</span>
-          <span className="chip chip-primary">
-            {quizPct !== null ? `Quiz ${quizPct}%` : 'Quiz boshlanmagan'}
-          </span>
-        </div>
         <div className="hero-goal">
-          <Ring
-            value={current?.progress.percent ?? 0}
-            size={92}
-            label={`${current?.progress.percent ?? 0}%`}
-          />
+          <div
+            role="progressbar"
+            aria-valuenow={current?.progress.percent ?? 0}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${current?.meta.title ?? 'Joriy kitob'} progressi`}
+          >
+            <Ring
+              value={current?.progress.percent ?? 0}
+              size={80}
+              label={`${current?.progress.percent ?? 0}%`}
+            />
+          </div>
           <small>joriy kitob progressi</small>
         </div>
       </div>
 
       {!library.length ? (
         <EmptyState
-          icon={<IconLibrary size={26} />}
+          icon={<IconLibrary size={24} />}
           title="Kutubxonangiz bo'sh"
           text="Birinchi kitobni yuklang — AI uni tahlil qilib, xulosalar va quizlar yaratadi."
           action={
@@ -197,20 +203,32 @@ export default function Dashboard() {
           <div className="grid grid-fit">
             <div className="card">
               <div className="section-head">
-                <h3>Bugungi reja</h3>
-                <span className={`chip ${todoDone === todos.length ? 'chip-green' : 'chip-primary'}`}>
+                <div>
+                  <span className="nx-eyebrow">Kunlik halqa</span>
+                  <h3 style={{ marginTop: 4 }}>Bugungi reja</h3>
+                </div>
+                <span
+                  className={`chip ${todoDone === todos.length ? 'chip-green' : 'chip-primary'}`}
+                  role="img"
+                  aria-label={`Bugungi halqa: ${todoDone} dan ${todos.length} bajarildi`}
+                >
                   {todoDone}/{todos.length} bajarildi
                 </span>
               </div>
+              <p className="hint mt-0 mb">O'qish → takrorlash → qo'llash — har kuni uch qadam.</p>
               <div className="todo">
                 {todos.map((t) => (
                   <Link key={t.title} to={t.to} className={`todo-row${t.done ? ' done' : ''}`}>
-                    <span className={`t-icon ${t.tone}`}>{t.icon}</span>
+                    <span className={`t-icon ${t.tone}`} aria-hidden>{t.icon}</span>
                     <span className="t-body">
                       <b>{t.title}</b>
                       <small>{t.sub}</small>
                     </span>
-                    <span className="t-check">
+                    <span
+                      className="t-check"
+                      role="img"
+                      aria-label={t.done ? 'Bajarildi' : 'Hali bajarilmagan'}
+                    >
                       <IconCheck size={14} strokeWidth={2.6} />
                     </span>
                   </Link>
@@ -225,7 +243,7 @@ export default function Dashboard() {
               <div className="qactions">
                 {actions.map((a) => (
                   <Link key={a.title} to={a.to} className="qaction">
-                    <span className={`qicon ${a.tone}`}>{a.icon}</span>
+                    <span className={`qicon ${a.tone}`} aria-hidden>{a.icon}</span>
                     <b>{a.title}</b>
                     <small>{a.sub}</small>
                   </Link>
@@ -237,14 +255,14 @@ export default function Dashboard() {
               <div className="section-head">
                 <h3>Umumiy ko'rsatkichlar</h3>
                 <Link to="/natijalar" className="chip">
-                  Batafsil <IconChevronRight size={12} />
+                  Batafsil <IconChevronRight size={14} />
                 </Link>
               </div>
               <div className="grid grid-2">
                 <Stat value={library.length} label="kitob" icon={<IconLibrary size={18} />} />
                 <Stat value={chaptersRead} label="bob o'qildi" icon={<IconBookOpen size={18} />} />
                 <Stat
-                  value={quizPct !== null ? `${quizPct}%` : '—'}
+                  value={quizPct !== null ? `${quizPct}%` : '0%'}
                   label="quiz o'rtachasi"
                   icon={<IconTarget size={18} />}
                 />
@@ -260,16 +278,22 @@ export default function Dashboard() {
                 <div className="card">
                   <div className="section-head">
                     <span className="chip chip-primary">Davom ettirish</span>
-                    <span className="chip">{current.progress.percent}%</span>
                   </div>
                   <div className="row" style={{ alignItems: 'flex-start' }}>
                     <Cover title={current.meta.title} variant="sm" />
                     <div className="grow">
-                      <h2 style={{ fontSize: 17 }}>{current.meta.title}</h2>
+                      <h2 style={{ fontSize: 18 }}>{current.meta.title}</h2>
                       <small>{current.meta.author ?? `${current.meta.chapters} ta bob`}</small>
                     </div>
                   </div>
-                  <div className="mt mb">
+                  <div
+                    className="mt mb"
+                    role="progressbar"
+                    aria-valuenow={current.progress.percent}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${current.meta.title} progressi`}
+                  >
                     <ProgressBar value={current.progress.percent} />
                   </div>
                   <div className="stack">
@@ -281,7 +305,7 @@ export default function Dashboard() {
                     </Link>
                     {!current.analysis && (
                       <Link to={`/kitob/${current.meta.slug}`} className="btn btn-block">
-                        <IconSparkles size={17} /> AI tahlilini boshlash
+                        <IconSparkles size={18} /> AI tahlilini boshlash
                       </Link>
                     )}
                   </div>
@@ -297,7 +321,7 @@ export default function Dashboard() {
                   </div>
                 {todayScenario ? (
                   <div className="stack">
-                    <p className="situation" style={{ fontSize: 15, lineHeight: 1.6 }}>
+                    <p className="situation" style={{ fontSize: 16, lineHeight: 1.5 }}>
                       {todayScenario.situation}
                     </p>
                     {revealed === todayScenario.id ? (
@@ -316,17 +340,33 @@ export default function Dashboard() {
                     <Link
                       to={`/kitob/${scenarioBook!.meta.slug}?tab=apply`}
                       className="btn btn-ghost btn-block"
-                      style={{ color: 'var(--muted)' }}
+                      style={{ color: 'var(--pm-ink-3)' }}
                     >
-                      Barcha vaziyatlar <IconChevronRight size={15} />
+                      Barcha vaziyatlar <IconChevronRight size={16} />
                     </Link>
                   </div>
                 ) : (
-                  <p className="hint" style={{ marginTop: 0 }}>
-                    {library.some((b) => b.analysis?.scenarios.length)
-                      ? "Barcha vaziyatlar bugun qo'llandi — barakalla! Ertaga yangilari paydo bo'ladi."
-                      : "Tahlil tayyor bo'lgach, «Hayotda qo'llash» tabida real vaziyatlar paydo bo'ladi."}
-                  </p>
+                  <div className="stack">
+                    <p className="hint mt-0">
+                      {library.some((b) => b.analysis?.scenarios.length)
+                        ? "Barcha vaziyatlar bugun qo'llandi — barakalla! Ertaga yangilari paydo bo'ladi."
+                        : "Tahlil tayyor bo'lgach, «Hayotda qo'llash» tabida real vaziyatlar paydo bo'ladi."}
+                    </p>
+                    <Link
+                      to={
+                        library.some((b) => b.analysis?.scenarios.length)
+                          ? '/natijalar'
+                          : current
+                            ? `/kitob/${current.meta.slug}`
+                            : '/kutubxona'
+                      }
+                      className="btn btn-ghost btn-sm"
+                    >
+                      {library.some((b) => b.analysis?.scenarios.length)
+                        ? 'Natijalarni ko\'rish'
+                        : 'AI tahliliga o\'tish'} <IconChevronRight size={14} />
+                    </Link>
+                  </div>
                 )}
               </div>
 
@@ -334,7 +374,7 @@ export default function Dashboard() {
                   <div className="section-head">
                     <h3>Kutubxonam</h3>
                     <Link to="/kutubxona" className="chip">
-                      Barchasi <IconChevronRight size={12} />
+                      Barchasi <IconChevronRight size={14} />
                     </Link>
                   </div>
                 <div className="stack" style={{ gap: 8 }}>
@@ -349,10 +389,16 @@ export default function Dashboard() {
                             : 'AI tahlil kutmoqda'}
                         </small>
                       </span>
-                      <ProgressBar
-                        value={b.progress.percent}
-                        style={{ width: 90, flexShrink: 0 }}
-                      />
+                      <div
+                        role="progressbar"
+                        aria-valuenow={b.progress.percent}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`${b.meta.title} progressi`}
+                        style={{ width: 96, flexShrink: 0 }}
+                      >
+                        <ProgressBar value={b.progress.percent} />
+                      </div>
                       <IconChevronRight size={16} className="row-arrow" />
                     </Link>
                   ))}
@@ -368,16 +414,16 @@ export default function Dashboard() {
                     {aiReady ? 'tayyor' : 'sozlanmagan'}
                   </span>
                 </div>
-                <div className="stack" style={{ gap: 10 }}>
+                <div className="stack" style={{ gap: 12 }}>
                   <div className="row">
                     <span
-                      className="icon"
-                      style={{ background: 'var(--purple-soft)', color: 'var(--purple-dark)', width: 38, height: 38, borderRadius: 12, display: 'grid', placeItems: 'center', flexShrink: 0 }}
+                      className="icon pm-ai-icon"
+                      style={{ background: 'var(--pm-accent-soft)', color: 'var(--pm-accent)', width: 40, height: 40, borderRadius: 12, display: 'grid', placeItems: 'center', flexShrink: 0 }}
                     >
-                      <IconSparkles size={19} />
+                      <IconSparkles size={20} />
                     </span>
                     <div className="grow">
-                      <b style={{ display: 'block', fontSize: 14.5 }}>{provider.name}</b>
+                      <b style={{ display: 'block', fontSize: 14 }}>{provider.name}</b>
                       <small>{aiReady ? ai.model || provider.defaultModel : 'Kalit kiritilmagan'}</small>
                     </div>
                   </div>
@@ -388,7 +434,7 @@ export default function Dashboard() {
                   )}
                   <Link
                     to={aiReady ? (pending.length ? `/kitob/${pending[0].meta.slug}` : '/sozlamalar') : '/sozlamalar'}
-                    className={`btn btn-block${aiReady ? '' : ' btn-primary'}`}
+                    className="btn btn-block"
                   >
                     {aiReady
                       ? pending.length
@@ -403,7 +449,7 @@ export default function Dashboard() {
                 <div className="section-head">
                   <h3>Oxirgi faoliyat</h3>
                   <span className="chip">
-                    <IconClock size={12} /> {applyLog.length} ta jami
+                    {applyLog.length} ta jami
                   </span>
                 </div>
                 {recent.length ? (
@@ -418,20 +464,20 @@ export default function Dashboard() {
                           <span
                             className="t-icon green"
                             style={{
-                              width: 34,
-                              height: 34,
-                              borderRadius: 10,
+                              width: 36,
+                              height: 36,
+                              borderRadius: 12,
                               display: 'grid',
                               placeItems: 'center',
                               flexShrink: 0,
-                              background: 'var(--primary-soft)',
-                              color: 'var(--primary-dark)',
+                              background: 'var(--pm-accent-soft)',
+                              color: 'var(--pm-accent)',
                             }}
                           >
-                            <IconCheck size={15} strokeWidth={2.4} />
+                            <IconCheck size={16} strokeWidth={2.4} />
                           </span>
                           <span className="b-body">
-                            <b style={{ fontSize: 13.5 }}>{idea?.idea ?? 'Qoida qo\'llandi'}</b>
+                            <b style={{ fontSize: 14 }}>{idea?.idea ?? 'Qoida qo\'llandi'}</b>
                             <small>
                               {book?.meta.title ?? e.book} · {dayLabel(e.date)}
                             </small>
@@ -441,9 +487,17 @@ export default function Dashboard() {
                     })}
                   </div>
                 ) : (
-                  <p className="hint" style={{ marginTop: 0 }}>
-                    Hozircha yozuv yo'q. «Hayotda qo'llash» bo'limida birinchi qoidani qo'llang — bu yerda paydo bo'ladi.
-                  </p>
+                  <div className="stack">
+                    <p className="hint mt-0">
+                      Hozircha yozuv yo'q. «Hayotda qo'llash» bo'limida birinchi qoidani qo'llang — bu yerda paydo bo'ladi.
+                    </p>
+                    <Link
+                      to={scenarioBook ? `/kitob/${scenarioBook.meta.slug}?tab=apply` : '/kutubxona'}
+                      className="btn btn-ghost btn-sm"
+                    >
+                      Qoidani qo'llash <IconChevronRight size={14} />
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
@@ -455,13 +509,13 @@ export default function Dashboard() {
 }
 
 function today(): string {
-  return new Date().toISOString().slice(0, 10)
+  return localDay()
 }
 
 function dayLabel(date: string): string {
   const t = today()
   if (date === t) return 'Bugun'
-  const y = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+  const y = localDay(addLocalDays(-1))
   if (date === y) return 'Kecha'
   return date.split('-').reverse().slice(0, 2).join('.')
 }

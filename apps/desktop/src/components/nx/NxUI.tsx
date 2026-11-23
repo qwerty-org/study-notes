@@ -1,25 +1,33 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { IconX } from '../icons'
 
 /* ---------- Halqa progress ---------- */
 export function Ring({
   value,
-  size = 46,
+  size = 48,
   label,
 }: {
   value: number
   size?: number
   label?: string
 }) {
-  const r = (size - 6) / 2
+  // foundation.css dagi .nx-ring circle stroke-width:8 bilan mos bo'lishi kerak
+  const r = (size - 8) / 2
   const c = 2 * Math.PI * r
   const pct = Math.max(0, Math.min(100, value))
+  const shown = label ?? `${Math.round(pct)}%`
   return (
     <span
       className="nx-ring-wrap"
       style={{ position: 'relative', width: size, height: size, display: 'inline-grid', placeItems: 'center' }}
+      role="progressbar"
+      aria-label="Jarayon"
+      aria-valuenow={Math.round(pct)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuetext={shown}
     >
-      <svg className="nx-ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <svg className="nx-ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
         <circle className="track" cx={size / 2} cy={size / 2} r={r} />
         <circle
           className="value"
@@ -30,16 +38,26 @@ export function Ring({
           strokeDashoffset={c - (c * pct) / 100}
         />
       </svg>
-      <span className="nx-ring-label">{label ?? `${Math.round(pct)}%`}</span>
+      <span className="nx-ring-label" aria-hidden="true">
+        {shown}
+      </span>
     </span>
   )
 }
 
 /* ---------- Chiziqli progress ---------- */
 export function Bar({ value, className = '' }: { value: number; className?: string }) {
+  const pct = Math.max(0, Math.min(100, value))
   return (
-    <div className={`nx-progress ${className}`}>
-      <span style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+    <div
+      className={`nx-progress ${className}`}
+      role="progressbar"
+      aria-label="Jarayon"
+      aria-valuenow={Math.round(pct)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      <span style={{ width: `${pct}%` }} />
     </div>
   )
 }
@@ -58,7 +76,9 @@ export function Empty({
 }) {
   return (
     <div className="nx-empty">
-      <div className="nx-empty__icon">{icon}</div>
+      <div className="nx-empty__icon" aria-hidden="true">
+        {icon}
+      </div>
       <div className="nx-empty__title">{title}</div>
       <p className="nx-empty__text">{text}</p>
       {action && <div style={{ marginTop: 8 }}>{action}</div>}
@@ -84,7 +104,11 @@ export function Stat({
     <div className={`nx-stat nx-stat--${tone}`}>
       <div className="nx-stat__top">
         <span className="nx-stat__label">{label}</span>
-        {icon && <span className="nx-stat__icon">{icon}</span>}
+        {icon && (
+          <span className="nx-stat__icon" aria-hidden="true">
+            {icon}
+          </span>
+        )}
       </div>
       <div className="nx-stat__value nx-mono-num">{value}</div>
       {hint && <div className="nx-stat__hint">{hint}</div>}
@@ -132,8 +156,8 @@ export function useToast() {
   )
 
   const node = toast ? (
-    <div className="nx-toast" role="status">
-      <span className="nx-dot" /> {toast}
+    <div className="nx-toast" role="status" aria-live="polite" aria-atomic="true">
+      <span className="nx-dot" aria-hidden="true" /> {toast}
     </div>
   ) : null
 
@@ -156,9 +180,42 @@ export function ConfirmModal({
   onConfirm: () => void
   onClose: () => void
 }) {
+  const titleId = useId()
+  const descId = useId()
+  const dialogRef = useRef<HTMLDivElement>(null)
+  // Render paytida olish kerak: autoFocus mount'da ishlaydi, shundan keyin
+  // activeElement allaqachon modal ichidagi tugma bo'lib qoladi.
+  const previousFocus = useRef<HTMLElement | null>(null)
+  if (previousFocus.current === null && typeof document !== 'undefined') {
+    previousFocus.current = document.activeElement as HTMLElement | null
+  }
+  useEffect(() => () => previousFocus.current?.focus(), [])
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const root = dialogRef.current
+      if (!root) return
+      const focusable = root.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const active = document.activeElement
+      if (e.shiftKey) {
+        if (active === first || !root.contains(active)) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else if (active === last || !root.contains(active)) {
+        e.preventDefault()
+        first.focus()
+      }
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
@@ -167,26 +224,29 @@ export function ConfirmModal({
   return (
     <div className="nx-overlay" onMouseDown={onClose}>
       <div
+        ref={dialogRef}
         className="nx-modal"
         role="alertdialog"
         aria-modal="true"
-        aria-labelledby="nx-confirm-title"
+        aria-labelledby={titleId}
+        aria-describedby={descId}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <button className="nx-modal__close nx-icon-btn" onClick={onClose} aria-label="Yopish">
+        <button type="button" className="nx-modal__close nx-icon-btn" onClick={onClose} aria-label="Yopish">
           <IconX size={16} />
         </button>
-        <h2 className="nx-title nx-title--sm" id="nx-confirm-title">
+        <h2 className="nx-title nx-title--sm" id={titleId}>
           {title}
         </h2>
-        <p className="nx-subtitle" style={{ marginTop: 10 }}>
+        <p className="nx-subtitle" id={descId} style={{ marginTop: 12 }}>
           {text}
         </p>
         <div className="nx-row" style={{ justifyContent: 'flex-end', marginTop: 24 }}>
-          <button className="nx-btn nx-btn--ghost" onClick={onClose}>
+          <button type="button" className="nx-btn nx-btn--ghost" onClick={onClose}>
             Bekor qilish
           </button>
           <button
+            type="button"
             className={`nx-btn ${danger ? 'nx-btn--danger' : 'nx-btn--primary'}`}
             onClick={onConfirm}
             autoFocus

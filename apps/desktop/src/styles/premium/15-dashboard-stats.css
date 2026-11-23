@@ -1,0 +1,258 @@
+/* Premium Dashboard Stats — Wave 3 / P15.
+   Owns: .stat, .stat .top, .stat .label, .stat .icon, .stat b,
+         .stat small, .stat-grid, .grid-2 (faqat dashboard statlari ichida).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/design/07-critique.md (D6)
+          docs/superpowers/specs/layout/02-dashboard.md (D3.3)
+   Motiv (D6): "—" katta bo'shliqda suzib yurmasin. Sokin 2×2 divider'li
+   sokin katakchalar: karta ramkasi/chegara/soya yo'q, faqat 1px --pm-line.
+   Faqat --pm-* tokenlari. premium/index.css da 15-o'rinda yuklanadi —
+   ustunlik qo'shimchasi yo'q. ARIA (role/aria-label) va focus ring
+   o'zgarishsiz; .stat interaktiv emas, outline olib tashlanmaydi. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Konteyner — 2×2, 8px gap. Eski .grid-2 (auto-fill/200px) va
+ *    .grid (12px gap) qoidalari shu yerda yengiladi.
+ * ------------------------------------------------------------------ */
+.stat-grid,
+.grid-2:has(> .stat),
+.card > .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(88px, auto));
+  gap: var(--pm-s-1);                       /* 8px */
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Katakcha — ramka yo'q, fon shaffof, soya yo'q, hover transform yo'q.
+ *    Ichki tuzilma: [label · icon] / [qiymat] / [ixtiyoriy izoh].
+ * ------------------------------------------------------------------ */
+.stat {
+  position: relative;                       /* divider'lar uchun anchor */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20px;
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: center;
+  column-gap: var(--pm-s-1);                /* 8px */
+  row-gap: var(--pm-s-1);                   /* 8px */
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 88px;                         /* 88–96px ritm */
+  margin: 0;
+  padding: var(--pm-s-3) calc(var(--pm-s-2) + var(--pm-s-1)); /* 16px 20px */
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink);
+  transform: none;                          /* eski translateY(-1px) olinadi */
+  transition: none;                         /* eski border/transform transition */
+}
+
+/* 3. Ajratgichlar — katakchalarga border NOT qo'yiladi; 1px --pm-line
+      chiziqlar ularning orasidagi 8px bo'shliq o'rtasida turadi. */
+.stat::before,
+.stat::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  background: var(--pm-line);
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+/* Vertikal chiziq: chap ustunning o'ng tomoni (1- va 3-katakcha). */
+.stat:nth-child(1)::before {
+  top: 0;
+  bottom: calc(var(--pm-s-1) / -2);         /* -4px → gorizontal chiziqqa yetadi */
+  right: calc(var(--pm-s-1) / -2);
+  width: 1px;
+}
+.stat:nth-child(3)::before {
+  top: calc(var(--pm-s-1) / -2);
+  bottom: 0;
+  right: calc(var(--pm-s-1) / -2);
+  width: 1px;
+}
+/* Gorizontal chiziq: yuqori qatorning past tomoni (1- va 2-katakcha). */
+.stat:nth-child(1)::after {
+  left: 0;
+  right: calc(var(--pm-s-1) / -2);
+  bottom: calc(var(--pm-s-1) / -2);
+  height: 1px;
+}
+.stat:nth-child(2)::after {
+  left: calc(var(--pm-s-1) / -2);
+  right: 0;
+  bottom: calc(var(--pm-s-1) / -2);
+  height: 1px;
+}
+/* Sokin hover: faqat chiziq rangi kuchayadi; fon/soya/transform o'zgarmaydi.
+   Eski global .stat:hover (specificity 0,2,0) ni yengish uchun aynan
+   .stat:hover ishlatiladi — premium keyin yuklansa ham ustunlik yetarli. */
+.stat:hover {
+  transform: none;
+  box-shadow: none;
+}
+.stat:hover::before,
+.stat:hover::after {
+  background: var(--pm-line-strong);
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Yuqori qator: label chapda, ikonka o'ngda (neutral, 20px).
+ *    .top faqat kelajakdagi markup bo'lsa ishlaydi; hozirgi markupda
+ *    ikonka wrapperi .stat-head, label esa oddiy <span>.
+ * ------------------------------------------------------------------ */
+.stat .top {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-1);
+  min-width: 0;
+}
+
+.stat .label,
+.stat > span:last-child:not(.stat-head):not(.icon) {
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);               /* 11px caps emas */
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;                     /* ALL CAPS YO'Q */
+  color: var(--pm-ink-2);
+}
+
+.stat .icon,
+.stat .stat-head {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);        /* rangli plitka yo'q */
+  box-shadow: none;
+  color: var(--pm-ink-3);                   /* neytral glif */
+}
+.stat .icon svg,
+.stat .stat-head svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  stroke: currentColor;
+}
+/* Eski tone variantlarining rangli fonlari neytrallanadi. */
+.stat .icon.primary,
+.stat .icon.green,
+.stat .icon.blue,
+.stat .icon.amber,
+.stat .icon.purple {
+  background: var(--pm-transparent);
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Qiymat — 30px Fraunces, tabular. Matn o'zgarishsiz: "—" shunchaki
+ *    chiziq sifatida emas, boshqa qiymatlar bilan bir xil ritmda o'qiladi.
+ * ------------------------------------------------------------------ */
+.stat b {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: block;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-30);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  color: var(--pm-ink);
+}
+
+/* 6. Ixtiyoriy izoh (markupda hozircha yo'q) — 12px --pm-ink-3. */
+.stat small,
+.stat .hint {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: block;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Responsiv — 1440 / 900 / 620 / 375.
+ *    900 da to'rt ustunli qatorga o'tmaymiz: 2×2 saqlanadi (D6 intent).
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .stat {
+    min-height: 88px;
+  }
+}
+
+@media (max-width: 620px) {
+  .stat {
+    padding: var(--pm-s-3) calc(var(--pm-s-2) + var(--pm-s-1));
+  }
+}
+
+@media (max-width: 480px) {
+  /* 375: 2×2 saqlanadi. Ikonka 2-qatorga o'tadi — label to'liq kenglikda
+     o'ralib, katakcha 88–96px balandlikda qoladi. */
+  .stat {
+    grid-template-columns: 20px minmax(0, 1fr);
+  }
+  .stat .label,
+  .stat > span:last-child:not(.stat-head):not(.icon) {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .stat .icon,
+  .stat .stat-head {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+  }
+  .stat b {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Reduced motion — barcha o'tishlar o'chadi (spec §6).
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .stat::before,
+  .stat::after {
+    transition: none;
+  }
+}

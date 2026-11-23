@@ -1,0 +1,212 @@
+/* Premium Chips / Badges / Labels — Wave 3 / P09.
+   Owns: .chip, .chip-amber, .chip-green, .chip-primary,
+         .nx-chip, .nx-chip--accent, .nx-chip--success, .nx-chip--warn,
+         .nx-chip--outline, .nx-dot, .nx-kbd, .nx-tab-count,
+         .nx-badge, .nx-about-pill.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md (§2, §5)
+          docs/superpowers/specs/design/07-critique.md (D7, D11, D14).
+
+   BITTA sokin retsept: 28px / 0 12px / 999px / 12px·700 /
+   --pm-surface-2 + --pm-ink-2; border YO'Q, soya YO'Q.
+   Barcha rangli variantlar (amber/green/primary/success/warn/accent/outline)
+   neytrastirildi — faqat haqiqatan faol holatda accent ruxsat.
+
+   Faqat --pm-* tokenlari. 11px / 28px / 20px / 6px kabi qiymatlar token
+   manbasida yo'q (type scale 12px dan boshlanadi) — ular yangi token emas,
+   balki dizayn spec'da to'g'ridan-to'g'ri belgilangan o'lchamlar.
+   Ustunlik qo'shimchasi (importance) ishlatilmaydi; premium/index.css
+   oxirida yuklanadi.
+
+   Eslatma: ikki barobar klass (.chip.chip, .nx-chip.nx-chip) eski qatlamdagi
+   [data-theme='dark'] .chip-green va .nx-repeat .nx-chip kabi (0,2,0)
+   qoidalarni teng specificacity + keyingi import tartibi bilan yengish uchun.
+   Bu faqat o'z selektorimga ta'sir qiladi, boshqa elementga tegmaydi. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Yagona sokin retsept — barcha chip / badge / kichik label
+ * ------------------------------------------------------------------ */
+.chip.chip,
+.chip-amber.chip-amber,
+.chip-green.chip-green,
+.chip-primary.chip-primary,
+.nx-chip.nx-chip,
+.nx-chip--accent.nx-chip--accent,
+.nx-chip--success.nx-chip--success,
+.nx-chip--warn.nx-chip--warn,
+.nx-chip--outline.nx-chip--outline,
+.nx-badge.nx-badge,
+.nx-about-pill.nx-about-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-1);                    /* 8px — ikonka–matn */
+  height: 28px;
+  padding: 0 var(--pm-s-2);              /* 0 12px */
+  border: 0;                             /* D2/D7: border yo'q */
+  border-radius: var(--pm-r-pill);       /* 999px */
+  box-shadow: none;                      /* D7: soya yo'q */
+  background: var(--pm-surface-2);       /* neytral ikkilamchi yuz */
+  color: var(--pm-ink-2);                /* neytral ikkilamchi matn */
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-12);            /* 12px */
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: normal;                /* sun'iy tracking yo'q */
+  text-transform: none;                  /* ALL CAPS YO'Q (D1) */
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;    /* chip ichidagi raqamlar */
+  transition: none;                      /* eski 'transition: all' o'chadi */
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Rangli variantlar o'ldirildi.
+ *    .chip-amber / .chip-green / .chip-primary /
+ *    .nx-chip--success / .nx-chip--warn / .nx-chip--accent /
+ *    .nx-chip--outline — barchasi yuqoridagi neytral retseptga bo'ysunadi.
+ *    Alohida background/color e'lon qilinmaydi (shu sabab ular ham eski
+ *    [data-theme='dark'] rang qoidalarini yengadi).
+ * ------------------------------------------------------------------ */
+
+/* 3. Faqat haqiqatan faol holatda accent (--pm-accent-soft + --pm-accent). */
+.nx-badge.is-earned {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+  border: 0;
+  box-shadow: none;
+}
+
+/* ARIA bog'langan faol holatlar — script tomonidan belgilanadi. */
+.chip[aria-pressed='true'],
+.chip[aria-selected='true'],
+.chip[aria-current='true'],
+.nx-chip[aria-pressed='true'],
+.nx-chip[aria-selected='true'],
+.nx-chip[aria-current='true'],
+.nx-badge[aria-pressed='true'],
+.nx-badge[aria-selected='true'] {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+/* Badge ichidagi small 11px emas — 12px (type floor). */
+.nx-badge small {
+  font-size: var(--pm-fs-12);
+  color: inherit;
+  text-transform: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Nexxus dot — 6px, neytral
+ * ------------------------------------------------------------------ */
+.nx-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-ink-3);
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Kbd — 20px, --pm-surface-2, 11px, faqat hairline border
+ * ------------------------------------------------------------------ */
+.nx-kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  border: 1px solid var(--pm-line);      /* hairline; 2px pastki chiziq yo'q */
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: 11px;                        /* faqat kbd/chip uchun ruxsat */
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Tab count — 11px tabular, neytral, rangli emas
+ *    (eski .tab.active .tab-count rangini qaytarmaymiz — D3)
+ * ------------------------------------------------------------------ */
+.nx-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  font-size: 11px;                        /* faqat kbd/chip uchun ruxsat */
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+  transition: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Focus — faqat interaktiv chip/badge'lar (spec §5: 2px + 3px offset)
+ * ------------------------------------------------------------------ */
+.chip:is(a, button, [role='button'], [tabindex]):focus-visible,
+.nx-chip:is(a, button, [role='button'], [tabindex]):focus-visible,
+.nx-badge:is(a, button, [role='button'], [tabindex]):focus-visible,
+.nx-about-pill:is(a, button, [role='button'], [tabindex]):focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Responsiv — 1440 / 900 / 620 / 375
+ *    1440 va 900: yuqoridagi retsept o'zgarmaydi.
+ *    Chip o'zi kichik; qatorlarga o'rash konteyner (hero/tab) ishi.
+ *    Bu yerda faqat chip ekrandan chiqib ketmasligi ta'minlanadi.
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .chip.chip,
+  .nx-chip.nx-chip,
+  .nx-badge.nx-badge,
+  .nx-about-pill.nx-about-pill {
+    max-width: 100%;                      /* 620/375 da to'kilish yo'q */
+  }
+}
+
+@media (max-width: 375px) {
+  .chip.chip,
+  .nx-chip.nx-chip,
+  .nx-badge.nx-badge,
+  .nx-about-pill.nx-about-pill {
+    height: auto;                         /* uzun yozuv ikki qatorga o'tadi */
+    min-height: 28px;                     /* lekin 28px dan kichik bo'lmaydi */
+    white-space: normal;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. Reduced motion — harakat yo'q (spec §6)
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .chip.chip,
+  .chip-amber.chip-amber,
+  .chip-green.chip-green,
+  .chip-primary.chip-primary,
+  .nx-chip.nx-chip,
+  .nx-chip--accent.nx-chip--accent,
+  .nx-chip--success.nx-chip--success,
+  .nx-chip--warn.nx-chip--warn,
+  .nx-chip--outline.nx-chip--outline,
+  .nx-badge.nx-badge,
+  .nx-about-pill.nx-about-pill,
+  .nx-dot,
+  .nx-kbd,
+  .nx-tab-count {
+    transition: none;
+    animation: none;
+  }
+}

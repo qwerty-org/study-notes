@@ -1,0 +1,217 @@
+/* Premium Buttons — Wave 3 / P08.
+   Faqat tugmalar: .btn* va .nx-btn* (shu jumladan ularning svg ikonkalari).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md §5, 07-critique D8/D9.
+   Eski 3D soya / inset soya / gradient / trailing arrow o'rniga sokin, tekis tugma.
+   Barcha ranglar FAQAT --pm-* tokenlaridan; yangi token yo'q. */
+
+/* ---------- Asos = secondary / ghost retsepti (44px) ---------- */
+.btn,
+.nx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-2);
+
+  /* min-height saqlanadi: matn o'ralganda tugma o'sishi mumkin. */
+  min-height: 44px;
+  padding: 0 var(--pm-s-3);
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background-color: var(--pm-transparent);
+  background-image: none;
+  color: var(--pm-ink-2);
+
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  /* 3D/ko'p qatlamli soya va filter butunlay o'chiriladi. */
+  box-shadow: none;
+  filter: none;
+  /* Hover faqat fon rangi, 160ms. */
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.btn-secondary,
+.btn-ghost,
+.nx-btn--ghost {
+  min-height: 44px;
+  padding: 0 var(--pm-s-3);
+  border-color: var(--pm-line);
+  background-color: var(--pm-transparent);
+  color: var(--pm-ink-2);
+}
+
+.btn:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled),
+.nx-btn:hover:not(:disabled),
+.nx-btn--ghost:hover:not(:disabled) {
+  background-color: var(--pm-surface-2);
+  filter: none;
+}
+
+/* ---------- Primary: ekrandagi yagona asosiy harakat (48px) ---------- */
+.btn-primary,
+.nx-btn--primary {
+  min-height: 48px;
+  padding: 0 var(--pm-s-4); /* 0 24px */
+  border-color: var(--pm-transparent);
+  border-radius: var(--pm-r-control); /* 12px */
+  background-color: var(--pm-accent);
+  color: var(--pm-on-accent);
+  font-weight: 700;
+  /* Na pastki 3D soya, na inset soya. */
+  box-shadow: none;
+}
+
+.btn-primary:hover:not(:disabled),
+.nx-btn--primary:hover:not(:disabled) {
+  background-color: var(--pm-accent-hover);
+}
+
+/* ---------- Soft: och accent foni, accent matn ---------- */
+.nx-btn--soft {
+  min-height: 44px;
+  border-color: var(--pm-transparent);
+  background-color: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+
+.nx-btn--soft:hover:not(:disabled) {
+  /* Faqat --pm-* tokenlaridan tuzilgan, bir qadam chuqurroq och accent. */
+  background-color: color-mix(in srgb, var(--pm-accent) 12%, var(--pm-accent-soft));
+}
+
+/* ---------- Danger: faqat kontur, to'ldirilgan qizil yo'q ---------- */
+.nx-btn--danger {
+  min-height: 44px;
+  border-color: var(--pm-danger);
+  background-color: var(--pm-transparent);
+  color: var(--pm-danger);
+}
+
+.nx-btn--danger:hover:not(:disabled) {
+  background-color: var(--pm-danger-soft);
+}
+
+/* ---------- O'lcham modifikatorlari (min-height saqlanadi) ---------- */
+.btn-sm,
+.nx-btn--sm {
+  min-height: 36px;
+  padding: 0 var(--pm-s-2);
+  border-radius: var(--pm-r-sm);
+}
+
+.btn-lg,
+.nx-btn--lg {
+  min-height: 48px;
+  padding: 0 var(--pm-s-4);
+  border-radius: var(--pm-r-control);
+}
+
+/* ---------- Ikonkalar ---------- */
+.nx-btn svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  filter: none; /* drop-shadow taqiqlangan */
+}
+
+.nx-btn--primary svg {
+  color: var(--pm-on-accent); /* currentColor ikonkalar matn bilan bir xil */
+}
+
+/* 07-critique D8: ketayotgan o'q ikonkasini matndan OLDINGA o'tkazamiz.
+   :not(:first-child) faqat ikonka + label bo'lgan tugmalarga tegadi. */
+.nx-btn--primary > svg:last-child:not(:first-child),
+.btn-primary > svg:last-child:not(:first-child),
+/* Matn node bo'lgani uchun svg yagona ELEMENT farzand bo'lib qoladi —
+   :not(:first-child) uni istisno qilar edi. */
+.nx-btn--primary > svg:only-child,
+.btn-primary > svg:only-child {
+  order: -1;
+}
+
+/* ---------- Holatlar ---------- */
+.btn:active:not(:disabled),
+.nx-btn:active:not(:disabled) {
+  transform: translateY(1px); /* 1px dan oshmaydi, scale yo'q */
+}
+
+.btn:disabled,
+.nx-btn:disabled {
+  opacity: 0.4;
+  transform: none;
+  box-shadow: none;
+  filter: none;
+  cursor: not-allowed;
+}
+
+/* Focus halqasi: 2px --pm-accent, offset 3px (ARIA atributlari TSX dan keladi). */
+.btn:focus-visible,
+.nx-btn:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none; /* eski keng rangli focus halqasi o'chiriladi */
+}
+
+@media (forced-colors: active) {
+  .btn:focus-visible,
+  .nx-btn:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ---------- Harakatni kamaytirish ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-sm,
+  .btn-lg,
+  .nx-btn,
+  .nx-btn--primary,
+  .nx-btn--soft,
+  .nx-btn--ghost,
+  .nx-btn--danger,
+  .nx-btn--sm,
+  .nx-btn--lg {
+    transition: none;
+  }
+
+  .btn:active:not(:disabled),
+  .nx-btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* ---------- 1440 / 900 / 620 / 375 ---------- */
+@media (max-width: 900px) {
+  .btn,
+  .nx-btn {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 620px) {
+  .btn-lg,
+  .nx-btn--lg {
+    padding: 0 var(--pm-s-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .btn,
+  .nx-btn {
+    max-width: 100%;
+    white-space: normal; /* uzun matn o'raladi, konteynerdan chiqmaydi */
+    text-align: center;
+  }
+}

@@ -1,0 +1,164 @@
+/* 35-motion.css — D04 "Motion & Micro-interactions" egasi.
+   premium/index.css dagi OXIRGI import: butun premium qatlamning harakat tizimi
+   shu yerda yagonalashtiriladi. Qolgan element fayllari @keyframes yaratmaydi.
+   Manba: docs/superpowers/specs/design/04-icon-motion.md §2–5.
+
+   Faqat mavjud --pm-* tokenlari. Yangi token yo'q: 240ms / 420ms va 8/12px
+   geometriya D04 jadvalidagi literal qiymatlar (ular uchun token taklif qilinmagan).
+
+   Kengliklar 1440 / 900 / 620 / 375: harakat faqat 8–12px vertikal siljish va
+   kichik scale bo'lib, gorizontal o'lchamga ta'sir qilmaydi → alohida
+   kenglik override'i kerak emas (375 da ham horizontal overflow yo'q).
+
+   Universal `*` faqat reduced-motion blokida ishlatiladi (butun harakatni
+   o'chirish uchun). Oddiy holatda hover o'tishlari berilgan selektorlar
+   ro'yxati bilan qat'iy chegaralangan. */
+
+/* ------------------------------------------------------------------ *
+ * Kanonik keyframe'lar — T1 / T7 / T8.
+ * Eski nx-rise / nx-page-in / nx-toast-in / nx-modal-in o'rniga.
+ * `transform: none` bilan tugatish: transform qoldiq qiymati (translateY(0))
+ * fixed position farzandlar uchun containing block yaratib qo'ymasligi uchun.
+ * ------------------------------------------------------------------ */
+@keyframes pm-page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pm-toast-in {
+  from { opacity: 0; transform: translate(-50%, 12px); } /* -50% = toast markazi */
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes pm-modal-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ------------------------------------------------------------------ *
+ * T1 ENTER — BITTA orkestratsiya, mount'da 1 marta (320ms, --pm-ease-out).
+ * `.page` — faqat legacy Dashboard shell (ichida `.nx-page` yo'q).
+ * NX sahifalarida ichki `.nx-page` harakat qiladi, tashqi `.page` emas.
+ * Ikkalasi hech qachon bir vaqtda ishlamaydi → bitta 8px kirish.
+ * ------------------------------------------------------------------ */
+.page:not(:has(.nx-page)),
+.nx-page {
+  animation: pm-page-enter var(--pm-d-enter) var(--pm-ease-out) both;
+}
+
+/* Karta / row / tugmaga alohida entrance yo'q — eski fade-and-slide qaytmasin. */
+.nx-card,
+.nx-btn,
+.nx-icon-btn,
+.nx-option,
+.nx-toc__item,
+.nx-reader-paper {
+  animation: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * T2 HOVER — faqat background/color, 160ms, --pm-ease-std.
+ * transform / box-shadow / scale / shake / pulse YO'Q (D04 §5: har
+ * elementga bitta property guruhi; soya hover'da o'zgarmaydi).
+ * ------------------------------------------------------------------ */
+.nx-btn,
+.nx-icon-btn,
+.nx-card,
+.nx-option,
+.nx-toc__item {
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std),
+              color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* T4 SELECT — tanlangan holatning chegara rangi ham color kanalidir.
+   Bu hover emas, faqat holat o'zgarishi (quiz option / faol qator). */
+.nx-option {
+  transition: background-color var(--pm-d-hover) var(--pm-ease-std),
+              color var(--pm-d-hover) var(--pm-ease-std),
+              border-color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+/* ------------------------------------------------------------------ *
+ * T7 TOAST — 240ms, --pm-ease-out. Eski `nx-toast-in` (0.25s ease) o'rniga.
+ * Chiqish D04 bo'yicha 160ms faqat opacity; ammo chiqish DOM'dan olib
+ * tashlanadi va maxsus class yo'q → TSX o'zgartirishsiz amalga oshmaydi (risk).
+ * `role=status` / `aria-live=polite` o'zgarishsiz saqlanadi — tegmaymiz.
+ * ------------------------------------------------------------------ */
+.nx-toast {
+  animation: pm-toast-in 240ms var(--pm-ease-out) both;
+}
+
+/* ------------------------------------------------------------------ *
+ * T8 MODAL — 240ms, --pm-ease-out. Eski `nx-modal-in` (0.24s, 14px/.97)
+ * o'rniga: 12px, scale .98→1. Overlay 160ms `nx-fade` mustaqil qoladi
+ * (.nx-overlay selektorimiz emas). Onboarding `.nx-onboarding-card`
+ * alohida selektor — unga tegmaymiz.
+ * ------------------------------------------------------------------ */
+.nx-modal {
+  animation: pm-modal-in 240ms var(--pm-ease-out) both;
+}
+
+/* ------------------------------------------------------------------ *
+ * T9 FLIP — 420ms, --pm-ease-std. Eski 0.5s cubic-bezier o'rniga.
+ * D04 jadvalidagi asl class `.term-inner`; TSX (BookTabs) da aynan shunday.
+ * Topshiriqda berilgan `.nx-term-inner` ham qamrab olinadi — ikkalasi bir
+ * xil flip yuzasi. `perspective:900px` allaqachon `.term-card` da bor.
+ * ------------------------------------------------------------------ */
+.nx-term-inner,
+.term-inner {
+  transition: transform 420ms var(--pm-ease-std);
+  transform-style: preserve-3d;
+}
+
+/* ------------------------------------------------------------------ *
+ * FOCUS — halqa element agentlarida (2px --pm-accent, 3px offset) bor
+ * va HECH QACHON animatsiyaga kirmaydi: `outline` yuqoridagi transition
+ * ro'yxatlarida yo'q → 0ms, darhol paydo bo'ladi. Bu yerda faqat shuni
+ * kafolatlaymiz; outline'ni qayta yozmaymiz (.nx-toc__item ning maxsus
+ * -2px offseti kabi holatlar saqlanadi). ARIA bog'lanishlariga tegmaymiz.
+ * ------------------------------------------------------------------ */
+.nx-btn:focus-visible,
+.nx-icon-btn:focus-visible,
+.nx-card:focus-visible,
+.nx-option:focus-visible,
+.nx-toc__item:focus-visible,
+.nx-modal:focus-visible,
+.nx-reader-paper:focus-visible {
+  transition: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * MOTION BUDGET (D04 §5) — bir vaqtda maksimal 3:
+ *   mount  → T1 (1)
+ *   hover  → faqat hover qilingan element (1)
+ *   toast  → T7 (1); yana hover bo'lsa 2
+ *   modal  → overlay + karta (2); T1/card-hover suppress qilinishi kerak
+ *            (JS holati — CSS bilan aniqlanmaydi, risk)
+ *   flip   → bitta T9 (1)
+ * Infinite / stagger / cascade / delay — YO'Q.
+ * ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ *
+ * REDUCED MOTION — shartsiz: BARCHA animatsiya va o'tish o'chadi.
+ * `!important` FAQAT shu blokda — oldingi qatamlarning
+ * `animation-duration: .01ms !important` qoidasini yengish va ularning
+ * class selektorlaridan ustun turish uchun. Focus halqasi saqlanadi
+ * (outline animatsiya emas, shuning uchun o'chirilmaydi).
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--pm-accent);
+  }
+}

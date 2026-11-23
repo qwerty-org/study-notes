@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { useLocation } from 'react-router-dom'
 import { store, type AIProvider } from '@study-notes/core'
 import { complete, PROVIDERS, providerInfo } from '@study-notes/ai'
@@ -9,13 +9,10 @@ import {
   IconBookOpen,
   IconCheck,
   IconDownload,
-  IconFlame,
   IconGlobe,
   IconLock,
-  IconSliders,
   IconTrash,
   IconUpload,
-  IconUser,
 } from '../components/icons'
 import { IconEye, IconEyeOff, IconInfo, IconMoon, IconRefresh, IconSun } from '../components/nx/icons'
 
@@ -43,11 +40,58 @@ export default function Settings() {
   const [clearOpen, setClearOpen] = useState(false)
   const [dataMsg, setDataMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const clearTriggerRef = useRef<HTMLButtonElement>(null)
+  const modalHostRef = useRef<HTMLDivElement>(null)
   const { show, toast: toastNode } = useToast()
 
   const reason = (location.state as { reason?: string } | null)?.reason
   const provider = providerInfo(ai.provider)
   const status = testOk ? 'Ulanish tekshirildi' : ai.apiKey.trim() || ai.provider === 'ollama' ? 'Sozlangan' : 'Sozlanmagan'
+
+  /* Tasdiqlash modali: Tab fokusini dialog ichida ushlab turamiz, Escape bilan
+     yopamiz va yopilganda fokusni ochgan tugmaga qaytaramiz. (ConfirmModal
+     ning o'zi ham Escape'ni boshqaradi — bu qo'shimcha xavfsizlik qatlami.) */
+  useEffect(() => {
+    if (!clearOpen) return
+    const host = modalHostRef.current
+    const focusable = () =>
+      host
+        ? Array.from(
+            host.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled])'),
+          ).filter((el) => !el.hasAttribute('hidden') && el.getClientRects().length > 0)
+        : []
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setClearOpen(false)
+        return
+      }
+      if (e.key !== 'Tab') return
+      const items = focusable()
+      if (!items.length) {
+        e.preventDefault()
+        return
+      }
+      const first = items[0]
+      const last = items[items.length - 1]
+      const active = document.activeElement
+      if (e.shiftKey && (active === first || !items.includes(active as HTMLElement))) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (active === last || !items.includes(active as HTMLElement))) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKey)
+    // Xavfli tugma avtomatik fokuslanmasin — xavfsiz harakatni tanlaymiz.
+    focusable().find((el) => el.textContent?.trim() === 'Bekor qilish')?.focus()
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      clearTriggerRef.current?.focus()
+    }
+  }, [clearOpen])
 
   const saveAI = () => {
     updateAI({ provider: ai.provider, apiKey: keyDraft.trim(), model: modelDraft.trim() })
@@ -145,8 +189,8 @@ export default function Settings() {
         <div className="nx-settings-content">
           {section === 'profile' && (
             <section className="nx-panel">
-              <div className="nx-panel__head"><b className="nx-h3">Profil va ko'rinish</b><IconUser size={17} /></div>
-              <div className="nx-panel__body nx-stack" style={{ gap: 22 }}>
+              <div className="nx-panel__head"><b className="nx-h3">Profil va ko'rinish</b></div>
+              <div className="nx-panel__body nx-stack" style={{ gap: 24 }}>
                 <div className="nx-field">
                   <label className="nx-label" htmlFor="set-name">Ismingiz</label>
                   <input id="set-name" className="nx-input" value={profile.name}
@@ -186,7 +230,7 @@ export default function Settings() {
                     <b>Interfeys tili</b>
                     <p className="nx-hint">Hozircha faqat o'zbekcha. Boshqa tillar keyingi bosqichda.</p>
                   </div>
-                  <span className="nx-chip nx-chip--outline"><IconGlobe size={13} /> O'zbek</span>
+                  <span className="nx-chip nx-chip--outline"><IconGlobe size={14} /> O'zbek</span>
                 </div>
 
                 <div className="nx-setting-row nx-setting-row--muted">
@@ -194,7 +238,7 @@ export default function Settings() {
                     <b>Takrorlash eslatmasi</b>
                     <p className="nx-hint">Eslatmalar keyingi bosqichda qo'shiladi.</p>
                   </div>
-                  <span className="nx-chip nx-chip--outline">20:00 · tez orada</span>
+                  <span className="nx-chip nx-chip--outline">Tez orada, soat 20:00</span>
                 </div>
 
                 <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={() => {
@@ -212,16 +256,19 @@ export default function Settings() {
               <div className="nx-panel__head">
                 <b className="nx-h3">AI ulash</b>
                 <span className={`nx-chip ${testOk ? 'nx-chip--success' : ai.apiKey || ai.provider === 'ollama' ? 'nx-chip--accent' : ''}`}>
-                  {testOk && <IconCheck size={11} />} {status}
+                  {testOk && <IconCheck size={14} />} {status}
                 </span>
               </div>
-              <div className="nx-panel__body nx-stack" style={{ gap: 22 }}>
+              <div className="nx-panel__body nx-stack" style={{ gap: 24 }}>
                 <div className="nx-field">
                   <span className="nx-label">Provayder</span>
-                  <div className="nx-provider-grid">
+                  <div className="nx-provider-grid" role="radiogroup" aria-label="AI provayderi">
                     {PROVIDERS.map((p) => (
                       <button
                         key={p.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={ai.provider === p.id}
                         className={`nx-provider${ai.provider === p.id ? ' is-active' : ''}`}
                         onClick={() => {
                           updateAI({ provider: p.id as AIProvider, apiKey: keyDraft, model: '' })
@@ -242,9 +289,11 @@ export default function Settings() {
                     <div className="nx-key-wrap">
                       <input id="set-key" className="nx-input" type={keyVisible ? 'text' : 'password'}
                         value={keyDraft} placeholder="AI Studio yoki platforma kaliti"
+                        autoComplete="off" spellCheck={false}
                         onChange={(e) => { setKeyDraft(e.target.value); setTestOk(false) }} />
-                      <button className="nx-icon-btn" onClick={() => setKeyVisible((v) => !v)}
-                        aria-label={keyVisible ? 'Kalitni yashirish' : 'Kalitni ko‘rsatish'}>
+                      <button type="button" className="nx-icon-btn" onClick={() => setKeyVisible((v) => !v)}
+                        aria-label={keyVisible ? 'Kalitni yashirish' : 'Kalitni ko‘rsatish'}
+                        aria-pressed={keyVisible} aria-controls="set-key">
                         {keyVisible ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                       </button>
                     </div>
@@ -262,9 +311,19 @@ export default function Settings() {
                     onChange={(e) => setModelDraft(e.target.value)} />
                 </div>
 
-                {testError && <div className="nx-inline-error"><IconInfo size={15} /> {testError}</div>}
+                <div className="nx-settings-feedback" aria-live="polite">
+                  {testing && (
+                    <div className="nx-inline-info" role="status"><IconInfo size={16} /> Ulanish tekshirilmoqda…</div>
+                  )}
+                  {!testing && testOk && (
+                    <div className="nx-inline-ok" role="status"><IconCheck size={16} /> Ulanish muvaffaqiyatli tekshirildi.</div>
+                  )}
+                  {!testing && testError && (
+                    <div className="nx-inline-error" role="alert"><IconInfo size={16} /> {testError}</div>
+                  )}
+                </div>
 
-                <div className="nx-row" style={{ gap: 9 }}>
+                <div className="nx-row" style={{ gap: 12 }}>
                   <button className="nx-btn nx-btn--primary" onClick={saveAI}>Saqlash</button>
                   <button className="nx-btn nx-btn--ghost" onClick={() => void testConnection()} disabled={testing}>
                     {testing ? 'Tekshirilmoqda…' : 'Ulanishni tekshirish'}
@@ -276,24 +335,24 @@ export default function Settings() {
 
           {section === 'data' && (
             <section className="nx-panel">
-              <div className="nx-panel__head"><b className="nx-h3">Ma'lumotlar</b><IconSliders size={17} /></div>
-              <div className="nx-panel__body nx-stack" style={{ gap: 18 }}>
+              <div className="nx-panel__head"><b className="nx-h3">Ma'lumotlar</b></div>
+              <div className="nx-panel__body nx-stack" style={{ gap: 20 }}>
                 {dataMsg && (
-                  <div className={dataMsg.ok ? 'nx-inline-ok' : 'nx-inline-error'}>
-                    <IconInfo size={15} /> {dataMsg.text}
+                  <div className={dataMsg.ok ? 'nx-inline-ok' : 'nx-inline-error'} role={dataMsg.ok ? 'status' : 'alert'}>
+                    <IconInfo size={16} /> {dataMsg.text}
                   </div>
                 )}
                 <div className="nx-data-row">
-                  <div className="nx-data-row__icon"><IconDownload size={19} /></div>
-                  <div style={{ flex: 1 }}>
+                  <div className="nx-data-row__icon"><IconDownload size={20} /></div>
+                  <div className="nx-data-row__body">
                     <b>Eksport qilish</b>
                     <p className="nx-hint">Kitoblar, progress va jurnalni JSON faylga zaxiralash.</p>
                   </div>
                   <button className="nx-btn nx-btn--ghost nx-btn--sm" onClick={exportData}>Eksport</button>
                 </div>
                 <div className="nx-data-row">
-                  <div className="nx-data-row__icon"><IconUpload size={19} /></div>
-                  <div style={{ flex: 1 }}>
+                  <div className="nx-data-row__icon"><IconUpload size={20} /></div>
+                  <div className="nx-data-row__body">
                     <b>Import qilish</b>
                     <p className="nx-hint">Avval eksport qilingan fayl bilan tiklash.</p>
                   </div>
@@ -301,12 +360,12 @@ export default function Settings() {
                   <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void importData(e)} />
                 </div>
                 <div className="nx-data-row nx-data-row--danger">
-                  <div className="nx-data-row__icon"><IconTrash size={19} /></div>
-                  <div style={{ flex: 1 }}>
+                  <div className="nx-data-row__icon"><IconTrash size={20} /></div>
+                  <div className="nx-data-row__body">
                     <b>Hammasini o'chirish</b>
                     <p className="nx-hint">Barcha kitoblar, tahlillar va jurnal o'chiriladi.</p>
                   </div>
-                  <button className="nx-btn nx-btn--danger nx-btn--sm" onClick={() => setClearOpen(true)}>O'chirish</button>
+                  <button ref={clearTriggerRef} className="nx-btn nx-btn--danger nx-btn--sm" onClick={() => setClearOpen(true)}>O'chirish</button>
                 </div>
               </div>
             </section>
@@ -314,10 +373,10 @@ export default function Settings() {
 
           {section === 'about' && (
             <section className="nx-panel">
-              <div className="nx-panel__head"><b className="nx-h3">Dastur haqida</b><IconBookOpen size={17} /></div>
+              <div className="nx-panel__head"><b className="nx-h3">Dastur haqida</b></div>
               <div className="nx-panel__body">
                 <div className="nx-about">
-                  <span className="nx-about__mark"><IconBookOpen size={28} /></span>
+                  <span className="nx-about__mark"><IconBookOpen size={24} /></span>
                   <h2 className="nx-title nx-title--sm">Study Notes</h2>
                   <p className="nx-subtitle">
                     Kitobni o'qish emas — tushunish va hayotda qo'llash uchun yaratilgan lokal dastur.
@@ -329,7 +388,7 @@ export default function Settings() {
                   <div><small>Ma'lumotlar</small><b>Faqat shu qurilmada</b></div>
                   <div><small>AI</small><b>O'z kalitingiz yoki Ollama</b></div>
                 </div>
-                <p className="nx-hint" style={{ marginTop: 18, lineHeight: 1.7 }}>
+                <p className="nx-hint" style={{ marginTop: 20, lineHeight: 1.7 }}>
                   Keyingi bosqichlarda AI ustoz, PDF/EPUB import, onlayn kutubxona va ustozlar obunasi qo'shiladi.
                   Asosiy dastur doim bepul bo'lib qoladi.
                 </p>
@@ -340,14 +399,16 @@ export default function Settings() {
       </div>
 
       {clearOpen && (
-        <ConfirmModal
-          title="Barcha ma'lumotlarni o'chirish?"
-          text="Kitoblar, tahlillar, streak va qo'llash jurnali butunlay o'chiriladi. Avval eksport qilish tavsiya etiladi."
-          confirmLabel="Ha, o'chirish"
-          danger
-          onClose={() => setClearOpen(false)}
-          onConfirm={() => { store.clearAll(); window.location.reload() }}
-        />
+        <div ref={modalHostRef}>
+          <ConfirmModal
+            title="Barcha ma'lumotlarni o'chirish?"
+            text="Kitoblar, tahlillar, streak va qo'llash jurnali butunlay o'chiriladi. Avval eksport qilish tavsiya etiladi."
+            confirmLabel="Ha, o'chirish"
+            danger
+            onClose={() => setClearOpen(false)}
+            onConfirm={() => { store.clearAll(); window.location.reload() }}
+          />
+        </div>
       )}
       {toastNode}
     </div>

@@ -18,9 +18,12 @@
   --nx-accent-soft: var(--primary-soft);
   --nx-shadow: 0 1px 2px rgba(48, 38, 22, 0.04), 0 12px 32px rgba(48, 38, 22, 0.045);
   --nx-shadow-lg: 0 24px 64px rgba(32, 24, 12, 0.18);
-  --nx-r: 14px;
-  --nx-r-sm: 9px;
+  /* 4px panjara: 12 = theme.css --r bilan mos kichik/medium radius */
+  --nx-r: 12px;
+  --nx-r-sm: 8px;
   --nx-r-lg: 20px;
+  /* .nx-chip radius — mapga asos token orqali ulanadi (theme.css / global.css) */
+  --nx-r-pill: var(--r-pill, 999px);
 }
 
 [data-theme='dark'] {
@@ -35,7 +38,7 @@
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 30px clamp(20px, 3vw, 56px) 88px;
+  padding: 32px clamp(20px, 3vw, 48px) 80px;
   color: var(--nx-ink);
   animation: nx-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -80,8 +83,8 @@
 .nx-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 10.5px;
+  gap: 8px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -90,15 +93,15 @@
 
 .nx-eyebrow::before {
   content: '';
-  width: 18px;
-  height: 1.5px;
+  width: 20px;
+  height: 2px;
   background: currentColor;
   opacity: 0.7;
 }
 
 .nx-title {
   font-family: var(--font-display);
-  font-size: clamp(26px, 2.5vw, 36px);
+  font-size: clamp(24px, 2.5vw, 36px);
   font-weight: 600;
   line-height: 1.14;
   letter-spacing: -0.035em;
@@ -106,14 +109,14 @@
 }
 
 .nx-title--sm {
-  font-size: clamp(22px, 2vw, 28px);
+  font-size: clamp(20px, 2vw, 24px);
 }
 
 .nx-subtitle {
-  margin-top: 7px;
+  margin-top: 8px;
   font-size: 14px;
   color: var(--nx-muted);
-  max-width: 64ch;
+  max-width: 66ch;
 }
 
 .nx-h2 {
@@ -124,7 +127,7 @@
 }
 
 .nx-h3 {
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 750;
   letter-spacing: -0.01em;
 }
@@ -143,26 +146,26 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 
 .nx-head__actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 .nx-back {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  margin-bottom: 18px;
+  gap: 8px;
+  margin-bottom: 16px;
   padding: 0;
   border: 0;
   background: none;
   color: var(--nx-muted);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: color 0.16s ease, gap 0.16s ease;
@@ -170,7 +173,7 @@
 
 .nx-back:hover {
   color: var(--nx-accent);
-  gap: 11px;
+  gap: 12px;
 }
 
 /* ---------- Tugmalar ---------- */
@@ -180,9 +183,9 @@
   justify-content: center;
   gap: 8px;
   min-height: 40px;
-  padding: 0 17px;
+  padding: 0 16px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 12px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 750;
@@ -274,7 +277,7 @@
   width: 36px;
   height: 36px;
   border: 1px solid var(--nx-line);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--nx-surface);
   color: var(--nx-muted);
   cursor: pointer;
@@ -302,7 +305,7 @@
 }
 
 .nx-card--pad {
-  padding: 22px;
+  padding: 20px;
 }
 
 .nx-card--flat {
@@ -323,17 +326,17 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 22px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--nx-line);
 }
 
 .nx-panel__body {
-  padding: 22px;
+  padding: 20px;
 }
 
 .nx-grid {
   display: grid;
-  gap: 18px;
+  gap: 16px;
 }
 
 .nx-grid--2 {
@@ -351,13 +354,13 @@
 .nx-stack {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .nx-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .nx-spacer {
@@ -368,8 +371,8 @@
 .nx-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  gap: 8px;
+  padding: 4px 12px;
   border-radius: var(--nx-r-pill);
   background: var(--nx-surface-2);
   color: var(--nx-muted);
@@ -400,21 +403,22 @@
 }
 
 .nx-dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: currentColor;
+  flex-shrink: 0;
 }
 
 /* ---------- Input / form ---------- */
 .nx-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .nx-label {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 750;
   color: var(--nx-muted);
   letter-spacing: 0.01em;
@@ -423,13 +427,13 @@
 .nx-input {
   width: 100%;
   min-height: 42px;
-  padding: 0 13px;
+  padding: 0 12px;
   border: 1px solid var(--nx-line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--input-bg);
   color: var(--nx-ink);
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14px;
   outline: none;
   transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
@@ -453,7 +457,7 @@
 
 .nx-input-wrap > svg {
   position: absolute;
-  left: 13px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--faint);
@@ -461,7 +465,7 @@
 }
 
 .nx-hint {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--nx-muted);
   line-height: 1.5;
 }
@@ -501,16 +505,16 @@
 
 .nx-segmented {
   display: inline-flex;
-  padding: 3px;
-  gap: 2px;
+  padding: 4px;
+  gap: 4px;
   border: 1px solid var(--nx-line);
-  border-radius: 11px;
+  border-radius: 12px;
   background: var(--nx-surface-2);
 }
 
 .nx-segmented button {
-  min-height: 30px;
-  padding: 0 13px;
+  min-height: 32px;
+  padding: 0 12px;
   border: 0;
   border-radius: 8px;
   background: transparent;
@@ -534,7 +538,7 @@
 
 /* ---------- Progress ---------- */
 .nx-progress {
-  height: 6px;
+  height: 8px;
   border-radius: 999px;
   background: var(--nx-surface-2);
   overflow: hidden;
@@ -551,6 +555,9 @@
 .nx-ring {
   flex-shrink: 0;
   transform: rotate(-90deg);
+  /* stroke 8px va NxUI radius formulasi (size-6)/2 moslashuviga qadar
+     qirraning kesilishini oldini oladi (1px) */
+  overflow: visible;
 }
 
 .nx-ring-label {
@@ -563,7 +570,7 @@
 
 .nx-ring circle {
   fill: none;
-  stroke-width: 6;
+  stroke-width: 8;
 }
 
 .nx-ring .track {
@@ -578,7 +585,7 @@
 
 /* ---------- Statistika karta ---------- */
 .nx-stat {
-  padding: 16px 18px;
+  padding: 16px 20px;
   border: 1px solid var(--nx-line);
   border-radius: var(--nx-r);
   background: var(--nx-surface);
@@ -606,16 +613,16 @@
 }
 
 .nx-stat__value {
-  margin-top: 9px;
+  margin-top: 8px;
   font-family: var(--font-display);
-  font-size: 27px;
+  font-size: 28px;
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
 }
 
 .nx-stat__hint {
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 11px;
   color: var(--nx-muted);
 }
@@ -645,8 +652,9 @@
 
 .nx-modal__close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
 }
 
 /* ---------- Bo'sh holat ---------- */
@@ -656,7 +664,7 @@
   align-items: center;
   text-align: center;
   gap: 12px;
-  padding: 54px 24px;
+  padding: 56px 24px;
   border: 1px dashed var(--border-strong);
   border-radius: var(--nx-r-lg);
   background: color-mix(in srgb, var(--nx-surface) 60%, transparent);
@@ -665,8 +673,8 @@
 .nx-empty__icon {
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border-radius: 18px;
   background: var(--nx-accent-soft);
   color: var(--nx-accent);
@@ -679,8 +687,8 @@
 }
 
 .nx-empty__text {
-  max-width: 42ch;
-  font-size: 13px;
+  max-width: 340px;
+  font-size: 14px;
   color: var(--nx-muted);
 }
 
@@ -688,18 +696,23 @@
 .nx-toast {
   position: fixed;
   left: 50%;
-  bottom: 26px;
+  bottom: 24px;
   z-index: 100;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 11px 18px;
+  gap: 8px;
+  padding: 12px 20px;
   border-radius: 12px;
   background: var(--text);
   color: var(--card);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  /* Uzun xabarlar ekrandan chiqib ketmasin; toast ostidagi UI'ni to'smasin */
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
   box-shadow: var(--nx-shadow-lg);
   animation: nx-toast-in 0.25s ease both;
 }
@@ -727,20 +740,29 @@
   z-index: 90;
   display: grid;
   place-items: center;
+  /* Uzun modallarda markazlashtirish tepani kesmasin */
+  place-items: safe center;
   padding: 24px;
   background: rgba(24, 18, 10, 0.45);
   backdrop-filter: blur(4px);
+  /* Baland modal ham pastki ekranda ko'rinadigan bo'lib qoladi */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   animation: nx-fade 0.18s ease both;
 }
 
 .nx-modal {
   position: relative;
-  width: min(440px, 100%);
+  width: min(448px, 100%);
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border-radius: var(--nx-r-lg);
   background: var(--nx-surface);
   border: 1px solid var(--nx-line);
   box-shadow: var(--nx-shadow-lg);
-  padding: 26px;
+  padding: 24px;
   animation: nx-modal-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -769,40 +791,159 @@
   place-items: center;
   min-width: 20px;
   height: 20px;
-  padding: 0 5px;
+  padding: 0 4px;
   border: 1px solid var(--border-strong);
   border-bottom-width: 2px;
-  border-radius: 5px;
+  border-radius: 6px;
   background: var(--nx-surface);
   color: var(--nx-muted);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
+}
+
+/* ---------- Klaviatura fokusi (faqat :focus-visible) ---------- */
+/* Barcha interaktiv nx- elementlar uchun ko'rinadigan, kontrastli halqa.
+   Rang dizayn tokenlaridan olinadi; outline klaviaturada ham, forced-colors'da ham ko'rinadi. */
+.nx-back:focus-visible,
+.nx-btn:focus-visible,
+.nx-icon-btn:focus-visible,
+.nx-switch:focus-visible,
+.nx-segmented button:focus-visible {
+  outline: 2px solid var(--nx-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--nx-accent-soft);
+}
+
+.nx-input:focus-visible {
+  outline: 2px solid var(--nx-accent);
+  outline-offset: 1px;
+  border-color: var(--nx-accent);
+  box-shadow: 0 0 0 3px var(--nx-accent-soft);
+}
+
+/* Modal yopish tugmasi har doim fokusda ko'rinadi (icon-only Control) */
+.nx-modal__close:focus-visible {
+  outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+  .nx-back:focus-visible,
+  .nx-btn:focus-visible,
+  .nx-icon-btn:focus-visible,
+  .nx-switch:focus-visible,
+  .nx-segmented button:focus-visible,
+  .nx-input:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ---------- Harakatni kamaytirish ---------- */
+/* theme.css'dagi global qoidani nx- qismlari uchun to'ldiradi:
+   vaqtni qisqartirish o'rniga animatsiya va o'tishlarni butunlay o'chirish. */
+@media (prefers-reduced-motion: reduce) {
+  .nx-page,
+  .nx-toast,
+  .nx-overlay,
+  .nx-modal,
+  .nx-progress > span,
+  .nx-ring .value {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .nx-btn,
+  .nx-icon-btn,
+  .nx-back,
+  .nx-switch,
+  .nx-switch::after,
+  .nx-segmented button,
+  .nx-input {
+    transition: none !important;
+  }
 }
 
 /* ---------- Kichik ekranlar ---------- */
 @media (max-width: 900px) {
   .nx-page {
-    padding: 22px 20px 70px;
+    padding: 20px 20px 64px;
   }
 
+  /* minmax(0, 1fr) allaqachon bor; bu yerda faqat ustunlar soni kamaytiriladi */
+  .nx-grid--3,
   .nx-grid--4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .nx-grid--3 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .nx-panel__head {
+    padding: 16px 20px;
+  }
+
+  .nx-panel__body,
+  .nx-card--pad {
+    padding: 16px;
   }
 }
 
 @media (max-width: 620px) {
-  .nx-head {
+  .nx-page {
+    padding: 20px 16px 64px;
+  }
+
+  .nx-head,
+  .nx-section-head,
+  .nx-panel__head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .nx-head,
+  .nx-section-head,
+  .nx-panel__head,
+  .nx-head__actions,
+  .nx-row {
+    flex-wrap: wrap;
+  }
+
+  .nx-grid {
+    gap: 12px;
   }
 
   .nx-grid--2,
   .nx-grid--3,
   .nx-grid--4 {
     grid-template-columns: 1fr;
+  }
+
+  .nx-stat__value {
+    font-size: clamp(24px, 7vw, 28px);
+  }
+
+  .nx-overlay {
+    padding: 16px;
+  }
+
+  .nx-modal {
+    padding: 24px 16px;
+  }
+}
+
+/* 375px va undan tor: hech qanday gorizontal siljish bo'lmasin */
+@media (max-width: 420px) {
+  .nx-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .nx-title {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  .nx-empty {
+    padding: 40px 16px;
+  }
+
+  .nx-modal__close {
+    top: 8px;
+    right: 8px;
   }
 }

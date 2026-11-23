@@ -1,0 +1,345 @@
+/* 16 — Dashboard secondary blocks (P16 / PREMIUM Wave 3)
+   Owned selectors:
+   .info, .info h1, .info-card, .ai-status, .ai-status .icon, .situation,
+   .situation p, .reveal-box, .reveal-btn, .activity, .activity-row,
+   .book-cover-mini (tightly-scoped descendants only).
+
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/design/07-critique.md (D1, D2, D6, D14)
+
+   Faqat --pm-* tokenlari (rang uchun). Hex/rgb/yangi token yo'q. !important yo'q.
+   premium/index.css da 16-o'rinda yuklanadi — eski global.css ustiga yozadi.
+   ARIA atributlari, focus halqalari va reduced-motion saqlanadi.
+   1440 / 900 / 620 / 375. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Info / joriy kitob tafsiloti — tinch, romkasiz.
+ *    Eslatma: .hero ichidagi .info / h1 P12 (12-dashboard-hero.css) ga
+ *    tegishli va yuqori specificity bilan saqlanib qoladi; bu qoidalar
+ *    faqat boshqa kontekstdagi ikkilamchi bloklarga ta'sir qiladi.
+ * ------------------------------------------------------------------ */
+.info {
+  min-width: 0;
+  max-width: 72ch;
+}
+.info h1 {
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-18);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Faqat guruhlash zarur bo'lgan joylarda --pm-surface-2 paneli.
+ *    12px radius, 20px padding, border/soya yo'q (D2).
+ * ------------------------------------------------------------------ */
+.info-card,
+.reveal-box {
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface-2);
+  box-shadow: none;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-2);
+}
+
+/* Javob qutisi ichidagi label: ALL CAPS olinadi (D1). */
+.reveal-box b {
+  display: block;
+  margin: 0 0 var(--pm-s-1);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink);
+}
+/* Eski dark override bilan teng specificity + keyingi manba — neytral rang. */
+[data-theme='dark'] .reveal-box b {
+  color: var(--pm-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. AI status — neytral nuqta, 13px matn, ghost "sozlash" havolasi.
+ *    Kartacha/gradient/rangli chip yo'q.
+ * ------------------------------------------------------------------ */
+.ai-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--pm-s-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink-2);
+}
+.ai-status .icon {
+  display: inline-block;
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-ink-3);
+  color: var(--pm-ink-3);
+}
+.ai-status .icon svg {
+  display: block;
+  width: 8px;
+  height: 8px;
+  fill: currentColor;
+  stroke: none;
+}
+.ai-status a {
+  padding: 2px 4px;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: none;
+  color: var(--pm-ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--pm-line-strong);
+  text-underline-offset: 3px;
+  transition:
+    color var(--pm-d-hover) var(--pm-ease-std),
+    background-color var(--pm-d-hover) var(--pm-ease-std);
+}
+.ai-status a:hover {
+  color: var(--pm-ink);
+  background: var(--pm-surface-2);
+}
+.ai-status a:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Vaziyat — 16px --pm-ink, 1px --pm-line chap rayka, quti yo'q.
+ *    Inline style (fontSize:16, lineHeight:1.5) bilan mos.
+ * ------------------------------------------------------------------ */
+.situation {
+  margin: 0;
+  padding: var(--pm-s-1) 0 var(--pm-s-1) var(--pm-s-3);
+  border: 0;
+  border-left: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+  max-width: 72ch;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-16);
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink);
+}
+.situation p {
+  margin: 0 0 var(--pm-s-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-16);
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pm-ink);
+}
+.situation p:last-child {
+  margin-bottom: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Javobni ochish tugmasi — sokin matn/ghost harakat.
+ *    Eski 100% kenglik, 14.5px/800 va ko'k rang olinadi.
+ * ------------------------------------------------------------------ */
+.reveal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: var(--pm-s-1) var(--pm-s-2);
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  box-shadow: none;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  color: var(--pm-ink-2);
+  cursor: pointer;
+  transition:
+    background-color var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+.reveal-btn:hover {
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+  text-decoration: none;
+  transform: none;
+}
+.reveal-btn:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+[data-theme='dark'] .reveal-btn:hover {
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Faoliyat — faqat ajratgichli qatorlar, 13px.
+ * ------------------------------------------------------------------ */
+.activity {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-2);
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: var(--pm-s-2) 0;
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: var(--pm-transparent);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: none;
+  color: var(--pm-ink-2);
+}
+.activity-row:hover {
+  background: var(--pm-surface-2);
+  text-decoration: none;
+}
+.activity-row:last-child {
+  border-bottom: 0;
+}
+.activity-row:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  border-radius: var(--pm-r-sm);
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Kichik kitob muqovasi — neytral miniatyura, soya/ramka yo'q.
+ * ------------------------------------------------------------------ */
+.book-cover-mini {
+  display: block;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 56px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface-2);
+  box-shadow: none;
+  object-fit: cover;
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Responsiv — 1440 (asosiy) / 900 / 620 / 375
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .info,
+  .situation,
+  .situation p {
+    max-width: none;
+  }
+  .activity-row {
+    gap: var(--pm-s-1);
+  }
+}
+
+@media (max-width: 620px) {
+  .info h1 {
+    font-size: var(--pm-fs-16);
+  }
+  .activity-row {
+    padding: var(--pm-s-1) 0;
+  }
+}
+
+@media (max-width: 375px) {
+  .info-card,
+  .reveal-box {
+    padding: var(--pm-s-3);
+  }
+  .reveal-btn {
+    padding: var(--pm-s-1);
+  }
+  .book-cover-mini {
+    flex-basis: 32px;
+    width: 32px;
+    height: 44px;
+  }
+  .activity-row {
+    gap: 6px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. Reduced motion — barcha harakat o'chadi (spec §6).
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .info,
+  .info h1,
+  .info-card,
+  .ai-status,
+  .ai-status .icon,
+  .ai-status a,
+  .situation,
+  .situation p,
+  .reveal-box,
+  .reveal-box b,
+  .reveal-btn,
+  .activity,
+  .activity-row,
+  .book-cover-mini {
+    animation: none;
+    transition: none;
+  }
+}

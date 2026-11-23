@@ -1,0 +1,57 @@
+/* Premium Brand lockup — Wave 3 / P04.
+   Faqat .brand, .brand .mark va .brand b ga tegishli; qolgan qismlar boshqa agentlarda.
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+   Uy havolasi (tugma emas): hover effekti yo'q, fokus halqasi va ARIA saqlanadi. */
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  min-width: 0;
+  gap: var(--pm-s-2); /* 12px — mark va nom orasi */
+  text-decoration: none;
+}
+
+/* Global a:hover chizig'ini o'chiramiz: uy havolasi tugma kabi javob bermaydi. */
+.brand:hover {
+  text-decoration: none;
+}
+
+/* Klaviatura fokusi saqlanadi, premium accent bilan (2px / offset 3px). */
+.brand:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+.brand .mark {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--pm-r-sm); /* 10px */
+  background: var(--pm-accent);
+  background-image: none; /* gradient yo'q */
+  box-shadow: none; /* ichki hamda rangli soya yo'q */
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  /* Ikonka currentColor bilan chiziladi — global.css dagi eski oq rangni
+     token bilan almashtiramiz: har ikki temada aksentga qarshi kontrast saqlanadi. */
+  color: var(--pm-on-accent);
+}
+
+.brand b {
+  display: inline; /* global.css 900px yashirish qoidasini qaytaradi */
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: none; /* ALL CAPS emas */
+  color: var(--pm-ink);
+  white-space: nowrap;
+}
+
+/* 620px va undan tor: faqat 36px mark qoladi, nom yashiriladi. */
+@media (max-width: 620px) {
+  .brand b {
+    display: none;
+  }
+}

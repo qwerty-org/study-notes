@@ -1,0 +1,470 @@
+/* Premium Library — book cards, covers, add tile, empty state (Wave 3 / P20).
+   Owned selectors: .nx-book-grid, .nx-book-card, .nx-book-card__body,
+   .nx-book-card__meta, .nx-book-cover (+ ::after), .nx-book-cover__title,
+   .nx-book-cover__author, .nx-book-cover__mark, .nx-book-cover__del,
+   .nx-book-add, .nx-book-add__icon, .nx-lib-empty.
+   Direct children of the owned containers (.nx-book-card__body > …,
+   .nx-book-add > …, .nx-empty__… inside the library empty state) are styled
+   only because they are part of THIS element — see Risks in the hand-off.
+
+   Law: docs/superpowers/specs/2026-11-23-premium-design-system.md §2/§4/§5/§6
+        docs/superpowers/specs/layout/03-library.md §5
+        docs/superpowers/specs/design/07-critique.md D1/D2/D12
+   Only --pm-* colours/tokens. No hex/rgb, no new tokens, no !important.
+   Geometry is literal px snapped to the 8px grid. premium/index.css loads
+   this AFTER the legacy nx layer, so equal specificity wins here.
+
+   Breakpoints implemented: 1440 (4 col) / 900 (3) / 620 (2) / ≤420 = 375 (1). */
+
+/* ------------------------------------------------------------------ *
+ * 1. Grid — fixed columns, never auto-fill (L03 §5)
+ * ------------------------------------------------------------------ */
+.nx-book-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pm-s-4);                         /* 24 */
+  align-items: stretch;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Card — surface + shadow-1, radius 16, NO border (spec §4/§5)
+ * ------------------------------------------------------------------ */
+.nx-book-card {
+  height: 384px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  border-radius: var(--pm-r);                 /* 16px */
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--pm-d-hover) var(--pm-ease-out),
+              box-shadow var(--pm-d-hover) var(--pm-ease-out);
+}
+
+.nx-book-card:hover {
+  transform: translateY(-1px);                /* 1px only, spec §6 */
+  box-shadow: var(--pm-shadow-2);
+}
+
+/* Focus ring preserved (spec §5: 2px accent, 3px offset). */
+.nx-book-card:focus-visible,
+.nx-book-add:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: var(--pm-shadow-focus);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Cover — 3:2, inline cool-indigo gradient kept as authored artwork.
+ *    The legacy ::after (hard-coded rgba wash + repeating stripe) is a
+ *    pseudo-element on MY selector: C02 removed the markup stripe, this
+ *    removes the remaining one. Inline `background` always wins — the
+ *    flat surface below is only a fallback when no inline gradient exists.
+ * ------------------------------------------------------------------ */
+.nx-book-cover {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  height: auto;
+  flex: 0 0 auto;
+  padding: var(--pm-s-4);                     /* 24 */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--pm-surface-2);
+  color: var(--pm-hero-ink);
+}
+
+.nx-book-cover::after {
+  content: none;                              /* no rgba wash, no stripe pattern */
+}
+
+.nx-book-cover__title {
+  padding-right: var(--pm-s-6);               /* 48 — clear of the 36px delete button */
+  color: var(--pm-hero-ink);
+  font-family: var(--pm-font-display);        /* Fraunces */
+  font-size: var(--pm-fs-16);                 /* 16 */
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nx-book-cover__author {
+  margin-top: var(--pm-s-1);                  /* 8 */
+  padding-right: var(--pm-s-6);
+  color: var(--pm-hero-ink);
+  font-family: var(--pm-font);
+  font-size: 11px;                            /* cover art is content, per brief */
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-transform: none;                       /* D1: no ALL CAPS */
+  opacity: .85;
+}
+
+.nx-book-cover__mark {
+  position: absolute;
+  top: var(--pm-s-3);                         /* 16 */
+  right: var(--pm-s-4);                       /* 24 */
+  color: var(--pm-brass);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-12);
+  font-weight: 600;
+  letter-spacing: .12em;
+  opacity: .9;
+}
+
+.nx-book-cover__del {
+  position: absolute;
+  right: var(--pm-s-2);                       /* 12 */
+  bottom: var(--pm-s-2);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);          /* ghost until hover */
+  color: var(--pm-hero-ink);
+  opacity: .55;
+  cursor: pointer;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;                      /* legacy blur removed */
+  transition: opacity var(--pm-d-hover) var(--pm-ease-std),
+              background var(--pm-d-hover) var(--pm-ease-std),
+              color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-book-card:hover .nx-book-cover__del,
+.nx-book-cover__del:focus-visible {
+  opacity: 1;                                 /* keyboard/touch users still see it */
+}
+
+.nx-book-cover__del:hover {
+  background: var(--pm-danger);
+  color: var(--pm-on-accent);
+  opacity: 1;
+}
+
+.nx-book-cover__del:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Body + meta (16 / 13px, 12px rhythm). Body's own text children are
+ *    included here only to complete L03's card recipe; nothing outside
+ *    this card is targeted.
+ * ------------------------------------------------------------------ */
+.nx-book-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-2);                         /* 12 */
+  flex: 1;
+  min-width: 0;
+  padding: var(--pm-s-4);                     /* 24 */
+}
+
+.nx-book-card__meta {
+  display: flex;
+  gap: var(--pm-s-1);                         /* 8 */
+  flex-wrap: wrap;
+}
+
+.nx-book-card__body > .nx-book-card__title {
+  margin: 0;
+  color: var(--pm-ink);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-16);
+  font-weight: 600;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nx-book-card__body > .nx-book-card__author {
+  margin: 0;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.nx-book-card__body > .nx-book-card__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  margin-top: auto;
+  padding-top: var(--pm-s-1);
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Add-book tile — surface-2 fill, NO dashed frame, quiet.
+ * ------------------------------------------------------------------ */
+.nx-book-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pm-s-1);                         /* 8 */
+  height: 384px;
+  min-width: 0;
+  padding: var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r);                 /* 16 */
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  cursor: pointer;
+  transition: background var(--pm-d-hover) var(--pm-ease-std),
+              color var(--pm-d-hover) var(--pm-ease-std);
+}
+
+.nx-book-add:hover {
+  background: var(--pm-surface-3);
+  color: var(--pm-ink);
+}
+
+.nx-book-add__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-surface);
+  color: var(--pm-ink-2);
+}
+
+/* Legacy hover recoloured the icon accent+white — keep it neutral. */
+.nx-book-add:hover .nx-book-add__icon {
+  background: var(--pm-surface);
+  color: var(--pm-ink-2);
+}
+
+.nx-book-add > b {
+  color: var(--pm-ink);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-16);                 /* 16 */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.nx-book-add > small {
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Empty state — left aligned, no dashed frame, one clear action.
+ *    The TSX renders <Empty> as .nx-empty; .nx-lib-empty is the selector
+ *    assigned to this element, so both are covered (see Risks).
+ * ------------------------------------------------------------------ */
+.nx-lib-empty,
+.nx-library .nx-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: var(--pm-s-3);                         /* 16 */
+  margin-top: var(--pm-s-5);                  /* 32 */
+  padding: var(--pm-s-6) 0;                   /* 48 / 0 */
+  border: 0;
+  border-radius: 0;
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+
+.nx-lib-empty > .nx-empty__icon,
+.nx-library .nx-empty > .nx-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+  font-size: var(--pm-fs-24);
+}
+
+.nx-lib-empty > .nx-empty__title,
+.nx-library .nx-empty > .nx-empty__title {
+  margin: 0;
+  color: var(--pm-ink);
+  font-family: var(--pm-font-display);
+  font-size: var(--pm-fs-20);                 /* 20 */
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.nx-lib-empty > .nx-empty__text,
+.nx-library .nx-empty > .nx-empty__text {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  line-height: 1.5;
+}
+
+.nx-lib-empty > div:last-child,
+.nx-library .nx-empty > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pm-s-2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. List view (same element, toggled by the view control)
+ * ------------------------------------------------------------------ */
+.nx-book-grid--list {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--pm-s-2);                         /* 12 */
+}
+
+.nx-book-grid--list .nx-book-card {
+  height: 104px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.nx-book-grid--list .nx-book-cover {
+  aspect-ratio: auto;
+  width: 144px;
+  height: 96px;
+  flex: 0 0 auto;
+  padding: var(--pm-s-3);                     /* 16 */
+}
+
+.nx-book-grid--list .nx-book-cover__title {
+  font-size: var(--pm-fs-13);
+  -webkit-line-clamp: 2;
+}
+
+.nx-book-grid--list .nx-book-cover__author {
+  display: none;                              /* no room in a 144x96 thumbnail */
+}
+
+.nx-book-grid--list .nx-book-cover__mark,
+.nx-book-grid--list .nx-book-cover__del {
+  right: var(--pm-s-1);
+}
+
+.nx-book-grid--list .nx-book-card__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--pm-s-1) var(--pm-s-4);
+}
+
+.nx-book-grid--list .nx-book-card__meta {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+
+.nx-book-grid--list .nx-book-card__body > .nx-book-card__progress {
+  grid-column: 1;
+  margin-top: 0;
+}
+
+.nx-book-grid--list .nx-book-add {
+  height: 104px;
+  flex-direction: row;
+  gap: var(--pm-s-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Responsive — 1440 / 900 / 620 / 375 (L03 §5)
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .nx-book-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nx-book-card,
+  .nx-book-add {
+    height: 360px;
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--pm-s-3);                       /* 16 */
+  }
+
+  .nx-book-card,
+  .nx-book-add {
+    height: 368px;
+  }
+
+  .nx-book-cover,
+  .nx-book-card__body {
+    padding: var(--pm-s-3);                   /* 16 */
+  }
+
+  .nx-lib-empty,
+  .nx-library .nx-empty {
+    padding: var(--pm-s-5) 0;                 /* 32 / 0 */
+  }
+
+  .nx-book-grid--list .nx-book-card {
+    height: 96px;
+  }
+
+  .nx-book-grid--list .nx-book-cover {
+    width: 96px;
+    height: 64px;
+    padding: var(--pm-s-2);                   /* 12 */
+  }
+}
+
+@media (max-width: 420px) {
+  .nx-book-grid {
+    grid-template-columns: minmax(0, 1fr);    /* 375 → 1 column */
+    gap: var(--pm-s-3);                       /* 16 */
+  }
+
+  .nx-book-card,
+  .nx-book-add {
+    height: 412px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. Reduced motion — no animation/transition/transform (spec §6)
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .nx-book-grid,
+  .nx-book-card,
+  .nx-book-card:hover,
+  .nx-book-cover,
+  .nx-book-cover__title,
+  .nx-book-cover__author,
+  .nx-book-cover__mark,
+  .nx-book-cover__del,
+  .nx-book-card__body,
+  .nx-book-card__meta,
+  .nx-book-add,
+  .nx-book-add__icon,
+  .nx-lib-empty,
+  .nx-library .nx-empty {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}

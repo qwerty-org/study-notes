@@ -1,0 +1,599 @@
+/* Premium Design System — Settings (P30 / Wave 3)
+   Owns: .nx-settings, .nx-settings-content, .nx-settings-layout,
+         .nx-settings-nav (+ __item / __foot), .nx-settings-row,
+         .nx-setting-row, .nx-data-row (+ __icon / __body),
+         .nx-provider-grid / .nx-provider, .nx-avatar-pick,
+         .nx-settings-notice, .nx-about-grid.
+
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/06-settings-onboarding.md §A
+
+   Faqat --pm-* tokenlari. Yangi token yo'q, hex/rgb yo'q, !important yo'q.
+   ARIA (aria-pressed / role=radiogroup / role=radio / aria-checked),
+   fokus halqasi, sr-only hint va reduced-motion saqlanadi.
+   Kengliklar: 1440 / 900 / 620 / 375. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Sahifa — 48 / 32 / 16 gorizontal ritm (S-1)
+ * ------------------------------------------------------------------ */
+.nx-settings {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--pm-s-6) var(--pm-s-6) calc(var(--pm-s-8) + var(--pm-s-3));
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Notice — tinch --pm-surface-2, 13px, border yo'q (S-2)
+ * ------------------------------------------------------------------ */
+.nx-settings-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-2);
+  margin: 0 0 var(--pm-s-4);
+  padding: var(--pm-s-3) var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink-2);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: none;
+}
+.nx-settings-notice svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--pm-ink-3);
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Ikki ustunli maket — 256 + 32 + 1056 (S-1)
+ * ------------------------------------------------------------------ */
+.nx-settings-layout {
+  display: grid;
+  grid-template-columns: 256px minmax(0, 1fr);
+  gap: var(--pm-s-5);
+  align-items: start;
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Yon nav — oddiy matn, faol 2px chap chiziq (S-3 / S-4)
+ * ------------------------------------------------------------------ */
+.nx-settings-nav {
+  position: sticky;
+  top: calc(var(--pm-s-7) + var(--pm-s-3));
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+  padding: var(--pm-s-2);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+}
+.nx-settings-nav__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+  padding: var(--pm-s-2) var(--pm-s-3);
+  border: 0;
+  border-radius: var(--pm-r-sm);
+  background: var(--pm-transparent);
+  color: var(--pm-ink-3);
+  font-family: var(--pm-font);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-settings-nav__item:hover {
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+}
+.nx-settings-nav__item b {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.nx-settings-nav__item small {
+  font-size: var(--pm-fs-13);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--pm-ink-3);
+}
+/* Eski pill o'rniga shaffof faol holat + 2px accent chiziq.
+   .is-active va ARIA holati bir xil ko'rinish beradi. */
+.nx-settings-nav__item.is-active,
+.nx-settings-nav__item[aria-pressed='true'] {
+  background: var(--pm-transparent);
+  color: var(--pm-accent);
+}
+.nx-settings-nav__item.is-active::before,
+.nx-settings-nav__item[aria-pressed='true']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--pm-s-1);
+  bottom: var(--pm-s-1);
+  width: 2px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent);
+}
+.nx-settings-nav__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-1);
+  margin-top: var(--pm-s-1);
+  padding: var(--pm-s-3) var(--pm-s-3) var(--pm-s-1);
+  border-top: 1px solid var(--pm-line);
+  color: var(--pm-ink-2);
+  font-size: var(--pm-fs-13);
+  line-height: 1.4;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Panel — bitta fokal ramka, 24/32 head, 32 body (S-6 / S-7 / S-8)
+ * ------------------------------------------------------------------ */
+.nx-settings-content {
+  min-width: 0;
+}
+.nx-settings-content > .nx-panel {
+  border: 0;
+  border-radius: var(--pm-r);
+  background: var(--pm-surface);
+  box-shadow: var(--pm-shadow-1);
+  overflow: visible;
+}
+.nx-settings-content .nx-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-3);
+  padding: var(--pm-s-3) var(--pm-s-5);
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  background: var(--pm-transparent);
+}
+.nx-settings-content .nx-panel__head .nx-h3 {
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-18);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--pm-ink);
+}
+.nx-settings-content .nx-panel__head svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--pm-ink-3);
+}
+.nx-settings-content .nx-panel__body {
+  padding: var(--pm-s-5);
+}
+.nx-settings-content .nx-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+}
+.nx-settings-content .nx-label {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  color: var(--pm-ink);
+}
+.nx-settings-content .nx-hint {
+  font-size: var(--pm-fs-13);
+  line-height: 1.5;
+  color: var(--pm-ink-3);
+}
+/* Faqat kenglik qo'yamiz — kontrol ko'rinishini P11 (forms) boshqaradi. */
+.nx-settings-content .nx-input,
+.nx-settings-content .nx-key-wrap {
+  max-width: 480px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Sozlama qatorlari — chegarasiz 72px slab, faqat juftlari to'ldiriladi
+ *    (S-10 / S-11). Radius 12px = --pm-r-control.
+ * ------------------------------------------------------------------ */
+.nx-setting-row,
+.nx-settings-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pm-s-4);
+  min-height: 72px;
+  padding: var(--pm-s-3) var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-transparent);
+  box-shadow: none;
+  color: var(--pm-ink);
+}
+.nx-setting-row:nth-child(odd),
+.nx-settings-row:nth-child(odd) {
+  background: var(--pm-surface-2);
+}
+.nx-setting-row > div:first-child,
+.nx-settings-row > div:first-child {
+  max-width: 60ch;
+  min-width: 0;
+}
+.nx-setting-row b,
+.nx-settings-row b {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--pm-ink);
+}
+.nx-setting-row .nx-hint,
+.nx-settings-row .nx-hint {
+  margin: var(--pm-s-1) 0 0;
+  font-size: var(--pm-fs-13);
+}
+.nx-setting-row > :last-child,
+.nx-settings-row > :last-child {
+  flex: 0 0 auto;
+}
+/* "Tez orada" qatorlari to'liq kontrastli — opacity pasaytirilmaydi. */
+.nx-setting-row--muted,
+.nx-settings-row--muted {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Ma'lumot qatorlari — chegarasiz 88px slab (S-12)
+ * ------------------------------------------------------------------ */
+.nx-data-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--pm-s-3);
+  min-height: 88px;
+  padding: var(--pm-s-3) var(--pm-s-4);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-transparent);
+  box-shadow: none;
+}
+.nx-data-row:nth-child(odd) {
+  background: var(--pm-surface-2);
+}
+.nx-data-row__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+/* Xavfli qator ham ikki rang doirasida qoladi. */
+.nx-data-row--danger .nx-data-row__icon {
+  background: var(--pm-accent-soft);
+  color: var(--pm-accent);
+}
+.nx-data-row__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.nx-data-row__body b {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--pm-ink);
+}
+.nx-data-row__body .nx-hint {
+  margin: var(--pm-s-1) 0 0;
+  font-size: var(--pm-fs-13);
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Provayderlar — neytral kartalar, faol 2px accent rail.
+ *    role=radiogroup / role=radio / aria-checked o'zgarishsiz.
+ * ------------------------------------------------------------------ */
+.nx-provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pm-s-2);
+}
+.nx-provider {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+  min-height: 88px;
+  padding: var(--pm-s-3);
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface);
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-14);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-provider:hover {
+  border-color: var(--pm-line-strong);
+}
+.nx-provider b {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.nx-provider small {
+  font-size: var(--pm-fs-13);
+  line-height: 1.45;
+  color: var(--pm-ink-3);
+}
+/* Faol holatda rangli to'ldirish yo'q — faqat chap 2px chiziq. */
+.nx-provider.is-active,
+.nx-provider[aria-checked='true'] {
+  border-color: var(--pm-line-strong);
+  background: var(--pm-surface);
+}
+.nx-provider.is-active::before,
+.nx-provider[aria-checked='true']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--pm-s-2);
+  bottom: var(--pm-s-2);
+  width: 2px;
+  border-radius: var(--pm-r-pill);
+  background: var(--pm-accent);
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. Avatar plitkalari — 48px, 8px oraliq (konteynerdan), 20px emoji (S-9)
+ * ------------------------------------------------------------------ */
+.nx-avatar-pick {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  padding: 0;
+  border: 1px solid var(--pm-line);
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface-2);
+  color: var(--pm-ink);
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-20);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background var(--pm-d-hover) var(--pm-ease-std),
+    border-color var(--pm-d-hover) var(--pm-ease-std);
+}
+.nx-avatar-pick:hover {
+  background: var(--pm-surface-3);
+}
+.nx-avatar-pick.is-active,
+.nx-avatar-pick[aria-pressed='true'] {
+  border-color: var(--pm-accent);
+  background: var(--pm-surface-2);
+  box-shadow: var(--pm-shadow-focus);
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. "Dastur haqida" — tinch 2 ustunli ma'lumot katakchalari
+ * ------------------------------------------------------------------ */
+.nx-about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pm-s-2);
+}
+.nx-about-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pm-s-1);
+  padding: var(--pm-s-3);
+  border: 0;
+  border-radius: var(--pm-r-control);
+  background: var(--pm-surface-2);
+}
+.nx-about-grid small {
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--pm-ink-3);
+}
+.nx-about-grid b {
+  font-size: var(--pm-fs-14);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--pm-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * 11. 900 — yon nav gorizontal tab stripga aylanadi (S-3 / S-13)
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .nx-settings {
+    padding: var(--pm-s-5) var(--pm-s-5) var(--pm-s-7);
+  }
+  .nx-settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--pm-s-4);
+  }
+  .nx-settings-nav {
+    position: relative;
+    top: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--pm-s-1);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--pm-s-1);
+  }
+  .nx-settings-nav__item {
+    flex: 0 0 auto;
+    min-width: 160px;
+    scroll-snap-align: start;
+  }
+  /* Vertikal chap chiziq o'rniga pastki 2px urg'u chizig'i. */
+  .nx-settings-nav__item.is-active::before,
+  .nx-settings-nav__item[aria-pressed='true']::before {
+    left: var(--pm-s-2);
+    right: var(--pm-s-2);
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 2px;
+  }
+  .nx-settings-nav__foot {
+    display: none;
+  }
+  .nx-provider-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 12. 620 — qatorlar ustma-ust, hint sr-only, segment 2 ustun (S-13 / S-14)
+ * ------------------------------------------------------------------ */
+@media (max-width: 620px) {
+  .nx-settings {
+    padding: var(--pm-s-4) var(--pm-s-3) var(--pm-s-7);
+  }
+  .nx-settings-content .nx-panel__head {
+    flex-wrap: wrap;
+    padding: var(--pm-s-3);
+  }
+  .nx-settings-content .nx-panel__body {
+    padding: var(--pm-s-3);
+  }
+  .nx-settings-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  /* Kirishchan nom saqlanadi — display:none emas, sr-only. */
+  .nx-settings-nav__item small {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .nx-setting-row,
+  .nx-settings-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--pm-s-2);
+    min-height: 0;
+    padding: var(--pm-s-3);
+  }
+  .nx-setting-row > div:first-child,
+  .nx-settings-row > div:first-child {
+    max-width: none;
+  }
+  .nx-setting-row > :last-child,
+  .nx-settings-row > :last-child {
+    width: 100%;
+  }
+  .nx-settings-content .nx-segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  .nx-data-row {
+    flex-wrap: wrap;
+    gap: var(--pm-s-2);
+    min-height: 0;
+    padding: var(--pm-s-3);
+  }
+  .nx-data-row__body {
+    flex: 1 1 calc(100% - 64px);
+  }
+  .nx-data-row > .nx-btn {
+    margin-left: 64px;
+  }
+  .nx-about-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 13. 375 — tor ekran himoyasi
+ * ------------------------------------------------------------------ */
+@media (max-width: 375px) {
+  .nx-settings-notice {
+    margin-bottom: var(--pm-s-3);
+    padding: var(--pm-s-2) var(--pm-s-3);
+  }
+  .nx-settings-content .nx-input,
+  .nx-settings-content .nx-key-wrap {
+    max-width: 100%;
+  }
+  .nx-data-row__body {
+    flex: 1 1 100%;
+  }
+  .nx-data-row > .nx-btn {
+    margin-left: 0;
+    width: 100%;
+  }
+  .nx-avatar-pick {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 14. Fokus, ARIA va harakat — premium halqa 2px / offset 3px saqlanadi.
+ *     Modal fokus trapiga (TSX) tegmaymiz: uning tugmalari ham bu halqani oladi.
+ * ------------------------------------------------------------------ */
+.nx-settings-nav__item:focus-visible,
+.nx-avatar-pick:focus-visible,
+.nx-provider:focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+.nx-settings :is(button, input, a, [role='radio']):focus-visible {
+  outline: 2px solid var(--pm-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-settings-nav__item,
+  .nx-avatar-pick,
+  .nx-provider {
+    transition: none;
+  }
+  .nx-avatar-pick:hover,
+  .nx-provider:hover {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .nx-settings-nav__item:focus-visible,
+  .nx-avatar-pick:focus-visible,
+  .nx-provider:focus-visible,
+  .nx-settings :is(button, input, a, [role='radio']):focus-visible {
+    outline-color: Highlight;
+  }
+}

@@ -1,0 +1,111 @@
+/* Premium Library header + statistics — Wave 3 / P17.
+   Owns: .nx-library .nx-head, .nx-library .nx-title, .nx-library .nx-subtitle,
+         .nx-library-stats, .nx-library-stats .nx-stat (+ __label / __value / __icon).
+   Qonun: docs/superpowers/specs/2026-11-23-premium-design-system.md
+          docs/superpowers/specs/layout/03-library.md (§1–2)
+   P07 already owns eyebrow/title/subtitle typography and the .nx-head__actions
+   button; here we only seat the single CTA on the right and turn the four stat
+   cards into one quiet, divider-only row. Faqat --pm-* tokenlari. */
+
+/* ------------------------------------------------------------------ *
+ * 1. Header — yagona CTA o'ngda, butun matn blokiga nisbatan markazda
+ * ------------------------------------------------------------------ */
+.nx-library .nx-head {
+  display: flex;
+  align-items: center;                 /* L03: CTA sarlavha bloki o'rtasida */
+  justify-content: space-between;      /* CTA o'ng chetda */
+  gap: var(--pm-s-4);                  /* 24px */
+  margin-bottom: var(--pm-s-5);        /* 32px — header → stats (barcha kenglikda) */
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Statistika — 4 ta karta emas, bitta sokin chiziqli qator
+ * ------------------------------------------------------------------ */
+.nx-library-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;                              /* kartalar orasidagi bo'shliq yo'q */
+  margin-bottom: var(--pm-s-5);        /* 32px — stats → dropzone */
+}
+
+.nx-library-stats .nx-stat {
+  height: var(--pm-s-8);                          /* 80px */
+  padding: var(--pm-s-2) var(--pm-s-4);           /* 12px 24px */
+  border: 0;
+  border-left: 1px solid var(--pm-line);          /* faqat ajratgich */
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* Qatorning chap cheti tekis: birinchi hujayrada chiziq va indent yo'q. */
+.nx-library-stats .nx-stat:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+/* Ikonkalar yashirilgan — ular aria-hidden, shuning uchun ARIA buzilmaydi. */
+.nx-library-stats .nx-stat__icon {
+  display: none;
+}
+
+.nx-library-stats .nx-stat__label {
+  margin: 0;
+  font-family: var(--pm-font);
+  font-size: var(--pm-fs-13);
+  font-weight: 600;
+  line-height: var(--pm-fs-16);        /* 16px */
+  letter-spacing: normal;
+  text-transform: none;                /* sentence case, ALL CAPS yo'q */
+  color: var(--pm-ink-2);
+}
+
+.nx-library-stats .nx-stat__value {
+  margin-top: var(--pm-s-1);           /* 8px — label → value */
+  font: 600 var(--pm-fs-30)/1 var(--pm-font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--pm-ink);                /* accent/success/warn ohanglari olinadi */
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Responsiv — 1440 / 900 / 620 / 375
+ * ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .nx-library-stats .nx-stat {
+    padding: var(--pm-s-2) var(--pm-s-3);         /* 12px 16px */
+  }
+}
+
+@media (max-width: 620px) {
+  .nx-library .nx-head {
+    flex-direction: column;            /* CTA subtitle ostiga tushadi */
+    align-items: stretch;
+    gap: var(--pm-s-4);                /* 24px */
+  }
+  /* .nx-head__actions va tugmaning to'liq kengligi P07 da boshqariladi. */
+}
+
+/* P34 ning umumiy .nx-grid--4 → 1 ustun qoidasi keyin yuklanadi;
+   yuqori specificiteli compound selektor bilan o'z sxemamizni saqlaymiz. */
+@media (max-width: 620px) {
+  .nx-grid.nx-library-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  /* 375px: 351 / 2 ≈ 175px — 2 × 2 qator, balandlik 160px. */
+  .nx-grid.nx-library-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .nx-library-stats .nx-stat {
+    border-top: 1px solid var(--pm-line);
+  }
+  .nx-library-stats .nx-stat:nth-child(-n+2) {
+    border-top: 0;                     /* ustki qator chiziqsiz */
+  }
+  .nx-library-stats .nx-stat:nth-child(odd) {
+    border-left: 0;                    /* chap ustun chiziqsiz */
+    padding-left: 0;
+  }
+}

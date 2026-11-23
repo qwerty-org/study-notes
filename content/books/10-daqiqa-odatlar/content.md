@@ -1,8 +1,8 @@
 # 1-bob: Odat nima va nima uchun muhim
 
 Har bir odam kuniga o'rtacha 40-50 ta qaror qabul qiladi. Ularning aksariyatini
-ongimiz emas, odatlarimiz qabul qiladi. Odat — bu miyaning ish yukiini
-kamaytiradigan avtomatik xatti-harakat. Suv ichishga stolga qo'yilganda
+ongimiz emas, odatlarimiz qabul qiladi. Odat — bu miyaning ish yukini
+kamaytiradigan avtomatik xatti-harakat. Stolga qo'yilgan suvni ichish uchun
 qo'lingizni cho'zishni o'ylamaysiz — odat shu.
 
 Odatsiz hayot og'ir: har bir harakatni ong ravishda o'ylab chiqish kerak bo'ladi
@@ -48,7 +48,7 @@ bir xil qisqa harakat (masalan, choy damlash, stulga o'tirish) yangi odatning
 "yoqish tugmasi" bo'lib qoladi.
 
 Qarshilikni kamaytirish uchun muhitni teskarisiga ham ishlatasiz: odatni
-buzish uchun uni noqulay qiling. Telefonni boshqa xonada quying, pechkeni
+buzish uchun uni noqulay qiling. Telefonni boshqa xonada quying, pechkani
 to'liq o'chiring, o'yin konsolini shiftga soling. Odatni qurishda —
 yo'lni ochasiz; buzishda — yo'lni yopasiz.
 
@@ -68,14 +68,14 @@ keyingi QAYTISH. Bir kun o'tkazib yuborganingizda muhim savol: "Ertaga
 nima qilaman?" — bu savol odatni saqlab qoladi.
 
 Buzish uchun muhitni ishlatish: yo'lni yopish. Choy shakarini uyga
-keltirmang — do'konda olishga to'sqinlik qilin. Ijtimoiy tarmoq ilovasini
-telefon asosiy ekranidan olib tashlang — 3 bosish kamayadi. Friction
-(qarshilik) kichrayadi — istak kamayadi.
+keltirmang — har safar do'konga borishga to'g'ri keladi. Ijtimoiy tarmoq
+ilovasini telefon asosiy ekranidan olib tashlang — ochish uchun 3 bosish
+qo'shiladi. Friction (qarshilik) kuchayadi — istak kamayadi.
 
 Davomiylik hisobini yozib boring. Odatni buzgan kuni qaytib yozing, lekin
 sanani emas — sababni. "Kech qoldim", "charchadim", "tashvishlandim" —
 har safar sabab boshqacha bo'ladi. Shu sabablar ro'yxati — sizning shaxsiy
-xaritangiz: kelajakda shay bo'lasiz.
+xaritangiz: kelajakda ogoh bo'lasiz.
 
 O'z-o'zini ayblash ishlamaydi. "Men axmoqman" — bu odatni kuchaytiradi,
 chunki stress eski odatlarni jonlantiradi. O'rniga: "Muhitim meni chalg'itdi —
@@ -95,7 +95,7 @@ o'ylaysiz. Lekin cheklov: kuzatish o'zi maqsad emas. Jadval to'la deb
 o'zingizni aldashmang — asl maqsad odatning o'zi.
 
 Mukofotni aniq qiling. Tabiiy mukofot tez bo'lsa — odat mustahkamlanadi
-(mapnuniyat darhol). Tabiiy mukofot sekin bo'lsa (sog'lom ovqat — oydan
+(mamnuniyat darhol). Tabiiy mukofot sekin bo'lsa (sog'lom ovqat — oydan
 so'ng natija) — sun'iy mukofot qo'shing: yulduzcha, "7 kun" nishoni,
 o'zingizga ruxsat. Muhim: mukofot xarid emas — sezgi. "Bugun bajarildi"
 hissi o'zi mukofot.
